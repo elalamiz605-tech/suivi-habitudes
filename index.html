@@ -2,62 +2,37 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Suivi d'habitudes</title>
-  <meta name="description" content="Suivez vos habitudes au quotidien et gardez vos séries de jours réussis.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Momentum · Habitudes & tâches</title>
+  <meta name="description" content="Momentum : suivez vos habitudes, organisez vos tâches et visualisez vos progrès, dans une interface 3D animée.">
+  <meta name="theme-color" content="#05060d">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="module" src="js/main.js"></script>
 </head>
 <body>
-  <main class="app">
-    <header class="top">
-      <div>
-        <h1>Suivi d'habitudes</h1>
-        <p class="today" id="today"></p>
-      </div>
-      <div class="summary" id="summary" aria-live="polite"></div>
-    </header>
+  <canvas id="bg3d" aria-hidden="true"></canvas>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
 
-    <form class="add" id="add-form" autocomplete="off">
-      <input id="emoji" class="emoji-input" maxlength="2" value="💧" aria-label="Emoji">
-      <input id="name" class="name-input" placeholder="Nouvelle habitude (ex. Boire 2 L d'eau)" maxlength="40" required aria-label="Nom de l'habitude">
-      <button type="submit" class="btn-primary">Ajouter</button>
-    </form>
+  <aside class="sidebar">
+    <a class="brand" href="#/today" aria-label="Momentum, accueil">
+      <img src="assets/favicon.svg" alt="" width="32" height="32">
+      <span>Momentum</span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Navigation principale"></nav>
+    <div class="level card" id="level"></div>
+  </aside>
 
-    <section class="week-head" aria-hidden="true">
-      <span></span>
-      <div class="days" id="days-head"></div>
-      <span></span>
-    </section>
-
-    <ul class="habits" id="habits"></ul>
-
-    <p class="empty" id="empty" hidden>
-      Aucune habitude pour l'instant.<br>Ajoutez-en une ci-dessus pour commencer 🚀
-    </p>
-
-    <footer class="foot">
-      Vos données restent dans votre navigateur (aucun compte, aucun serveur).
-      <button type="button" class="link" id="export">Exporter</button>
-      ·
-      <label class="link">Importer<input type="file" id="import" accept="application/json" hidden></label>
-    </footer>
+  <main id="view" class="view" tabindex="-1">
+    <noscript><p>Momentum a besoin de JavaScript pour fonctionner.</p></noscript>
   </main>
 
-  <template id="habit-tpl">
-    <li class="habit">
-      <div class="info">
-        <span class="h-emoji"></span>
-        <div>
-          <div class="h-name"></div>
-          <div class="h-streak"></div>
-        </div>
-      </div>
-      <div class="days"></div>
-      <button type="button" class="delete" aria-label="Supprimer">✕</button>
-    </li>
-  </template>
-
-  <script src="app.js"></script>
+  <dialog id="modal" class="modal" aria-label="Formulaire"></dialog>
+  <dialog id="palette" class="palette" aria-label="Palette de commandes"></dialog>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
 </body>
 </html>

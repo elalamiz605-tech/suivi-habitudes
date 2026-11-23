@@ -1,53 +1,87 @@
-# ✅ Suivi d'habitudes
+# Momentum · Habitudes & tâches
 
-Une petite application web pour suivre ses habitudes au quotidien (boire de l'eau, lire, faire du sport…) et garder ses **séries de jours réussis** 🔥.
+**Momentum** est une application web pour suivre ses habitudes, organiser ses tâches et visualiser ses progrès, dans une interface sombre avec un **décor 3D animé en temps réel**.
 
-![Aperçu](apercu.png)
+👉 **Démo en ligne :** https://elalamiz605-tech.github.io/suivi-habitudes/
 
-Aucune installation, aucun compte : tout fonctionne dans le navigateur et les données restent sur votre appareil.
+![Page Aujourd'hui](assets/apercu.jpg)
 
 ## Fonctionnalités
 
-- Ajouter une habitude avec un emoji
-- Cocher / décocher les 7 derniers jours d'un clic
-- Série en cours et record pour chaque habitude
-- Résumé du jour (« 2 / 3 aujourd'hui »)
-- Sauvegarde automatique (localStorage)
-- Export / import des données en JSON
-- Thème sombre automatique et affichage adapté au mobile
+### 🎨 Interface 3D
+- Scène **Three.js** en arrière-plan : sphère organique déformée par un shader GLSL (bruit de Perlin), anneaux en orbite avec satellites, champ de 1 800 particules et formes flottantes.
+- La scène **réagit** à la souris (parallaxe), **se déplace** selon la page et **change de couleur** avec votre progression du jour (violet → vert).
+- Cartes qui **s'inclinent en 3D** sous la souris, entrées animées, confettis 3D lors d'une journée parfaite.
+- Interface en verre dépoli, adaptée au mobile (barre de navigation en bas).
+
+### 🔁 Habitudes
+- **Deux types de suivi** : fait / pas fait, ou **objectif chiffré** (ex. 8 verres d'eau, avec compteur + / −).
+- **Fréquences** : tous les jours, certains jours de la semaine, ou **X fois par semaine**.
+- Catégories, couleur, icône, heure prévue, notes, archivage.
+- **Séries** (en cours et record) qui tiennent compte des jours non prévus.
+- Historique sur 14 jours, modifiable d'un clic.
+
+### ✅ Tâches
+- **Tableau Kanban** (À faire / En cours / Terminé) avec **glisser-déposer**.
+- 4 niveaux de **priorité**, **échéances** (en retard, aujourd'hui, demain…), **projets**, **sous-tâches** avec barre de progression.
+- Recherche instantanée, filtres par priorité et projet, trois modes de tri.
+
+### 📊 Statistiques et motivation
+- Taux de réussite sur 30 jours (graphique en barres), **carte de régularité** sur 20 semaines, classement des habitudes, répartition des tâches.
+- **XP et niveaux** : chaque validation et chaque tâche terminée rapporte des points.
+- **10 badges** à débloquer (séries de 7 et 30 jours, journée parfaite, 100 validations…).
+
+### ⚡ Confort
+- **Palette de commandes** `Ctrl + K` : navigation, création, recherche d'habitudes et de tâches.
+- Raccourcis : `N` nouvelle habitude, `T` nouvelle tâche, `1` à `5` pour changer de page.
+- Annulation après suppression ou archivage.
+- **Export / import** des données en JSON. Les données restent dans le navigateur : aucun compte, aucun serveur.
+- Respecte le réglage « réduire les animations » du système. La 3D se met en pause quand l'onglet est caché et peut être désactivée.
+
+| Tâches | Statistiques |
+| --- | --- |
+| ![Tableau des tâches](assets/apercu-taches.jpg) | ![Statistiques](assets/apercu-stats.jpg) |
 
 ## Lancer le projet
 
-Ouvrez simplement `index.html` dans votre navigateur.
-
-Ou, avec un petit serveur local :
+Le projet utilise des modules JavaScript : il faut l'ouvrir via un petit serveur local (un double-clic sur `index.html` ne suffit pas).
 
 ```bash
 python3 -m http.server 8000
 ```
 
-puis allez sur http://localhost:8000
+Puis ouvrez http://localhost:8000. Vous pouvez aussi utiliser l'extension **Live Server** de VS Code.
 
-## Mettre le site en ligne (gratuit)
+## Mise en ligne
 
-Le dépôt contient un workflow GitHub Actions (`.github/workflows/pages.yml`) qui publie le site sur **GitHub Pages** à chaque `push` sur `main`.
+Le workflow `.github/workflows/pages.yml` publie le site sur **GitHub Pages** à chaque `push` sur `main`.
+Pour l'activer une fois : **Settings → Pages → Source : « GitHub Actions »**.
 
-1. Sur GitHub : **Settings → Pages → Source : « GitHub Actions »**
-2. Faites un `push` : le site sera disponible sur `https://<votre-pseudo>.github.io/<nom-du-depot>/`
+## Technologies
+
+- HTML, CSS et JavaScript natifs (modules ES), **sans framework ni étape de build**
+- [Three.js](https://threejs.org/) r170 (fourni dans `vendor/`) et shaders GLSL écrits à la main
+- Graphiques en SVG faits maison
+- `localStorage` pour la sauvegarde
 
 ## Structure
 
 ```
-index.html   → la page
-style.css    → le design (clair / sombre, mobile)
-app.js       → la logique (habitudes, séries, sauvegarde)
-.github/     → publication automatique sur GitHub Pages
+index.html            → structure de la page
+css/styles.css        → design (verre dépoli, animations, responsive)
+js/main.js            → navigation, actions, récompenses, palette de commandes
+js/views.js           → rendu de chaque page
+js/forms.js           → fenêtres de création / modification
+js/logic.js           → règles : séries, taux de réussite, XP, badges
+js/store.js           → données, sauvegarde, démo
+js/scene.js           → scène 3D (Three.js + shaders)
+js/ui.js              → notifications, confettis, effet 3D des cartes
+vendor/               → Three.js
 ```
 
-## Idées d'améliorations
+## Idées pour la suite
 
-- [ ] Statistiques par mois (graphique)
-- [ ] Choisir les jours de la semaine pour chaque habitude
-- [ ] Notifications de rappel
-- [ ] Glisser-déposer pour réordonner les habitudes
-- [ ] Installer comme application (PWA)
+- [ ] Rappels par notification
+- [ ] Application installable (PWA, mode hors ligne)
+- [ ] Synchronisation entre appareils
+- [ ] Thème clair
