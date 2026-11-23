@@ -1,6 +1,6 @@
 # Momentum · Habitudes & tâches
 
-**Momentum** est une application web pour suivre ses habitudes, organiser ses tâches et visualiser ses progrès, dans une interface sombre avec un **décor 3D animé en temps réel**.
+**Momentum** est une application web pour suivre ses habitudes, organiser ses tâches et visualiser ses progrès, dans une interface sombre et minimaliste avec un **fond animé**.
 
 👉 **Démo en ligne :** https://elalamiz605-tech.github.io/suivi-habitudes/
 
@@ -8,11 +8,12 @@
 
 ## Fonctionnalités
 
-### 🎨 Interface 3D
-- Scène **Three.js** en arrière-plan : sphère organique déformée par un shader GLSL (bruit de Perlin), anneaux en orbite avec satellites, champ de 1 800 particules et formes flottantes.
-- La scène **réagit** à la souris (parallaxe), **se déplace** selon la page et **change de couleur** avec votre progression du jour (violet → vert).
-- Cartes qui **s'inclinent en 3D** sous la souris, entrées animées, confettis 3D lors d'une journée parfaite.
-- Interface en verre dépoli, adaptée au mobile (barre de navigation en bas).
+### Interface
+- Design sombre et minimaliste : surfaces graphite, filets fins, un seul accent vermillon pour ce qui est validé.
+- **Fond animé** (Three.js) : un champ de points en perspective qui ondule lentement ; la part de points allumés suit votre progression du jour.
+- Valider une habitude « tamponne » la case du jour avec un anneau qui se referme.
+- Chiffres en police mono (Martian Mono), texte en Host Grotesk, polices hébergées dans le projet.
+- Adapté au mobile (barre de navigation en bas). Le fond animé se met en pause quand l'onglet est caché et peut être désactivé.
 
 ### 🔁 Habitudes
 - **Deux types de suivi** : fait / pas fait, ou **objectif chiffré** (ex. 8 verres d'eau, avec compteur + / −).
@@ -36,7 +37,7 @@
 - Raccourcis : `N` nouvelle habitude, `T` nouvelle tâche, `1` à `5` pour changer de page.
 - Annulation après suppression ou archivage.
 - **Export / import** des données en JSON. Les données restent dans le navigateur : aucun compte, aucun serveur.
-- Respecte le réglage « réduire les animations » du système. La 3D se met en pause quand l'onglet est caché et peut être désactivée.
+- Respecte le réglage « réduire les animations » du système. Le fond animé se met en pause quand l'onglet est caché et peut être désactivé.
 
 | Tâches | Statistiques |
 | --- | --- |
@@ -74,8 +75,8 @@ js/views.js           → rendu de chaque page
 js/forms.js           → fenêtres de création / modification
 js/logic.js           → règles : séries, taux de réussite, XP, badges
 js/store.js           → données, sauvegarde, démo
-js/scene.js           → scène 3D (Three.js + shaders)
-js/ui.js              → notifications, confettis, effet 3D des cartes
+js/scene.js           → fond animé (champ de points Three.js + shaders)
+js/ui.js              → notifications
 vendor/               → Three.js
 ```
 

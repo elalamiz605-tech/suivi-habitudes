@@ -11,30 +11,31 @@ const RING_C = 2 * Math.PI * 52;
 
 // ---------- Composants ----------
 
-export function ring(ratio, size = 'lg') {
+const BADGE_IC = {
+  'first-habit': 'plus', 'first-check': 'check', 'streak-7': 'flame', 'streak-30': 'zap', 'checks-100': 'target',
+  'perfect-day': 'sun', 'perfect-7': 'award', 'tasks-10': 'list', urgent: 'alert', 'level-5': 'layers',
+};
+
+const tick = (c) => `<i class="tick" style="--c:${c}" aria-hidden="true"></i>`;
+
+/** Une mesure de la bande de chiffres : libellé, valeur en chiffres tabulaires, précision. */
+function metric({ label, value, sub = '', tone = '' }) {
   return `
-  <div class="ring ring-${size}">
-    <svg viewBox="0 0 120 120" aria-hidden="true">
-      <defs><linearGradient id="ring-grad-${size}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs>
-      <circle class="ring-bg" cx="60" cy="60" r="52"/>
-      <circle class="ring-fg" cx="60" cy="60" r="52" stroke="url(#ring-grad-${size})"
-        style="stroke-dasharray:${RING_C}" data-ring="${RING_C * (1 - ratio)}"/>
-    </svg>
-    <div class="ring-label"><b data-count="${Math.round(ratio * 100)}">${Math.round(ratio * 100)}</b><span>%</span></div>
+  <div class="metric ${tone}">
+    <p class="metric-label">${label}</p>
+    <p class="metric-value">${value}</p>
+    ${sub ? `<p class="metric-sub">${sub}</p>` : ''}
   </div>`;
 }
 
-function kpi({ label, value, sub, ic, tone = '', i = 0 }) {
-  return `
-  <article class="card kpi tilt ${tone}" style="--i:${i}">
-    <div class="kpi-top"><span class="kpi-icon">${icon(ic)}</span><p class="kpi-label">${label}</p></div>
-    <p class="kpi-value">${value}</p>
-    <p class="kpi-sub">${sub}</p>
-  </article>`;
+/** Barre segmentée : un segment par habitude prévue, allumé quand elle est validée. */
+function segments(done, total) {
+  if (!total) return '<div class="segbar empty" aria-hidden="true"><i></i></div>';
+  return `<div class="segbar" role="img" aria-label="${done} sur ${total} habitudes validées">${[...Array(total)].map((_, i) => `<i class="${i < done ? 'on' : ''}"></i>`).join('')}</div>`;
 }
 
 const empty = (title, text, action = '') => `
-  <div class="empty card"><div class="empty-orb"></div><h3>${title}</h3><p>${text}</p>${action}</div>`;
+  <div class="empty"><h3>${title}</h3><p>${text}</p>${action}</div>`;
 
 function prioChip(t) {
   const p = L.PRIORITIES[t.priority] || L.PRIORITIES[1];
@@ -69,32 +70,27 @@ function weekDots(h) {
   }).join('')}</div>`;
 }
 
-function habitCard(h, i) {
+function habitItem(h, stamp) {
   const k = dateKey(today());
   const v = L.valueOn(h, k);
   const done = L.isDone(h, k);
   const streak = L.currentStreak(h);
   const isCount = h.kind === 'count';
   return `
-  <article class="card habit-card tilt ${done ? 'is-done' : ''}" style="--c:${h.color};--i:${i}">
-    <div class="hc-top">
-      <div class="hc-icon">${esc(h.icon)}</div>
-      <div class="hc-title"><h3>${esc(h.name)}</h3><p>${habitMeta(h)}</p></div>
-      <button class="check ${done ? 'on' : ''}" data-action="check" data-id="${h.id}" aria-pressed="${done}" aria-label="Valider ${esc(h.name)}">${icon('check')}</button>
-    </div>
+  <article class="habit-item ${done ? 'is-done' : ''}" style="--c:${h.color}">
+    ${tick(h.color)}
+    <div class="hi-title"><h3>${esc(h.name)}</h3><p>${habitMeta(h)}</p></div>
+    ${weekDots(h)}
+    <span class="streak ${streak ? 'live' : ''}" title="Série en cours">${icon('flame')}<b>${streak ? L.streakLabel(h, streak) : '0'}</b></span>
     ${isCount ? `
-    <div class="counter-row">
-      <div class="meter"><span style="width:${Math.min(100, (v / h.target) * 100)}%"></span></div>
-      <div class="counter">
-        <button class="icon-btn sm" data-action="dec" data-id="${h.id}" aria-label="Retirer 1">${icon('minus')}</button>
-        <span><b>${v}</b> / ${h.target} ${esc(h.unit)}</span>
-        <button class="icon-btn sm" data-action="inc" data-id="${h.id}" aria-label="Ajouter 1">${icon('plus')}</button>
-      </div>
+    <div class="counter">
+      <button class="icon-btn sm" data-action="dec" data-id="${h.id}" aria-label="Retirer 1">${icon('minus')}</button>
+      <span><b>${v}</b>/${h.target}<small>${esc(h.unit)}</small></span>
+      <button class="icon-btn sm" data-action="inc" data-id="${h.id}" aria-label="Ajouter 1">${icon('plus')}</button>
     </div>` : ''}
-    <div class="hc-bottom">
-      <span class="streak ${streak ? 'hot' : ''}">${icon('flame')}${streak ? L.streakLabel(h, streak) : 'Pas de série'}</span>
-      ${weekDots(h)}
-    </div>
+    <button class="check ${done ? 'on' : ''} ${stamp ? 'stamp' : ''}" data-action="check" data-id="${h.id}" aria-pressed="${done}" aria-label="Valider ${esc(h.name)}">
+      <svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18"/></svg>${icon('check')}
+    </button>
   </article>`;
 }
 
@@ -113,7 +109,7 @@ function taskRow(t) {
 
 // ---------- Aujourd'hui ----------
 
-export function viewToday(s) {
+export function viewToday(s, ui = {}) {
   const t = today();
   const habits = activeHabits(s);
   const prog = L.todayProgress(habits);
@@ -122,50 +118,47 @@ export function viewToday(s) {
   const overdue = s.tasks.filter(L.isOverdue).length;
   const rate7 = L.overallRate(habits, 7);
   const top = habits.map((h) => ({ h, n: L.currentStreak(h) })).sort((a, b) => b.n - a.n)[0];
-  const hour = new Date().getHours();
-  const greet = hour < 5 ? 'Bonne nuit' : hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
   const left = prog.total - prog.done;
-  const lead = !prog.total
-    ? "Aucune habitude prévue aujourd'hui. Profitez-en pour planifier la suite."
-    : left === 0
-      ? 'Journée parfaite : tout est validé. Continuez sur cette lancée.'
-      : `Encore ${plural(left, 'habitude', 'habitudes')} à valider aujourd'hui${overdue ? ` et ${plural(overdue, 'tâche en retard', 'tâches en retard')}` : ''}.`;
+  const status = !prog.total
+    ? "Rien de prévu aujourd'hui"
+    : left === 0 ? 'Journée complète' : `${plural(left, 'habitude restante', 'habitudes restantes')}`;
 
   return `
-  <section class="hero" style="--i:0">
-    <p class="eyebrow"><span class="pulse"></span>${fmtFull(t)}</p>
-    <h1>${greet}${s.settings.name ? `, <span class="grad-text">${esc(s.settings.name)}</span>` : ''}</h1>
-    <p class="lead">${lead}</p>
-    <div class="hero-actions">
-      <button class="btn primary" data-action="new-habit">${icon('plus')}Nouvelle habitude</button>
-      <button class="btn" data-action="new-task">${icon('list')}Nouvelle tâche</button>
-      <button class="btn ghost hide-sm" data-action="palette">${icon('search')}Rechercher<kbd>Ctrl K</kbd></button>
+  <header class="page-head">
+    <div>
+      <h1>Aujourd'hui${s.settings.name ? `<span class="who">, ${esc(s.settings.name)}</span>` : ''}</h1>
+      <p class="lead"><time datetime="${dateKey(t)}">${fmtFull(t)}</time><i class="sep"></i>${status}${overdue ? `<i class="sep"></i><span class="late-text">${plural(overdue, 'tâche en retard', 'tâches en retard')}</span>` : ''}</p>
     </div>
+    <div class="head-actions">
+      <button class="btn ghost hide-sm" data-action="palette">${icon('search')}Rechercher<kbd>Ctrl K</kbd></button>
+      <button class="btn" data-action="new-task">${icon('plus')}Tâche</button>
+      <button class="btn primary" data-action="new-habit">${icon('plus')}Habitude</button>
+    </div>
+  </header>
+
+  <section class="band" aria-label="Résumé du jour">
+    <div class="metric metric-main">
+      <p class="metric-label">Progression du jour</p>
+      <p class="metric-value"><b>${prog.done}</b><span>/${prog.total}</span></p>
+      ${segments(prog.done, prog.total)}
+    </div>
+    ${metric({ label: 'Réussite 7 jours', value: `<b>${Math.round(rate7 * 100)}</b><span>%</span>` })}
+    ${metric({ label: 'Meilleure série', value: `<b>${top && top.n ? top.n : 0}</b><span>${top && top.h.schedule.type === 'weekly' ? 'sem.' : 'j'}</span>`, sub: top && top.n ? esc(top.h.name) : '' })}
+    ${metric({ label: 'Tâches à traiter', value: `<b>${focus.length}</b>`, sub: overdue ? `dont ${overdue} en retard` : '', tone: overdue ? 'warn' : '' })}
   </section>
 
-  <section class="kpis stagger" style="--i:1">
-    <article class="card ring-card tilt" style="--i:0">
-      ${ring(prog.ratio)}
-      <div><p class="kpi-label">Progression du jour</p><p class="ring-sub"><b>${prog.done}</b> / ${prog.total} habitude${prog.total > 1 ? 's' : ''}</p>
-      <p class="kpi-sub">${left > 0 ? 'Chaque validation rapporte 10 XP' : prog.total ? '+25 XP de bonus journée parfaite' : 'Ajoutez une habitude pour commencer'}</p></div>
-    </article>
-    ${kpi({ i: 1, ic: 'flame', tone: 'warm', label: 'Meilleure série en cours', value: top && top.n ? `<b data-count="${top.n}">${top.n}</b><small>${top.h.schedule.type === 'weekly' ? 'sem.' : 'jours'}</small>` : '<b>0</b>', sub: top && top.n ? `${esc(top.h.icon)} ${esc(top.h.name)}` : 'Validez une habitude pour lancer une série' })}
-    ${kpi({ i: 2, ic: 'target', tone: 'cool', label: 'Réussite sur 7 jours', value: `<b data-count="${Math.round(rate7 * 100)}">${Math.round(rate7 * 100)}</b><small>%</small>`, sub: rate7 >= 0.8 ? 'Excellent rythme' : rate7 >= 0.5 ? 'Bon rythme, on accélère ?' : 'On repart du bon pied' })}
-    ${kpi({ i: 3, ic: 'list', tone: overdue ? 'hot' : '', label: 'Tâches à traiter', value: `<b data-count="${focus.length}">${focus.length}</b><small>${overdue ? `dont ${overdue} en retard` : 'prioritaires'}</small>`, sub: `${s.tasks.filter((x) => x.status === 'doing').length} en cours · ${s.tasks.filter((x) => x.status === 'done').length} terminées` })}
-  </section>
-
-  <section class="section" style="--i:2">
+  <section class="section">
     <div class="section-head"><h2>Habitudes du jour</h2><a href="#/habits" class="link">Tout gérer${icon('chev-r')}</a></div>
     ${prog.due.length
-      ? `<div class="habit-grid stagger">${prog.due.map(habitCard).join('')}</div>`
+      ? `<div class="list">${prog.due.map((h) => habitItem(h, ui.stamp === h.id)).join('')}</div>`
       : empty("Rien de prévu aujourd'hui", 'Créez une habitude ou profitez de votre journée de repos.', `<button class="btn primary" data-action="new-habit">${icon('plus')}Créer une habitude</button>`)}
-    ${later.length ? `<div class="later"><span>Pas prévues aujourd'hui</span>${later.map((h) => `<button class="chip" style="--c:${h.color}" data-action="edit-habit" data-id="${h.id}">${esc(h.icon)} ${esc(h.name)}</button>`).join('')}</div>` : ''}
+    ${later.length ? `<div class="later"><span>Pas prévues aujourd'hui</span>${later.map((h) => `<button class="chip" data-action="edit-habit" data-id="${h.id}">${tick(h.color)}${esc(h.name)}</button>`).join('')}</div>` : ''}
   </section>
 
-  <section class="section" style="--i:3">
-    <div class="section-head"><h2>Focus tâches</h2><a href="#/tasks" class="link">Ouvrir le tableau${icon('chev-r')}</a></div>
+  <section class="section">
+    <div class="section-head"><h2>Tâches prioritaires</h2><a href="#/tasks" class="link">Ouvrir le tableau${icon('chev-r')}</a></div>
     ${focus.length
-      ? `<div class="card focus-list">${focus.map(taskRow).join('')}</div>`
+      ? `<div class="list">${focus.map(taskRow).join('')}</div>`
       : empty('Aucune tâche urgente', 'Les tâches urgentes, en cours ou à échéance apparaissent ici.', `<button class="btn" data-action="new-task">${icon('plus')}Nouvelle tâche</button>`)}
   </section>`;
 }
@@ -183,14 +176,14 @@ function habitStrip(h) {
   }).join('')}</div>`;
 }
 
-function habitRow(h, i) {
+function habitRow(h) {
   const rate = L.completionRate(h, 30);
   const streak = L.currentStreak(h);
   const best = L.bestStreak(h);
   return `
-  <article class="card habit-row tilt tilt-soft" style="--c:${h.color};--i:${i}">
+  <article class="habit-row" style="--c:${h.color}">
     <div class="hr-main">
-      <div class="hc-icon">${esc(h.icon)}</div>
+      ${tick(h.color)}
       <div class="hr-title">
         <h3>${esc(h.name)}</h3>
         <p>${habitMeta(h)}${h.kind === 'count' ? `<i class="sep"></i>${h.target} ${esc(h.unit)}/jour` : ''}</p>
@@ -218,23 +211,22 @@ export function viewHabits(s, ui) {
   const list = habits.filter((h) => !cat || h.category === cat);
   const archived = s.habits.filter((h) => h.archived);
   return `
-  <header class="page-head" style="--i:0">
+  <header class="page-head">
     <div>
-      <p class="eyebrow">Routine</p>
       <h1>Habitudes</h1>
       <p class="lead">${plural(habits.length, 'habitude active', 'habitudes actives')} · réussite moyenne sur 30 jours : <b>${pct(L.overallRate(habits, 30))}</b></p>
     </div>
     <button class="btn primary" data-action="new-habit">${icon('plus')}Nouvelle habitude</button>
   </header>
-  ${cats.length ? `<div class="chips" style="--i:1">${['', ...cats].map((c) => `<button class="chip-btn ${c === cat ? 'on' : ''}" data-action="filter-cat" data-cat="${esc(c)}">${c ? esc(c) : 'Toutes'}</button>`).join('')}</div>` : ''}
-  <div class="habit-list stagger" style="--i:2">
+  ${cats.length ? `<div class="chips">${['', ...cats].map((c) => `<button class="chip-btn ${c === cat ? 'on' : ''}" data-action="filter-cat" data-cat="${esc(c)}">${c ? esc(c) : 'Toutes'}</button>`).join('')}</div>` : ''}
+  <div class="list">
     ${list.length ? list.map(habitRow).join('') : empty('Aucune habitude', 'Créez votre première habitude : boire de l’eau, lire, faire du sport…', `<button class="btn primary" data-action="new-habit">${icon('plus')}Créer une habitude</button>`)}
   </div>
-  <p class="hint" style="--i:3">Astuce : cliquez sur un jour pour le valider ou l’annuler. Les jours barrés ne sont pas prévus.</p>
+  <p class="hint">Astuce : cliquez sur un jour pour le valider ou l’annuler. Les jours barrés ne sont pas prévus.</p>
   ${archived.length ? `
-  <details class="archived card" style="--i:4">
+  <details class="archived">
     <summary>${icon('archive')}Archivées (${archived.length})</summary>
-    ${archived.map((h) => `<div class="arch-row"><span>${esc(h.icon)} ${esc(h.name)}</span><span class="spacer"></span><button class="btn sm" data-action="unarchive-habit" data-id="${h.id}">${icon('restore')}Restaurer</button><button class="icon-btn danger" data-action="delete-habit" data-id="${h.id}" aria-label="Supprimer">${icon('trash')}</button></div>`).join('')}
+    ${archived.map((h) => `<div class="arch-row"><span>${tick(h.color)}${esc(h.name)}</span><span class="spacer"></span><button class="btn sm" data-action="unarchive-habit" data-id="${h.id}">${icon('restore')}Restaurer</button><button class="icon-btn danger" data-action="delete-habit" data-id="${h.id}" aria-label="Supprimer">${icon('trash')}</button></div>`).join('')}
   </details>` : ''}`;
 }
 
@@ -269,7 +261,7 @@ export function boardHTML(s, ui) {
     const items = list.filter((t) => t.status === st.id)
       .sort(st.id === 'done' ? (a, b) => (b.doneAt || '').localeCompare(a.doneAt || '') : L.taskSorter(ui.taskSort));
     return `
-    <section class="col card" data-col="${st.id}">
+    <section class="col" data-col="${st.id}">
       <header class="col-head"><span class="col-dot ${st.id}"></span><h3>${st.label}</h3><span class="count">${items.length}</span>
         <button class="icon-btn sm" data-action="new-task" data-status="${st.id}" aria-label="Ajouter dans ${st.label}">${icon('plus')}</button></header>
       <div class="col-body">${items.map(taskCard).join('') || '<p class="col-empty">Glissez une tâche ici</p>'}</div>
@@ -283,21 +275,20 @@ export function viewTasks(s, ui) {
   const overdue = s.tasks.filter(L.isOverdue).length;
   const opt = (v, label, cur) => `<option value="${esc(v)}" ${String(cur) === String(v) ? 'selected' : ''}>${esc(label)}</option>`;
   return `
-  <header class="page-head" style="--i:0">
+  <header class="page-head">
     <div>
-      <p class="eyebrow">Organisation</p>
       <h1>Tâches</h1>
       <p class="lead">${plural(open, 'tâche ouverte', 'tâches ouvertes')}${overdue ? ` · <span class="late-text">${overdue} en retard</span>` : ''} · déplacez les cartes d’une colonne à l’autre</p>
     </div>
     <button class="btn primary" data-action="new-task">${icon('plus')}Nouvelle tâche</button>
   </header>
-  <div class="toolbar card" style="--i:1">
+  <div class="toolbar">
     <label class="search">${icon('search')}<input id="task-q" type="search" placeholder="Rechercher une tâche…" value="${esc(ui.taskQ)}" aria-label="Rechercher une tâche"></label>
     <select id="task-prio" aria-label="Filtrer par priorité">${opt('', 'Toutes priorités', ui.taskPrio)}${[3, 2, 1, 0].map((i) => opt(i, L.PRIORITIES[i].label, ui.taskPrio)).join('')}</select>
     <select id="task-proj" aria-label="Filtrer par projet">${opt('', 'Tous projets', ui.taskProj)}${projects.map((p) => opt(p, `#${p}`, ui.taskProj)).join('')}</select>
     <select id="task-sort" aria-label="Trier">${opt('prio', 'Tri : priorité', ui.taskSort)}${opt('due', 'Tri : échéance', ui.taskSort)}${opt('recent', 'Tri : plus récentes', ui.taskSort)}</select>
   </div>
-  <div id="board" class="board" style="--i:2">${boardHTML(s, ui)}</div>`;
+  <div id="board" class="board">${boardHTML(s, ui)}</div>`;
 }
 
 // ---------- Statistiques ----------
@@ -313,11 +304,10 @@ function barChart(habits) {
   const avg = withData.length ? withData.reduce((a, x) => a + x.r, 0) / withData.length : 0;
   return `
   <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Taux de réussite des 30 derniers jours">
-    <defs><linearGradient id="bar-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#7c5cff"/></linearGradient></defs>
     ${[0, 0.5, 1].map((r) => `<line class="grid" x1="${left}" x2="${W}" y1="${y(r)}" y2="${y(r)}"/><text class="axis" x="${left - 8}" y="${y(r) + 4}" text-anchor="end">${r * 100}%</text>`).join('')}
     ${data.map((x, i) => {
       const h = Math.max(2, (H - top - bottom) * x.r);
-      return `<rect class="bar" style="--d:${i * 18}ms" x="${left + i * bw + 3}" y="${y(x.r) - (x.r ? 0 : 2)}" width="${bw - 6}" height="${x.r ? h : 2}" rx="3" fill="${x.r ? 'url(#bar-g)' : 'rgba(255,255,255,.12)'}"><title>${fmtFull(x.d)} : ${x.done}/${x.req}</title></rect>`;
+      return `<rect x="${left + i * bw + 3}" y="${y(x.r) - (x.r ? 0 : 2)}" width="${bw - 6}" height="${x.r ? h : 2}" rx="1.5" class="bar ${x.r >= 1 ? 'full' : x.r ? '' : 'zero'}"><title>${fmtFull(x.d)} : ${x.done}/${x.req}</title></rect>`;
     }).join('')}
     <line class="avg" x1="${left}" x2="${W}" y1="${y(avg)}" y2="${y(avg)}"><title>Moyenne : ${Math.round(avg * 100)} %</title></line>
     ${data.map((x, i) => (i % 7 === 2 || i === 29 ? `<text class="axis" x="${left + i * bw + bw / 2}" y="${H - 6}" text-anchor="middle">${i === 29 ? "auj." : fmtShort(x.d)}</text>` : '')).join('')}
@@ -361,7 +351,7 @@ function donut(parts) {
   }).join('');
   return `
   <div class="donut-wrap">
-    <svg class="donut" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,.06)"/>${arcs}</svg>
+    <svg class="donut" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="40" stroke="#1b1e24"/>${arcs}</svg>
     <ul class="legend">${parts.map((p) => `<li><i style="background:${p.color}"></i>${p.label}<b>${p.n}</b></li>`).join('')}</ul>
   </div>`;
 }
@@ -382,50 +372,50 @@ export function viewStats(s) {
   const unlocked = new Set(L.BADGES.filter((b) => b.test(s)).map((b) => b.id));
 
   return `
-  <header class="page-head" style="--i:0">
-    <div><p class="eyebrow">Analyse</p><h1>Statistiques</h1><p class="lead">Vos tendances, vos records et votre progression.</p></div>
+  <header class="page-head">
+    <div><h1>Statistiques</h1><p class="lead">Vos tendances, vos records et votre progression.</p></div>
   </header>
 
-  <section class="kpis stagger" style="--i:1">
-    ${kpi({ i: 0, ic: 'target', tone: 'cool', label: 'Réussite 30 jours', value: `<b data-count="${Math.round(rate30 * 100)}">${Math.round(rate30 * 100)}</b><small>%</small>`, sub: 'Toutes habitudes confondues' })}
-    ${kpi({ i: 1, ic: 'check', label: 'Validations', value: `<b data-count="${checks}">${checks}</b><small>au total</small>`, sub: `${checks * 10} XP gagnés` })}
-    ${kpi({ i: 2, ic: 'flame', tone: 'warm', label: 'Record de série', value: `<b data-count="${best}">${best}</b><small>jours</small>`, sub: 'Votre plus longue série' })}
-    ${kpi({ i: 3, ic: 'zap', label: 'Tâches terminées', value: `<b data-count="${doneWeek}">${doneWeek}</b><small>en 7 jours</small>`, sub: `Niveau ${lv.level} · ${lv.xp} XP` })}
+  <section class="band" aria-label="Chiffres clés">
+    ${metric({ label: 'Réussite 30 jours', value: `<b>${Math.round(rate30 * 100)}</b><span>%</span>`, sub: 'Toutes habitudes confondues' })}
+    ${metric({ label: 'Validations', value: `<b>${checks}</b>`, sub: `${checks * 10} XP gagnés` })}
+    ${metric({ label: 'Record de série', value: `<b>${best}</b><span>j</span>`, sub: 'Votre plus longue série' })}
+    ${metric({ label: 'Tâches terminées', value: `<b>${doneWeek}</b>`, sub: `7 derniers jours · niveau ${lv.level}` })}
   </section>
 
-  <section class="grid-2" style="--i:2">
-    <article class="card panel">
+  <section class="grid-2">
+    <article class="panel">
       <div class="panel-head"><h3>30 derniers jours</h3><span class="muted"><i class="avg-key"></i>moyenne ${pct(avg30)}</span></div>
       ${habits.length ? barChart(habits) : '<p class="muted">Pas encore de données.</p>'}
     </article>
-    <article class="card panel">
+    <article class="panel">
       <div class="panel-head"><h3>Régularité</h3><span class="muted">20 dernières semaines</span></div>
       ${heatmap(habits)}
     </article>
   </section>
 
-  <section class="grid-2" style="--i:3">
-    <article class="card panel">
+  <section class="grid-2">
+    <article class="panel">
       <div class="panel-head"><h3>Classement des habitudes</h3><span class="muted">réussite sur 30 jours</span></div>
       <div class="rank">${ranking.map(({ h, r }) => `
-        <div class="rank-row" style="--c:${h.color}"><span class="rank-name">${esc(h.icon)} ${esc(h.name)}</span><div class="rank-bar"><span style="width:${r * 100}%"></span></div><b>${pct(r)}</b></div>`).join('') || '<p class="muted">Aucune habitude.</p>'}
+        <div class="rank-row" style="--c:${h.color}"><span class="rank-name">${tick(h.color)}${esc(h.name)}</span><div class="rank-bar"><span style="width:${r * 100}%"></span></div><b>${pct(r)}</b></div>`).join('') || '<p class="muted">Aucune habitude.</p>'}
       </div>
     </article>
-    <article class="card panel">
+    <article class="panel">
       <div class="panel-head"><h3>Tâches</h3><span class="muted">${open.length} ouvertes</span></div>
       ${donut([
-        { label: 'À faire', n: s.tasks.filter((x) => x.status === 'todo').length, color: '#7c5cff' },
-        { label: 'En cours', n: s.tasks.filter((x) => x.status === 'doing').length, color: '#22d3ee' },
-        { label: 'Terminées', n: s.tasks.filter((x) => x.status === 'done').length, color: '#34d399' },
+        { label: 'À faire', n: s.tasks.filter((x) => x.status === 'todo').length, color: '#4b515b' },
+        { label: 'En cours', n: s.tasks.filter((x) => x.status === 'doing').length, color: '#c3c8d0' },
+        { label: 'Terminées', n: s.tasks.filter((x) => x.status === 'done').length, color: '#ff5b3a' },
       ])}
       <div class="prio-bars">${[3, 2, 1, 0].map((p) => { const n = open.filter((x) => x.priority === p).length; return `<div class="prio-bar ${L.PRIORITIES[p].cls}"><span>${L.PRIORITIES[p].label}</span><div><i style="width:${open.length ? (n / open.length) * 100 : 0}%"></i></div><b>${n}</b></div>`; }).join('')}</div>
     </article>
   </section>
 
-  <section class="section" style="--i:4">
+  <section class="section">
     <div class="section-head"><h2>Badges</h2><span class="muted">${unlocked.size} / ${L.BADGES.length} débloqués</span></div>
-    <div class="badges stagger">${L.BADGES.map((b, i) => `
-      <div class="badge card tilt ${unlocked.has(b.id) ? 'on' : ''}" style="--i:${i}"><span class="badge-ic">${b.icon}</span><b>${b.name}</b><small>${b.desc}</small></div>`).join('')}
+    <div class="badges">${L.BADGES.map((b) => `
+      <div class="badge ${unlocked.has(b.id) ? 'on' : ''}"><span class="badge-ic">${icon(BADGE_IC[b.id] || 'award')}</span><div><b>${b.name}</b><small>${b.desc}</small></div><span class="badge-state">${unlocked.has(b.id) ? 'Obtenu' : 'Verrouillé'}</span></div>`).join('')}
     </div>
   </section>`;
 }
@@ -435,21 +425,21 @@ export function viewStats(s) {
 export function viewSettings(s) {
   const lv = L.levelFor(L.computeXP(s));
   return `
-  <header class="page-head" style="--i:0">
-    <div><p class="eyebrow">Préférences</p><h1>Réglages</h1><p class="lead">Personnalisez Momentum et gérez vos données.</p></div>
+  <header class="page-head">
+    <div><h1>Réglages</h1><p class="lead">Personnalisez Momentum et gérez vos données.</p></div>
   </header>
-  <section class="settings stagger" style="--i:1">
-    <article class="card panel" style="--i:0">
+  <section class="settings">
+    <article class="panel">
       <div class="panel-head"><h3>${icon('user')}Profil</h3></div>
       <label class="field"><span>Votre prénom (pour l’accueil)</span><input data-setting="name" value="${esc(s.settings.name)}" maxlength="30" placeholder="Ex. Ziad"></label>
       <p class="muted">Niveau ${lv.level} · ${lv.xp} XP au total · ${s.profile.perfectDays.length} journée(s) parfaite(s)</p>
     </article>
-    <article class="card panel" style="--i:1">
-      <div class="panel-head"><h3>${icon('cube')}Animation 3D</h3></div>
-      <label class="switch"><input type="checkbox" data-setting="motion" ${s.settings.motion ? 'checked' : ''}><span class="track"></span><span>Décor 3D animé en arrière-plan</span></label>
-      <p class="muted">Désactivez-la pour économiser la batterie. Elle est aussi mise en pause quand l’onglet est caché.</p>
+    <article class="panel">
+      <div class="panel-head"><h3>${icon('grid')}Fond animé</h3></div>
+      <label class="switch"><input type="checkbox" data-setting="motion" ${s.settings.motion ? 'checked' : ''}><span class="track"></span><span>Champ de points animé en arrière-plan</span></label>
+      <p class="muted">Désactivez-le pour économiser la batterie. Il se met aussi en pause quand l’onglet est caché.</p>
     </article>
-    <article class="card panel" style="--i:2">
+    <article class="panel">
       <div class="panel-head"><h3>${icon('layers')}Données</h3></div>
       <p class="muted">Tout est enregistré dans ce navigateur, sans compte ni serveur. Exportez régulièrement une sauvegarde.</p>
       <div class="btn-row">
@@ -461,7 +451,7 @@ export function viewSettings(s) {
         <button class="btn danger" data-action="reset">${icon('trash')}Tout effacer</button>
       </div>
     </article>
-    <article class="card panel" style="--i:3">
+    <article class="panel">
       <div class="panel-head"><h3>${icon('keyboard')}Raccourcis clavier</h3></div>
       <ul class="shortcuts">
         <li><kbd>Ctrl</kbd><kbd>K</kbd><span>Palette de commandes</span></li>

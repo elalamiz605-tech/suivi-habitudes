@@ -4,7 +4,7 @@ import * as S from './store.js';
 import * as L from './logic.js';
 import * as V from './views.js';
 import * as F from './forms.js';
-import { toast, confetti, initTilt, countUp } from './ui.js';
+import { toast } from './ui.js';
 import { dateKey, today, norm, esc, prefersReducedMotion } from './utils.js';
 
 const NAV = [
@@ -17,14 +17,14 @@ const NAV = [
 const VIEWS = { today: V.viewToday, habits: V.viewHabits, tasks: V.viewTasks, stats: V.viewStats, settings: V.viewSettings };
 
 const viewEl = document.getElementById('view');
-const ui = { habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio' };
+const ui = { habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio', stamp: '' };
 let route = currentRoute();
 let entering = true;
 let scene = null;
 let lastLevel = 0;
 const st = () => S.store.state;
 
-// ---------- 3D ----------
+// ---------- Fond animé ----------
 
 function startScene() {
   if (scene) return;
@@ -36,7 +36,7 @@ function startScene() {
       document.body.classList.add('has-3d');
     })
     .catch((err) => {
-      console.warn('3D indisponible :', err);
+      console.warn('Fond animé indisponible :', err);
       document.body.classList.add('no-3d');
     });
 }
@@ -62,15 +62,7 @@ function render() {
   viewEl.innerHTML = VIEWS[route](s, ui);
   renderNav();
 
-  // Anneau de progression animé
-  viewEl.querySelectorAll('[data-ring]').forEach((c) => {
-    const end = c.dataset.ring;
-    const from = entering ? c.style.strokeDasharray : render.lastRing ?? end;
-    c.style.strokeDashoffset = from;
-    requestAnimationFrame(() => requestAnimationFrame(() => (c.style.strokeDashoffset = end)));
-    render.lastRing = end;
-  });
-  if (entering) countUp(viewEl);
+  ui.stamp = '';
   entering = false;
 
   scene?.setProgress(L.todayProgress(s.habits.filter((h) => !h.archived)).ratio);
@@ -102,8 +94,7 @@ function checkRewards(silent = false) {
     s.profile.perfectDays.push(k);
     changed = true;
     if (!silent) {
-      toast('Journée parfaite ! +25 XP', { icon: '🌟' });
-      confetti();
+      toast('Journée complète. +25 XP');
       scene?.burst();
     }
   }
@@ -113,14 +104,14 @@ function checkRewards(silent = false) {
     if (!s.profile.badges.includes(b.id) && b.test(s)) {
       s.profile.badges.push(b.id);
       changed = true;
-      if (!silent) setTimeout(() => toast(`Badge débloqué : ${b.name}`, { icon: b.icon }), 600);
+      if (!silent) setTimeout(() => toast(`Badge débloqué : ${b.name}`, {}), 600);
     }
   }
 
   // Niveau
   const lv = L.levelFor(L.computeXP(s)).level;
   if (!silent && lastLevel && lv > lastLevel) {
-    setTimeout(() => toast(`Niveau ${lv} atteint !`, { icon: '🚀' }), 300);
+    setTimeout(() => toast(`Niveau ${lv} atteint`), 300);
     scene?.burst();
   }
   lastLevel = lv;
@@ -147,7 +138,7 @@ const actions = {
     const h = S.findHabit(el.dataset.id);
     const k = dateKey(today());
     const done = L.isDone(h, k);
-    el.classList.add('pop');
+    ui.stamp = done ? '' : h.id;
     setDay(h, k, done ? 0 : h.target);
   },
   inc(el) {
@@ -171,7 +162,7 @@ const actions = {
     const h = S.findHabit(el.dataset.id);
     h.archived = true;
     S.commit();
-    toast(`« ${h.name} » archivée`, { icon: '📦', action: { label: 'Annuler', fn: () => { h.archived = false; S.commit(); } } });
+    toast(`« ${h.name} » archivée`, { action: { label: 'Annuler', fn: () => { h.archived = false; S.commit(); } } });
   },
   'unarchive-habit'(el) {
     S.findHabit(el.dataset.id).archived = false;
@@ -187,7 +178,7 @@ const actions = {
     const finishing = t.status !== 'done';
     S.setTaskStatus(t, finishing ? 'done' : 'todo');
     S.commit();
-    if (finishing) toast(`Tâche terminée : ${t.title}`, { icon: '🎯', action: { label: 'Annuler', fn: () => { S.setTaskStatus(t, 'todo'); S.commit(); } } });
+    if (finishing) toast(`Tâche terminée : ${t.title}`, { action: { label: 'Annuler', fn: () => { S.setTaskStatus(t, 'todo'); S.commit(); } } });
   },
   'task-move'(el) {
     const t = S.findTask(el.dataset.id);
@@ -200,13 +191,13 @@ const actions = {
   'load-demo'() {
     if (confirm('Remplacer vos données actuelles par la démo ?')) {
       S.replaceState(S.demoState());
-      toast('Démo rechargée', { icon: '✨' });
+      toast('Démo rechargée');
     }
   },
   reset() {
     if (confirm('Effacer définitivement toutes vos habitudes et tâches ? Pensez à exporter une sauvegarde avant.')) {
       S.replaceState(S.emptyState());
-      toast('Données effacées. Nouveau départ !', { icon: '🧹' });
+      toast('Données effacées. Nouveau départ !');
     }
   },
 };
@@ -280,7 +271,7 @@ viewEl.addEventListener('drop', (e) => {
     const finishing = col.dataset.col === 'done';
     S.setTaskStatus(t, col.dataset.col);
     S.commit();
-    if (finishing) toast(`Tâche terminée : ${t.title}`, { icon: '🎯' });
+    if (finishing) toast(`Tâche terminée : ${t.title}`);
   } else render();
 });
 
@@ -293,7 +284,7 @@ function exportData() {
   a.download = `momentum-${dateKey(today())}.json`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  toast('Sauvegarde exportée', { icon: '💾' });
+  toast('Sauvegarde exportée');
 }
 
 async function importData(file) {
@@ -302,9 +293,9 @@ async function importData(file) {
     const data = JSON.parse(await file.text());
     if (!data || !Array.isArray(data.habits) || !Array.isArray(data.tasks)) throw new Error('format');
     S.replaceState(data);
-    toast('Données importées', { icon: '📥' });
+    toast('Données importées');
   } catch (_) {
-    toast('Fichier invalide : choisissez un export de Momentum.', { icon: '⚠️' });
+    toast('Fichier invalide : choisissez un export de Momentum.');
   }
 }
 
@@ -319,8 +310,8 @@ function openPalette() {
     { label: 'Nouvelle habitude', ic: 'plus', hint: 'N', run: () => F.openHabitModal() },
     { label: 'Nouvelle tâche', ic: 'plus', hint: 'T', run: () => F.openTaskModal() },
     { label: 'Exporter mes données', ic: 'download', run: exportData },
-    { label: `${s.settings.motion ? 'Désactiver' : 'Activer'} l’animation 3D`, ic: 'cube', run: () => { s.settings.motion = !s.settings.motion; S.commit(); scene ? scene.setMotion(s.settings.motion) : startScene(); } },
-    ...s.habits.filter((h) => !h.archived).map((h) => ({ label: h.name, group: 'Habitude', emoji: h.icon, run: () => F.openHabitModal(h) })),
+    { label: `${s.settings.motion ? 'Désactiver' : 'Activer'} le fond animé`, ic: 'grid', run: () => { s.settings.motion = !s.settings.motion; S.commit(); scene ? scene.setMotion(s.settings.motion) : startScene(); } },
+    ...s.habits.filter((h) => !h.archived).map((h) => ({ label: h.name, group: 'Habitude', ic: 'repeat', run: () => F.openHabitModal(h) })),
     ...s.tasks.map((t) => ({ label: t.title, group: t.status === 'done' ? 'Tâche terminée' : 'Tâche', ic: 'list', run: () => F.openTaskModal(t) })),
   ];
   pal.innerHTML = `
@@ -338,7 +329,7 @@ function openPalette() {
     sel = Math.max(0, Math.min(sel, items.length - 1));
     list.innerHTML = items.map((c, i) => `
       <li class="${i === sel ? 'sel' : ''}" data-i="${i}" role="option" aria-selected="${i === sel}">
-        <span class="pal-ic">${c.emoji ? esc(c.emoji) : icon(c.ic)}</span><span class="pal-label">${esc(c.label)}</span>
+        <span class="pal-ic">${icon(c.ic)}</span><span class="pal-label">${esc(c.label)}</span>
         ${c.group ? `<small>${c.group}</small>` : ''}${c.hint ? `<kbd>${c.hint}</kbd>` : ''}
       </li>`).join('') || '<li class="pal-empty">Aucun résultat</li>';
     list.querySelector('.sel')?.scrollIntoView({ block: 'nearest' });
@@ -392,7 +383,6 @@ document.getElementById('modal').addEventListener('click', (e) => {
 
 checkRewards(true);
 render();
-initTilt(document.body);
 startScene();
 
 // Mise à jour à minuit si la page reste ouverte

@@ -4,7 +4,9 @@ import { uid, dateKey, addDays, today } from './utils.js';
 const KEY = 'momentum:v2';
 const LEGACY_KEY = 'suivi-habitudes:v1'; // données de la première version
 
-export const COLORS = ['#7c5cff', '#22d3ee', '#34d399', '#fbbf24', '#f472b6', '#fb7185', '#60a5fa', '#a3e635'];
+export const COLORS = ['#ff5b3a', '#e6e8eb', '#7ea6e0', '#8fbf8a', '#d9b36c', '#b39ddb', '#6fc3c9', '#e08a9a'];
+// Couleurs de la première palette, converties vers la palette sobre actuelle.
+const OLD_COLORS = { '#7c5cff': '#b39ddb', '#22d3ee': '#6fc3c9', '#34d399': '#8fbf8a', '#fbbf24': '#d9b36c', '#f472b6': '#e08a9a', '#fb7185': '#ff5b3a', '#60a5fa': '#7ea6e0', '#a3e635': '#8fbf8a' };
 
 export function newHabit(o = {}) {
   return {
@@ -64,11 +66,11 @@ export function demoState() {
   const created = k(-34);
 
   const habits = [
-    newHabit({ name: "Boire de l'eau", icon: '💧', color: '#22d3ee', category: 'Santé', kind: 'count', target: 8, unit: 'verres', createdAt: created }),
-    newHabit({ name: 'Méditation 10 min', icon: '🧘', color: '#f472b6', category: 'Esprit', schedule: { type: 'days', days: [0, 1, 2, 3, 4], perWeek: 3 }, time: '07:00', createdAt: created }),
-    newHabit({ name: 'Séance de sport', icon: '🏋️', color: '#34d399', category: 'Santé', schedule: { type: 'weekly', days: [], perWeek: 3 }, time: '18:30', createdAt: created }),
-    newHabit({ name: 'Lecture 20 pages', icon: '📚', color: '#7c5cff', category: 'Esprit', time: '21:30', createdAt: created }),
-    newHabit({ name: 'Coder 1 heure', icon: '💻', color: '#fbbf24', category: 'Carrière', schedule: { type: 'days', days: [0, 1, 2, 3, 4, 5], perWeek: 3 }, createdAt: created }),
+    newHabit({ name: "Boire de l'eau", icon: '💧', color: '#6fc3c9', category: 'Santé', kind: 'count', target: 8, unit: 'verres', createdAt: created }),
+    newHabit({ name: 'Méditation 10 min', icon: '🧘', color: '#e08a9a', category: 'Esprit', schedule: { type: 'days', days: [0, 1, 2, 3, 4], perWeek: 3 }, time: '07:00', createdAt: created }),
+    newHabit({ name: 'Séance de sport', icon: '🏋️', color: '#8fbf8a', category: 'Santé', schedule: { type: 'weekly', days: [], perWeek: 3 }, time: '18:30', createdAt: created }),
+    newHabit({ name: 'Lecture 20 pages', icon: '📚', color: '#b39ddb', category: 'Esprit', time: '21:30', createdAt: created }),
+    newHabit({ name: 'Coder 1 heure', icon: '💻', color: '#d9b36c', category: 'Carrière', schedule: { type: 'days', days: [0, 1, 2, 3, 4, 5], perWeek: 3 }, createdAt: created }),
   ];
   const odds = [0.85, 0.8, 0.45, 0.72, 0.8];
   habits.forEach((h, i) => {
@@ -119,7 +121,7 @@ function normalize(s) {
   return {
     ...base,
     ...s,
-    habits: (s.habits || []).map((h) => newHabit({ ...h, id: h.id || uid(), schedule: { ...newHabit().schedule, ...(h.schedule || {}) }, log: h.log || {} })),
+    habits: (s.habits || []).map((h) => newHabit({ ...h, color: OLD_COLORS[h.color] || h.color || COLORS[0], id: h.id || uid(), schedule: { ...newHabit().schedule, ...(h.schedule || {}) }, log: h.log || {} })),
     tasks: (s.tasks || []).map((t) => newTask({ ...t, id: t.id || uid(), subtasks: t.subtasks || [] })),
     profile: { ...base.profile, ...(s.profile || {}) },
     settings: { ...base.settings, ...(s.settings || {}) },

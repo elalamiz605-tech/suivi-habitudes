@@ -5,7 +5,6 @@ import { PRIORITIES, STATUSES } from './logic.js';
 import { esc, uid, WEEKDAYS } from './utils.js';
 import { toast } from './ui.js';
 
-const EMOJIS = ['💧', '🏃', '🏋️', '🧘', '📚', '💻', '🥗', '😴', '🎸', '✍️', '🧠', '💊', '🚭', '💰', '🌱', '🙏'];
 const modal = () => document.getElementById('modal');
 
 function open(html, onReady) {
@@ -40,11 +39,7 @@ export function openHabitModal(existing) {
   open(`
     ${head(existing ? 'Modifier l’habitude' : 'Nouvelle habitude')}
     <div class="modal-body">
-      <div class="field-row">
-        <label class="field emoji-field"><span>Icône</span><input name="icon" value="${esc(h.icon)}" maxlength="4" aria-label="Icône"></label>
-        <label class="field grow"><span>Nom</span><input name="name" value="${esc(h.name)}" maxlength="50" placeholder="Ex. Lire 20 pages" required autofocus></label>
-      </div>
-      <div class="emoji-pick">${EMOJIS.map((e) => `<button type="button" data-emoji="${e}" aria-label="Choisir ${e}">${e}</button>`).join('')}</div>
+      <label class="field"><span>Nom</span><input name="name" value="${esc(h.name)}" maxlength="50" placeholder="Ex. Lire 20 pages" required autofocus></label>
 
       <div class="field-row">
         <fieldset class="field grow"><legend>Couleur</legend>
@@ -83,10 +78,6 @@ export function openHabitModal(existing) {
     };
     form.addEventListener('change', sync);
     sync();
-    form.querySelector('.emoji-pick').addEventListener('click', (e) => {
-      const b = e.target.closest('[data-emoji]');
-      if (b) form.icon.value = b.dataset.emoji;
-    });
     form.querySelector('[data-delete]')?.addEventListener('click', () => {
       modal().close();
       deleteHabit(h);
@@ -101,7 +92,6 @@ export function openHabitModal(existing) {
       const kind = form.kind.value;
       Object.assign(h, {
         name,
-        icon: form.icon.value.trim() || '✅',
         color: form.color.value || COLORS[0],
         category: form.category.value.trim(),
         kind,
@@ -114,7 +104,7 @@ export function openHabitModal(existing) {
       if (!existing) store.state.habits.push(h);
       modal().close();
       commit();
-      toast(existing ? 'Habitude mise à jour' : 'Habitude créée', { icon: h.icon });
+      toast(existing ? 'Habitude mise à jour' : 'Habitude créée');
     });
   });
 }
@@ -122,7 +112,7 @@ export function openHabitModal(existing) {
 export function deleteHabit(h) {
   const undo = removeWithUndo(store.state.habits, h);
   commit();
-  toast(`« ${h.name} » supprimée`, { icon: '🗑️', action: { label: 'Annuler', fn: undo } });
+  toast(`« ${h.name} » supprimée`, { action: { label: 'Annuler', fn: undo } });
 }
 
 // ---------- Tâche ----------
@@ -211,8 +201,8 @@ export function openTaskModal(existing, defaults = {}) {
       if (!existing) store.state.tasks.push(t);
       modal().close();
       commit();
-      if (!wasDone && t.status === 'done') toast('Tâche terminée, bravo !', { icon: '🎯' });
-      else toast(existing ? 'Tâche mise à jour' : 'Tâche créée', { icon: '📝' });
+      if (!wasDone && t.status === 'done') toast('Tâche terminée, bravo !');
+      else toast(existing ? 'Tâche mise à jour' : 'Tâche créée');
     });
   });
 }
@@ -220,5 +210,5 @@ export function openTaskModal(existing, defaults = {}) {
 export function deleteTask(t) {
   const undo = removeWithUndo(store.state.tasks, t);
   commit();
-  toast(`« ${t.title} » supprimée`, { icon: '🗑️', action: { label: 'Annuler', fn: undo } });
+  toast(`« ${t.title} » supprimée`, { action: { label: 'Annuler', fn: undo } });
 }
