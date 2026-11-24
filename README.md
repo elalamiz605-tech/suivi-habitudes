@@ -2,13 +2,20 @@
 
 **Momentum** est une application web pour suivre ses habitudes, organiser ses tâches et visualiser ses progrès, dans une interface sombre et minimaliste avec un **fond animé**.
 
-👉 **Démo en ligne :** https://elalamiz605-tech.github.io/suivi-habitudes/
+👉 **Page vitrine :** https://elalamiz605-tech.github.io/suivi-habitudes/
+👉 **Application :** https://elalamiz605-tech.github.io/suivi-habitudes/app.html
 
 ![Page Aujourd'hui](assets/apercu.jpg)
 
 ## Fonctionnalités
 
-### Interface
+### Page vitrine
+- **Une année d'habitudes en 3D** (Three.js) : 371 blocs, un par jour ; hauteur et couleur = habitudes tenues ce jour-là.
+- Au défilement, l'année se transforme : calendrier, puis spirale (la série), puis trois anneaux (un par habitude).
+- **Démo interactive** : validez trois habitudes, le bloc d'aujourd'hui monte et une vague traverse l'année.
+- Captures de l'application réelle avec onglets. Respecte « réduire les animations ».
+
+### Interface de l'application
 - Design sombre et minimaliste : surfaces graphite, filets fins, un seul accent vermillon pour ce qui est validé.
 - **Fond animé** (Three.js) : un champ de points en perspective qui ondule lentement ; la part de points allumés suit votre progression du jour.
 - Valider une habitude « tamponne » la case du jour avec un anneau qui se referme.
@@ -18,7 +25,7 @@
 ### 🔁 Habitudes
 - **Deux types de suivi** : fait / pas fait, ou **objectif chiffré** (ex. 8 verres d'eau, avec compteur + / −).
 - **Fréquences** : tous les jours, certains jours de la semaine, ou **X fois par semaine**.
-- Catégories, couleur, icône, heure prévue, notes, archivage.
+- Catégories, couleur, heure prévue, notes, archivage.
 - **Séries** (en cours et record) qui tiennent compte des jours non prévus.
 - Historique sur 14 jours, modifiable d'un clic.
 
@@ -45,7 +52,7 @@
 
 ## Lancer le projet
 
-Le projet utilise des modules JavaScript : il faut l'ouvrir via un petit serveur local (un double-clic sur `index.html` ne suffit pas).
+Le projet utilise des modules JavaScript : il faut l'ouvrir via un petit serveur local (un double-clic sur `index.html` ou `app.html` ne suffit pas).
 
 ```bash
 python3 -m http.server 8000
@@ -68,7 +75,9 @@ Pour l'activer une fois : **Settings → Pages → Source : « GitHub Actions »
 ## Structure
 
 ```
-index.html            → structure de la page
+index.html            → page vitrine (scène 3D de l'année + démo)
+app.html              → l'application
+js/year.js            → scène 3D de la vitrine (Three.js, 371 blocs)
 css/styles.css        → design (verre dépoli, animations, responsive)
 js/main.js            → navigation, actions, récompenses, palette de commandes
 js/views.js           → rendu de chaque page

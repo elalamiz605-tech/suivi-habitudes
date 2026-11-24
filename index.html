@@ -1,35 +1,382 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Momentum · Habitudes & tâches</title>
-  <meta name="description" content="Momentum : suivez vos habitudes, organisez vos tâches et visualisez vos progrès.">
-  <meta name="theme-color" content="#090a0c">
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/fonts/HostGrotesk-Variable.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/styles.css">
-  <script type="module" src="js/main.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Momentum suit vos habitudes et vos tâches, jour après jour. Sans compte : vos données restent dans votre navigateur.">
+<meta name="theme-color" content="#07080c">
+<meta property="og:title" content="Momentum · Une année se construit un jour à la fois">
+<meta property="og:description" content="Habitudes, tâches et statistiques dans une seule appli. Essayez la démo.">
+<meta property="og:image" content="https://elalamiz605-tech.github.io/suivi-habitudes/assets/vitrine/today.jpg">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<title>Momentum · Une année, un jour à la fois</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: produit haut de gamme, calme, chaque phrase explique ce qu'on voit.
+IDEA: une année d'habitudes en volume : 371 blocs, un par jour, hauteur = habitudes tenues.
+PICTURE: la scène 3D plein écran qui se transforme au défilement : calendrier, spirale de série, trois anneaux.
+COLOUR and TYPE: nuit d'encre, indigo pour la régularité, corail pour les jours complets ; Inter Tight, JetBrains Mono pour les chiffres.
+LAYOUT: texte en colonne à gauche sur un voile, la scène à droite et derrière ; l'appli réelle en fin de parcours.
+*/
+:root {
+  --bg: #07080c; --ink: #f4f4f8; --muted: #9a9cab; --dim: #6c6e7d; --line: rgba(255,255,255,.08); --line-2: rgba(255,255,255,.14);
+  --glass: rgba(14,15,22,.72); --indigo: #7b6cff; --coral: #ff7a59; --grad: linear-gradient(120deg, #7b6cff, #ff7a59);
+  --font: 'Inter Tight', system-ui, sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace; --ease: cubic-bezier(.22,1,.36,1);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; min-width: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 var(--font); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+::selection { background: rgba(123,108,255,.4); }
+:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+#scene { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 0; }
+.veil { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(90deg, rgba(7,8,12,.92) 0%, rgba(7,8,12,.7) 34%, rgba(7,8,12,0) 62%), linear-gradient(180deg, rgba(7,8,12,.5), rgba(7,8,12,0) 18%, rgba(7,8,12,0) 80%, rgba(7,8,12,.6)); }
+.dim { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: rgba(7,8,12,.86); opacity: 0; transition: opacity .6s var(--ease); }
+body.dimmed .dim { opacity: 1; }
+main, header, footer { position: relative; z-index: 1; }
+
+/* Navigation */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; gap: 30px; padding: 14px max(4vw, 18px); transition: background .3s, border-color .3s; border-bottom: 1px solid transparent; }
+.nav.solid { background: rgba(7,8,12,.72); backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%); border-bottom-color: var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16.5px; letter-spacing: -.01em; }
+.brand svg { width: 26px; height: 26px; }
+.nav nav { display: flex; gap: 26px; margin-left: auto; font-size: 14.5px; color: var(--muted); }
+.nav nav a { transition: color .15s; }
+.nav nav a:hover, .nav nav a.on { color: var(--ink); }
+
+/* Boutons */
+.btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 48px; padding: 0 22px; border-radius: 12px; border: 1px solid var(--line-2); background: rgba(255,255,255,.04); font-weight: 550; font-size: 15.5px; white-space: nowrap; transition: transform .15s, background .2s, border-color .2s, box-shadow .25s; }
+.btn:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.24); }
+.btn:active { transform: scale(.98); }
+.btn svg { width: 17px; height: 17px; transition: transform .2s var(--ease); }
+.btn:hover svg { transform: translateX(3px); }
+.btn.primary { border: 0; background: var(--grad); color: #fff; box-shadow: 0 10px 30px -10px rgba(255,122,89,.6), inset 0 1px 0 rgba(255,255,255,.25); }
+.btn.primary:hover { box-shadow: 0 14px 40px -10px rgba(255,122,89,.8), inset 0 1px 0 rgba(255,255,255,.3); }
+.btn.sm { height: 38px; padding: 0 15px; font-size: 14px; border-radius: 10px; }
+
+/* Sections */
+section { min-height: 100vh; display: grid; align-content: center; padding: 120px max(4vw, 18px) 80px; }
+.col { max-width: 540px; }
+h1, h2 { margin: 0; font-weight: 650; letter-spacing: -.04em; text-wrap: balance; }
+h1 { font-size: clamp(46px, 6.4vw, 92px); line-height: .98; }
+h2 { font-size: clamp(34px, 4.2vw, 58px); line-height: 1.02; }
+h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lead { color: var(--muted); font-size: clamp(17px, 1.4vw, 19.5px); margin: 22px 0 0; max-width: 46ch; }
+.lead b { color: var(--ink); font-weight: 550; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
+
+.legend { margin-top: 56px; display: grid; gap: 10px; max-width: 360px; }
+.legend .scale { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #171824 0 14%, #3b3478 14% 30%, #7b6cff 55%, #ff7a59); }
+.legend .ticks { display: flex; justify-content: space-between; font: 500 11.5px var(--mono); color: var(--dim); }
+.legend p { margin: 0; color: var(--dim); font-size: 13.5px; }
+.legend p .mono { color: var(--muted); }
+
+/* Démo */
+.try { margin-top: 34px; width: min(520px, 100%); background: var(--glass); border: 1px solid var(--line-2); border-radius: 18px; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 40px 80px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06); overflow: hidden; }
+.try-head { display: flex; justify-content: space-between; align-items: baseline; padding: 15px 20px; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+.try-head span { font: 500 12px var(--mono); color: var(--dim); }
+.habit { display: flex; align-items: center; gap: 14px; padding: 15px 20px; border-bottom: 1px solid var(--line); }
+.habit .t { flex: 1; }
+.habit .t b { display: block; font-weight: 550; font-size: 16px; transition: color .3s; }
+.habit .t small { color: var(--dim); font-size: 13px; }
+.habit.done .t b { color: var(--muted); }
+.ring { display: grid; grid-template-columns: repeat(7, 7px); gap: 3px; }
+.ring i { height: 18px; border-radius: 2px; background: #1b1c28; }
+.ring i.on { background: var(--indigo); }
+.ring i.today { background: transparent; box-shadow: inset 0 0 0 1px var(--dim); }
+.habit.done .ring i.today { background: var(--coral); box-shadow: none; }
+.counter { display: flex; align-items: center; gap: 6px; font: 500 13px var(--mono); color: var(--dim); }
+.counter b { color: var(--ink); }
+.counter button { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line-2); background: transparent; padding: 0; line-height: 1; font-size: 16px; }
+.counter button:hover { border-color: rgba(255,255,255,.3); }
+.check { position: relative; width: 42px; height: 42px; flex: none; border-radius: 50%; border: 1.5px solid var(--line-2); background: transparent; padding: 0; display: grid; place-items: center; transition: background .25s, border-color .25s, box-shadow .3s; }
+.check:hover { border-color: var(--coral); }
+.check svg.ok { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity .2s; }
+.check.on { border-color: transparent; background: var(--grad); box-shadow: 0 0 24px rgba(255,122,89,.5); }
+.check.on svg.ok { opacity: 1; }
+.check svg.seal { position: absolute; inset: -7px; width: calc(100% + 14px); height: calc(100% + 14px); transform: rotate(-90deg); fill: none; stroke: var(--coral); stroke-width: 1.5; stroke-dasharray: 113.1; stroke-dashoffset: 113.1; opacity: 0; pointer-events: none; }
+.check.stamp { animation: pop .35s var(--ease); }
+.check.stamp svg.seal { animation: seal .7s var(--ease) forwards; }
+@keyframes pop { from { transform: scale(.84); } }
+@keyframes seal { 0% { opacity: 1; stroke-dashoffset: 113.1; } 60% { opacity: 1; stroke-dashoffset: 0; } 100% { opacity: 0; stroke-dashoffset: 0; } }
+.try-foot { padding: 14px 20px 18px; display: grid; gap: 10px; }
+.try-foot p { margin: 0; display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+.try-foot p .mono { color: var(--ink); font-weight: 600; }
+.bar { height: 5px; border-radius: 5px; background: #1b1c28; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--grad); border-radius: inherit; transition: width .7s var(--ease); }
+.after { margin-top: 20px; min-height: 48px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; color: var(--muted); font-size: 15.5px; }
+.after.complete { color: var(--ink); }
+.after .btn { animation: pop .4s var(--ease); }
+
+/* Chiffres */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 44px; border-top: 1px solid var(--line); }
+.stats div { padding: 20px 18px 0 0; }
+.stats div + div { padding-left: 18px; border-left: 1px solid var(--line); }
+.stats b { display: block; font: 600 clamp(30px, 3vw, 42px)/1 var(--mono); letter-spacing: -.04em; }
+.stats b span { font-size: .5em; color: var(--muted); margin-left: 2px; }
+.stats small { display: block; margin-top: 8px; color: var(--muted); font-size: 13.5px; }
+.note { margin: 14px 0 0; color: var(--dim); font-size: 12.5px; }
+.points { list-style: none; margin: 34px 0 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.points li { display: grid; grid-template-columns: 36px 1fr; gap: 6px 14px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.points .n { grid-row: span 2; width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font: 600 12px var(--mono); background: rgba(123,108,255,.14); color: #b3aaff; }
+.points b { font-weight: 600; }
+.points span { color: var(--muted); font-size: 15.5px; }
+
+/* L'appli */
+#appli { align-content: start; padding-top: 140px; }
+#appli .head { max-width: 760px; margin: 0 auto; text-align: center; }
+#appli .lead { margin-inline: auto; }
+.tabs { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 40px auto 0; padding: 5px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid var(--line); width: fit-content; }
+.tabs button { height: 40px; padding: 0 16px; border-radius: 10px; border: 0; background: transparent; color: var(--muted); font-size: 14.5px; font-weight: 500; transition: background .2s, color .2s; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-selected="true"] { background: rgba(255,255,255,.1); color: var(--ink); }
+.window { margin: 26px auto 0; width: min(1180px, 100%); border-radius: 16px; overflow: hidden; border: 1px solid var(--line-2); background: #0b0c10; box-shadow: 0 60px 120px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.02), 0 -20px 80px -40px rgba(123,108,255,.35); }
+.window-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.window-bar i { width: 11px; height: 11px; border-radius: 50%; background: #2a2b36; }
+.window-bar span { margin-left: 12px; font: 500 12px var(--mono); color: var(--dim); }
+.shots { position: relative; aspect-ratio: 1440 / 900; }
+.shots img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0; transform: scale(1.01); transition: opacity .5s var(--ease), transform .7s var(--ease); }
+.shots img.on { opacity: 1; transform: none; }
+.caption { text-align: center; color: var(--muted); font-size: 15px; margin: 18px auto 0; max-width: 60ch; min-height: 3.2em; }
+
+/* Fin */
+#fin { text-align: center; justify-items: center; }
+#fin .lead { margin-inline: auto; }
+#fin .actions { justify-content: center; }
+.foot { display: flex; flex-wrap: wrap; gap: 10px 28px; padding: 30px max(4vw, 18px) 40px; border-top: 1px solid var(--line); color: var(--dim); font-size: 14px; background: var(--bg); }
+.foot a { color: var(--muted); }
+.foot a:hover { color: var(--ink); }
+
+/* Apparition */
+.rise { opacity: 0; transform: translateY(24px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.rise.in { opacity: 1; transform: none; }
+.rise.d1 { transition-delay: .08s; } .rise.d2 { transition-delay: .16s; } .rise.d3 { transition-delay: .24s; }
+
+@media (max-width: 900px) {
+  .veil { background: linear-gradient(180deg, rgba(7,8,12,.35), rgba(7,8,12,.72) 40%, rgba(7,8,12,.86)); }
+  .nav nav { display: none; }
+  .nav .btn { margin-left: auto; }
+  section { padding: 110px 18px 70px; min-height: 92vh; }
+  .stats div { padding-right: 10px; } .stats div + div { padding-left: 12px; }
+}
+@media (max-width: 520px) { .ring { display: none; } .habit { padding: 14px 16px; } .tabs button { padding: 0 11px; font-size: 13.5px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; } .rise { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
+</style>
 </head>
 <body>
-  <canvas id="bg3d" aria-hidden="true"></canvas>
-  <div class="bg-veil" aria-hidden="true"></div>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="veil" aria-hidden="true"></div>
+<div class="dim" aria-hidden="true"></div>
 
-  <aside class="sidebar">
-    <a class="brand" href="#/today" aria-label="Momentum, accueil">
-      <img src="assets/favicon.svg" alt="" width="28" height="28">
-      <span>Momentum</span>
-    </a>
-    <nav class="nav" id="nav" aria-label="Navigation principale"></nav>
-    <div class="level card" id="level"></div>
-  </aside>
+<header class="nav" id="nav">
+  <a class="brand" href="#hero"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7b6cff"/><stop offset="1" stop-color="#ff7a59"/></linearGradient></defs><circle cx="16" cy="16" r="10.5" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="3.5"/><path d="M16 5.5a10.5 10.5 0 1 1-10 13.7" fill="none" stroke="url(#lg)" stroke-width="3.5" stroke-linecap="round"/></svg>Momentum</a>
+  <nav aria-label="Sections"><a href="#aujourdhui">Essayer</a><a href="#serie">Séries</a><a href="#anneaux">Habitudes</a><a href="#appli">L'appli</a></nav>
+  <a class="btn sm" href="app.html">Ouvrir l'app</a>
+</header>
 
-  <main id="view" class="view" tabindex="-1">
-    <noscript><p>Momentum a besoin de JavaScript pour fonctionner.</p></noscript>
-  </main>
+<main>
+  <section id="hero" data-stage="0" data-focus="0">
+    <div class="col">
+      <h1 class="rise in">Une année se construit <em>un jour à la fois.</em></h1>
+      <p class="lead rise in d1">Momentum suit vos habitudes et vos tâches, jour après jour. Chaque bloc derrière ce texte est une journée : <b>plus il monte, plus vous avez tenu.</b></p>
+      <div class="actions rise in d2">
+        <a class="btn primary" href="#aujourdhui">Valider ma journée <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+        <a class="btn" href="app.html">Ouvrir l'appli</a>
+      </div>
+      <div class="legend rise in d3">
+        <div class="scale" aria-hidden="true"></div>
+        <div class="ticks"><span>0 habitude</span><span>1</span><span>2</span><span>3 habitudes</span></div>
+        <p><span class="mono" id="days">371</span> jours, dont <span class="mono" id="kept">0</span> avec au moins une habitude tenue. Année de démonstration.</p>
+      </div>
+    </div>
+  </section>
 
-  <dialog id="modal" class="modal" aria-label="Formulaire"></dialog>
-  <dialog id="palette" class="palette" aria-label="Palette de commandes"></dialog>
-  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <section id="aujourdhui" data-stage="0" data-focus="1">
+    <div class="col">
+      <h2 class="rise">Aujourd'hui, c'est <em>le bloc qui manque.</em></h2>
+      <p class="lead rise d1">Il est tout au bout de l'année, encore à plat. Validez vos trois habitudes et regardez-le monter.</p>
+      <div class="try rise d2" aria-label="Démonstration interactive">
+        <div class="try-head"><b>Aujourd'hui</b><span id="date"></span></div>
+        <div id="list"></div>
+        <div class="try-foot"><p><span>Progression du jour</span><span class="mono" id="score">0/3</span></p><div class="bar"><i id="fill"></i></div></div>
+      </div>
+      <div class="after" id="after"><span id="msg">Cliquez sur un cercle pour valider une habitude.</span></div>
+    </div>
+  </section>
+
+  <section id="serie" data-stage="1" data-focus="0">
+    <div class="col">
+      <h2 class="rise">Une série, <em>ça se voit.</em></h2>
+      <p class="lead rise d1">L'année s'enroule en spirale : chaque tour, c'est un peu plus de quatre semaines. Momentum compte vos jours tenus et ne casse pas votre série les jours où rien n'était prévu.</p>
+      <div class="stats rise d2">
+        <div><b>15<span>j</span></b><small>série en cours</small></div>
+        <div><b>47<span>j</span></b><small>meilleur record</small></div>
+        <div><b>73<span>%</span></b><small>réussite sur 30 jours</small></div>
+      </div>
+      <p class="note rise d2">Chiffres d'exemple, tirés des données de démonstration.</p>
+    </div>
+  </section>
+
+  <section id="anneaux" data-stage="2" data-focus="0">
+    <div class="col">
+      <h2 class="rise">Trois habitudes, <em>trois anneaux.</em></h2>
+      <p class="lead rise d1">Vue d'en haut, l'année se range en trois cercles, un par habitude. Chacune a son rythme et son objectif.</p>
+      <ol class="points rise d2">
+        <li><span class="n">1</span><b>Fait, ou chiffré</b><span>Une case à cocher, ou un objectif comme 8 verres d'eau ou 20 pages.</span></li>
+        <li><span class="n">2</span><b>À votre rythme</b><span>Tous les jours, certains jours, ou 3 fois par semaine.</span></li>
+        <li><span class="n">3</span><b>Avec les tâches</b><span>Un tableau À faire, En cours, Terminé, avec priorités et échéances.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="appli" data-stage="2" data-focus="0" data-dim="1">
+    <div class="head">
+      <h2 class="rise">Et tout le reste, <em>dans l'appli.</em></h2>
+      <p class="lead rise d1">Ce que vous voyez ici est l'application réelle, avec ses données de démonstration.</p>
+    </div>
+    <div class="tabs rise d2" role="tablist" aria-label="Écrans de l'appli">
+      <button role="tab" aria-selected="true" data-i="0">Aujourd'hui</button>
+      <button role="tab" aria-selected="false" data-i="1">Habitudes</button>
+      <button role="tab" aria-selected="false" data-i="2">Tâches</button>
+      <button role="tab" aria-selected="false" data-i="3">Statistiques</button>
+    </div>
+    <div class="window rise d2">
+      <div class="window-bar"><i></i><i></i><i></i><span>elalamiz605-tech.github.io/suivi-habitudes/app.html</span></div>
+      <div class="shots" id="shots">
+        <img class="on" src="assets/vitrine/today.jpg" alt="Écran Aujourd'hui de Momentum : progression du jour, habitudes et tâches prioritaires" width="1440" height="900">
+        <img src="assets/vitrine/habits.jpg" alt="Écran Habitudes : historique de 14 jours, séries et taux de réussite par habitude" width="1440" height="900" loading="lazy">
+        <img src="assets/vitrine/tasks.jpg" alt="Écran Tâches : tableau À faire, En cours, Terminé" width="1440" height="900" loading="lazy">
+        <img src="assets/vitrine/stats.jpg" alt="Écran Statistiques : réussite sur 30 jours et carte de régularité" width="1440" height="900" loading="lazy">
+      </div>
+    </div>
+    <p class="caption" id="caption">Votre journée sur un écran : les habitudes prévues, ce qu'il reste à faire et les tâches urgentes.</p>
+  </section>
+
+  <section id="fin" data-stage="0" data-focus="0">
+    <h2 class="rise">Le jour 1, <em>c'est aujourd'hui.</em></h2>
+    <p class="lead rise d1">Pas de compte à créer, pas de serveur : vos données restent dans votre navigateur. La démo est déjà remplie pour tout essayer.</p>
+    <div class="actions rise d2">
+      <a class="btn primary" href="app.html">Ouvrir Momentum <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn" href="https://github.com/elalamiz605-tech/suivi-habitudes">Voir le code</a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot"><span>Momentum, une application de Ziad El Alami</span><a href="https://github.com/elalamiz605-tech/suivi-habitudes">GitHub</a><a href="https://elalamiz605-tech.github.io">Portfolio</a></footer>
+
+<script type="module">
+{
+  const APP = 'app.html';
+  const $ = (id) => document.getElementById(id);
+  const motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let year = null;
+
+  /* ---------- Scène 3D ---------- */
+  import('./js/year.js').then(({ createYear }) => {
+    year = createYear($('scene'), { motion });
+    $('days').textContent = year.days;
+    $('kept').textContent = year.kept;
+    onScroll();
+  }).catch((e) => console.warn('Scène 3D indisponible', e));
+
+  /* ---------- Défilement : forme de la scène, navigation, apparitions ---------- */
+  const sections = [...document.querySelectorAll('main section')];
+  const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  function onScroll() {
+    $('nav').classList.toggle('solid', scrollY > 20);
+    const mid = scrollY + innerHeight * 0.55;
+    let k = sections.findIndex((s) => s.offsetTop + s.offsetHeight > mid);
+    if (k < 0) k = sections.length - 1;
+    const s = sections[k], n = sections[Math.min(k + 1, sections.length - 1)];
+    const f = smooth(0.6, 1, (mid - s.offsetTop) / s.offsetHeight);
+    const num = (el, key) => Number(el.dataset[key] || 0);
+    const stage = num(s, 'stage') + (num(n, 'stage') - num(s, 'stage')) * f;
+    const focus = num(s, 'focus') + (num(n, 'focus') - num(s, 'focus')) * f;
+    year?.setStage(stage);
+    year?.setFocus(focus);
+    document.body.classList.toggle('dimmed', s.dataset.dim === '1' && f < 0.6);
+    document.querySelectorAll('.nav nav a').forEach((a) => a.classList.toggle('on', a.getAttribute('href') === `#${s.id}`));
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
+  const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.2 });
+  document.querySelectorAll('.rise:not(.in)').forEach((el) => io.observe(el));
+
+  /* ---------- Démo : valider sa journée ---------- */
+  const OK = '<svg class="ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  const SEAL = '<svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18"/></svg>';
+  const HABITS = [
+    { id: 'med', name: 'Méditation 10 min', meta: 'Esprit · 07:00', days: [1, 1, 0, 1, 1, 1] },
+    { id: 'eau', name: "Boire de l'eau", meta: 'Santé · 8 verres', days: [1, 1, 1, 1, 0, 1], target: 8, v: 5 },
+    { id: 'lec', name: 'Lecture 20 pages', meta: 'Esprit · 21:30', days: [1, 1, 1, 1, 1, 1] },
+  ];
+  const done = new Set();
+  let stamp = '';
+  $('date').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  const row = (h) => {
+    const on = done.has(h.id);
+    const ring = h.days.map((d) => `<i class="${d ? 'on' : ''}"></i>`).join('') + '<i class="today"></i>';
+    const counter = h.target ? `<div class="counter"><button data-dec="${h.id}" aria-label="Retirer un verre">−</button><span><b>${h.v}</b>/${h.target}</span><button data-inc="${h.id}" aria-label="Ajouter un verre">+</button></div>` : '';
+    return `<div class="habit ${on ? 'done' : ''}"><div class="t"><b>${h.name}</b><small>${h.meta}</small></div><div class="ring" aria-hidden="true">${ring}</div>${counter}<button class="check ${on ? 'on' : ''} ${stamp === h.id ? 'stamp' : ''}" data-check="${h.id}" aria-pressed="${on}" aria-label="Valider ${h.name}">${SEAL}${OK}</button></div>`;
+  };
+  function render() {
+    $('list').innerHTML = HABITS.map(row).join('');
+    stamp = '';
+    const n = done.size;
+    $('score').textContent = `${n}/3`;
+    $('fill').style.width = `${(n / 3) * 100}%`;
+    $('msg').textContent = n === 0 ? 'Cliquez sur un cercle pour valider une habitude.' : n < 3 ? `Le bloc monte. Encore ${3 - n} habitude${3 - n > 1 ? 's' : ''}.` : "Journée complète : le bloc d'aujourd'hui est au sommet.";
+    const after = $('after');
+    after.classList.toggle('complete', n === 3);
+    if (n === 3 && !after.querySelector('a')) after.insertAdjacentHTML('beforeend', `<a class="btn primary" href="${APP}">Continuer dans l'appli <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>`);
+    if (n < 3) after.querySelector('a')?.remove();
+    year?.setToday(n / 3);
+  }
+  document.addEventListener('click', (e) => {
+    const c = e.target.closest('[data-check]'), inc = e.target.closest('[data-inc]'), dec = e.target.closest('[data-dec]');
+    if (!c && !inc && !dec) return;
+    const prev = done.size;
+    if (c) {
+      const h = HABITS.find((x) => x.id === c.dataset.check);
+      if (done.has(h.id)) { done.delete(h.id); if (h.target) h.v = Math.min(h.v, h.target - 1); }
+      else { done.add(h.id); stamp = h.id; if (h.target) h.v = h.target; }
+    } else {
+      const h = HABITS.find((x) => x.id === (inc || dec).dataset[inc ? 'inc' : 'dec']);
+      h.v = Math.max(0, Math.min(h.target, h.v + (inc ? 1 : -1)));
+      if (h.v >= h.target) { if (!done.has(h.id)) stamp = h.id; done.add(h.id); } else done.delete(h.id);
+    }
+    render();
+    if (prev < 3 && done.size === 3) year?.celebrate();
+  });
+  render();
+
+  /* ---------- L'appli : onglets ---------- */
+  const CAPS = [
+    "Votre journée sur un écran : les habitudes prévues, ce qu'il reste à faire et les tâches urgentes.",
+    'Chaque habitude avec ses 14 derniers jours, modifiables d’un clic, sa série et son taux de réussite.',
+    'Un tableau À faire, En cours, Terminé, avec glisser-déposer, priorités, échéances et sous-tâches.',
+    'Réussite jour par jour sur 30 jours, régularité sur 20 semaines, classement, niveaux et badges.',
+  ];
+  const tabs = [...document.querySelectorAll('[role=tab]')], imgs = [...$('shots').children];
+  const show = (i) => {
+    tabs.forEach((t, k) => t.setAttribute('aria-selected', String(k === i)));
+    imgs.forEach((im, k) => im.classList.toggle('on', k === i));
+    $('caption').textContent = CAPS[i];
+  };
+  tabs.forEach((t) => t.addEventListener('click', () => show(Number(t.dataset.i))));
+  document.querySelector('[role=tablist]').addEventListener('keydown', (e) => {
+    const i = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+    const j = e.key === 'ArrowRight' ? (i + 1) % 4 : e.key === 'ArrowLeft' ? (i + 3) % 4 : -1;
+    if (j >= 0) { show(j); tabs[j].focus(); }
+  });
+}
+</script>
 </body>
 </html>

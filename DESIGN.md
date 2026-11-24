@@ -43,3 +43,7 @@ Radii: 10 px containers, 7 px controls, 5 px day cells, 2 px ticks and bars. 1 p
 ## Motion
 
 150–250 ms state transitions with `cubic-bezier(.22,1,.36,1)`; 220 ms page enter fade. The only authored moment is the stamp. The background field (`js/scene.js`) drifts in slow waves, lit share follows progress, and a radial wave runs through it on a complete day or level-up. It pauses when the tab is hidden and can be switched off in Réglages; reduced motion disables animation.
+
+## Landing page (`index.html`)
+
+A separate Persuade surface with its own night palette: ink `#07080c`, indigo `#7b6cff`, coral `#ff7a59`, gradient `linear-gradient(120deg, #7b6cff, #ff7a59)` for the primary button and the emphasised half of each headline. Inter Tight for text, JetBrains Mono for figures (Google Fonts). The picture is `js/year.js`: 371 instanced blocks (53 weeks × 7 days) whose height and colour encode habits kept that day; scroll morphs calendar → rising spiral → three rings, and the live demo raises today's block and sends a wave through the year on a complete day. Copy sits in a left column over a veil; the shape sits to the right on wide screens.
