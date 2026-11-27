@@ -9,6 +9,8 @@
 <meta property="og:description" content="Habitudes, tâches et statistiques dans une seule appli. Essayez la démo.">
 <meta property="og:image" content="https://elalamiz605-tech.github.io/suivi-habitudes/assets/vitrine/today.jpg">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 <title>Momentum · Une année, un jour à la fois</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -238,7 +240,7 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
   <section id="appli" data-stage="2" data-focus="0" data-dim="1">
     <div class="head">
       <h2 class="rise">Et tout le reste, <em>dans l'appli.</em></h2>
-      <p class="lead rise d1">Ce que vous voyez ici est l'application réelle, avec ses données de démonstration.</p>
+      <p class="lead rise d1">Ce que vous voyez ici est l'application réelle, avec ses données de démonstration. Installable sur votre téléphone, elle fonctionne hors ligne, avec rappels, mode vacances, analyse hebdomadaire et thème clair, en français, español ou English.</p>
     </div>
     <div class="tabs rise d2" role="tablist" aria-label="Écrans de l'appli">
       <button role="tab" aria-selected="true" data-i="0">Aujourd'hui</button>
@@ -252,7 +254,7 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
         <img class="on" src="assets/vitrine/today.jpg" alt="Écran Aujourd'hui de Momentum : progression du jour, habitudes et tâches prioritaires" width="1440" height="900">
         <img src="assets/vitrine/habits.jpg" alt="Écran Habitudes : historique de 14 jours, séries et taux de réussite par habitude" width="1440" height="900" loading="lazy">
         <img src="assets/vitrine/tasks.jpg" alt="Écran Tâches : tableau À faire, En cours, Terminé" width="1440" height="900" loading="lazy">
-        <img src="assets/vitrine/stats.jpg" alt="Écran Statistiques : réussite sur 30 jours et carte de régularité" width="1440" height="900" loading="lazy">
+        <img src="assets/vitrine/stats.jpg" alt="Écran Statistiques : analyse de la semaine, réussite sur 30 jours et carte de régularité" width="1440" height="900" loading="lazy">
       </div>
     </div>
     <p class="caption" id="caption">Votre journée sur un écran : les habitudes prévues, ce qu'il reste à faire et les tâches urgentes.</p>
@@ -378,5 +380,6 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
   });
 }
 </script>
+<script>if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("./sw.js").catch(function () {});</script>
 </body>
 </html>

@@ -53,6 +53,10 @@ void main(){
   gl_FragColor = vec4(col, a);
 }`;
 
+// Couleur des points éteints selon le thème (valeurs sRGB brutes).
+const DARK_BASE = [0.6, 0.63, 0.68];
+const LIGHT_BASE = [0.42, 0.45, 0.5];
+
 // Cadrage de la caméra par page : léger glissement quand on change de section.
 const VIEWS = {
   today: [0, -9.5, 7.2],
@@ -62,7 +66,7 @@ const VIEWS = {
   settings: [2, -9, 7.6],
 };
 
-export function createScene(canvas, { motion = true } = {}) {
+export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'low-power' });
   const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
   renderer.setPixelRatio(dpr);
@@ -97,7 +101,7 @@ export function createScene(canvas, { motion = true } = {}) {
     uPulseT: { value: 0 },
     uPx: { value: dpr },
     // Valeurs sRGB brutes : le shader écrit directement la couleur affichée.
-    uBase: { value: new THREE.Vector3(0.6, 0.63, 0.68) },
+    uBase: { value: new THREE.Vector3(...(theme === 'light' ? LIGHT_BASE : DARK_BASE)) },
     uSignal: { value: new THREE.Vector3(1.0, 0.357, 0.227) },
   };
   const mat = new THREE.ShaderMaterial({
@@ -200,6 +204,10 @@ export function createScene(canvas, { motion = true } = {}) {
       if (!running) return;
       pulse = 1;
       pulseT = 0;
+    },
+    setTheme(th) {
+      uniforms.uBase.value.set(...(th === 'light' ? LIGHT_BASE : DARK_BASE));
+      if (!running) renderStill();
     },
     setMotion(on) {
       enabled = on;

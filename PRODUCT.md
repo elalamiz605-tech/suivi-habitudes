@@ -12,11 +12,11 @@ Primary user: the author (Ziad El Alami), who uses Momentum daily to track habit
 
 ## Product Purpose
 
-Momentum lets one person track recurring habits, organise one-off tasks and see their progress, without an account or a server. Success: checking off today's habits takes seconds, and the app reads as the work of a professional developer.
+Momentum lets one person track recurring habits, organise one-off tasks and see their progress, without an account or a server. It installs as a PWA and works offline. Success: checking off today's habits takes seconds, and the app reads as the work of a professional developer.
 
 ## Positioning
 
-Habits and tasks in one place, with habit streaks that respect non-scheduled days, numeric goals (8 glasses of water), "X times a week" frequencies, and a Kanban for tasks. All data stays in the browser.
+Habits and tasks in one place, with habit streaks that respect non-scheduled days, skipped days, pauses and vacations; numeric goals (8 glasses of water), quit habits ("days without"), "X times a week / month" and "every X days" frequencies; reminders; a weekly insight engine; and a Kanban for tasks. All data stays in the browser, with optional no-account sync (transfer code, GitHub gist).
 
 ## Operating Context
 
@@ -24,12 +24,14 @@ Used in short sessions: morning or evening check-ins on the phone, weekly planni
 
 ## Capabilities and Constraints
 
-- Habits: check or numeric target, daily / specific weekdays / X per week, category, colour, icon, time, notes, archive, current and best streak, 14-day editable history.
+- Habits: check, numeric target or quit habit; daily / specific weekdays / X per week / every X days / X per month; templates library; category, colour, time, up to 3 reminders, notes, archive; skip a day, pause, global vacation mode, custom day-start hour; daily note + mood; timer for minute-based habits; current and best streak, 14-day editable history.
 - Tasks: Kanban (to do / doing / done) with drag and drop, 4 priorities, due dates, projects, subtasks, search, filters, sort.
-- Stats: 30-day success rate, 20-week regularity map, habit ranking, task breakdown, XP, levels, 10 badges.
-- Comfort: command palette (Ctrl+K), keyboard shortcuts, undo after delete/archive, JSON export/import, reduced-motion support.
+- Stats: weekly insights (trend, weak/strong weekday, streaks at risk, struggling/improving habits, mood vs success), 30-day success rate, 20-week or 12-month regularity map, habit ranking, task breakdown, average mood, XP, levels, 12 badges, CSV export.
+- Data: JSON export/import, Web Share, compressed transfer code, daily automatic snapshots (7 days), optional GitHub gist sync (manual or automatic).
+- Platform: PWA (manifest, service worker, offline, install prompt, update toast), notifications via service worker, dark / light / auto theme.
+- Comfort: command palette (Ctrl+K), keyboard shortcuts, undo after delete/archive/pause/skip, reduced-motion support.
 - Stack: vanilla HTML/CSS/JS ES modules, no build step, Three.js vendored, localStorage, deployed on GitHub Pages via Actions.
-- Interface language: French.
+- Interface languages: French (default), Spanish, English (auto-detected, switchable in settings).
 - Routes: `index.html` is the landing page (3D year of habits, live demo, app screenshots); `app.html` is the application.
 
 ## Brand Commitments

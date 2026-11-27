@@ -1,0 +1,30 @@
+{
+  "name": "Momentum · Habitudes & tâches",
+  "short_name": "Momentum",
+  "description": "Suivez vos habitudes, organisez vos tâches et visualisez vos progrès. Sans compte : vos données restent sur votre appareil.",
+  "id": "./app.html",
+  "start_url": "./app.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#090a0c",
+  "theme_color": "#090a0c",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["productivity", "lifestyle", "health"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "assets/apercu.jpg", "sizes": "1440x900", "type": "image/jpeg", "form_factor": "wide", "label": "Page Aujourd'hui" },
+    { "src": "assets/apercu-stats.jpg", "sizes": "1440x900", "type": "image/jpeg", "form_factor": "wide", "label": "Statistiques" }
+  ],
+  "shortcuts": [
+    { "name": "Aujourd'hui", "url": "./app.html#/today", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Habitudes", "url": "./app.html#/habits", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Tâches", "url": "./app.html#/tasks", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Statistiques", "url": "./app.html#/stats", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

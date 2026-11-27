@@ -6,7 +6,22 @@
   <title>Momentum · Habitudes & tâches</title>
   <meta name="description" content="Momentum : suivez vos habitudes, organisez vos tâches et visualisez vos progrès.">
   <meta name="theme-color" content="#090a0c">
+  <meta name="color-scheme" content="dark light">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Momentum">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <script>
+    // Thème appliqué avant le premier rendu pour éviter un flash.
+    try {
+      var th = localStorage.getItem('momentum:theme');
+      if (!th) { var s = JSON.parse(localStorage.getItem('momentum:v2') || '{}'); var p = (s.settings && s.settings.theme) || 'dark'; th = p === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : p; }
+      document.documentElement.dataset.theme = th;
+    } catch (e) { document.documentElement.dataset.theme = 'dark'; }
+  </script>
   <link rel="preload" href="assets/fonts/HostGrotesk-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/styles.css">
   <script type="module" src="js/main.js"></script>
