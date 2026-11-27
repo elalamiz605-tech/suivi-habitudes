@@ -9,6 +9,8 @@ import { toast } from './ui.js';
 import { t, onLangChange } from './i18n.js';
 import { initPWA, promptInstall, onInstallChange } from './pwa.js';
 import { startReminders, requestPermission, permission, notify } from './reminders.js';
+import { applySuggestion, reviewWeek } from './insights.js';
+import { writeReview } from './coach.js';
 import { dateKey, today, norm, esc, prefersReducedMotion, fmtClock } from './utils.js';
 
 const NAV = [
@@ -16,12 +18,15 @@ const NAV = [
   { id: 'habits', key: 'nav.habits', ic: 'repeat' },
   { id: 'tasks', key: 'nav.tasks', ic: 'list' },
   { id: 'stats', key: 'nav.stats', ic: 'chart' },
+  { id: 'year', key: 'nav.year', ic: 'cube' },
   { id: 'settings', key: 'nav.settings', ic: 'sliders' },
 ];
-const VIEWS = { today: V.viewToday, habits: V.viewHabits, tasks: V.viewTasks, stats: V.viewStats, settings: V.viewSettings };
+// Pages hors menu : le bilan de la semaine (bannière du dimanche, page Statistiques, palette).
+const VIEWS = { today: V.viewToday, habits: V.viewHabits, tasks: V.viewTasks, stats: V.viewStats, year: V.viewYear, review: V.viewReview, settings: V.viewSettings };
+const TITLE_KEY = { review: 'review.title' };
 
 const viewEl = document.getElementById('view');
-const ui = { habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio', stamp: '' };
+const ui = { habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio', stamp: '', yearStage: 0, aiBusy: false, aiError: '' };
 let route = currentRoute();
 let entering = true;
 let scene = null;
@@ -86,7 +91,73 @@ function render() {
   entering = false;
 
   scene?.setProgress(L.todayProgress(s.habits.filter((h) => !h.archived)).ratio);
-  document.title = `${t(NAV.find((n) => n.id === route).key)} · Momentum`;
+  document.title = `${t(TITLE_KEY[route] || NAV.find((n) => n.id === route)?.key || 'nav.today')} · Momentum`;
+  if (route === 'year') mountYear();
+  else unmountYear();
+  if (route === 'review' && s.settings.lastReviewWeek !== reviewWeek().key) { s.settings.lastReviewWeek = reviewWeek().key; S.save(); }
+}
+
+// ---------- Mon année en 3D (vraies données) ----------
+
+let year = null;
+function mountYear() {
+  const canvas = document.getElementById('year3d');
+  if (!canvas) return;
+  if (year) year.dispose();
+  year = null;
+  import('./year.js').then(({ createYear }) => {
+    if (route !== 'year' || !document.getElementById('year3d')) return;
+    year = createYear(canvas, { motion: st().settings.motion && !prefersReducedMotion(), data: V.yearData(st()), embedded: true });
+    year.setStage(ui.yearStage);
+    year.setToday(V.yearData(st()).at(-1));
+  }).catch((err) => console.warn('Scène 3D indisponible :', err));
+}
+function unmountYear() {
+  if (year) { year.dispose(); year = null; }
+}
+
+/** Image à partager : la scène 3D + le titre et les chiffres, au format carré. */
+async function shareYear() {
+  if (!year) return;
+  const s = st();
+  const stats = V.yearStats(s);
+  const img = new Image();
+  img.src = year.snapshot();
+  await img.decode();
+  const W = 1080, H = 1080;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  g.fillStyle = '#07080c'; g.fillRect(0, 0, W, H);
+  // scène centrée, recadrée
+  const ratio = img.width / img.height;
+  const sw = ratio > 1 ? img.height * 1.15 : img.width, sh = ratio > 1 ? img.height : img.width / 1.15;
+  g.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 180, W, W / 1.15);
+  const grad = g.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, 'rgba(7,8,12,0.1)'); grad.addColorStop(0.2, 'rgba(7,8,12,0)'); grad.addColorStop(0.78, 'rgba(7,8,12,0)'); grad.addColorStop(1, 'rgba(7,8,12,0.92)');
+  g.fillStyle = grad; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#f4f4f8';
+  g.font = '600 56px "Host Grotesk", system-ui, sans-serif';
+  g.fillText(t('year.share_title', { name: s.settings.name || '' }).trim(), 64, 110);
+  g.font = '400 30px "Host Grotesk", system-ui, sans-serif';
+  g.fillStyle = '#9a9cab';
+  g.fillText(t('year.share_sub', { kept: stats.kept, full: stats.full, best: stats.best }), 64, 160);
+  g.font = '500 30px "Martian Mono", ui-monospace, monospace';
+  g.fillStyle = '#ff7a59';
+  g.fillText('momentum · ' + new Date().toLocaleDateString(), 64, H - 64);
+  g.fillStyle = '#7b6cff';
+  g.textAlign = 'right';
+  g.font = '500 26px "Host Grotesk", system-ui, sans-serif';
+  g.fillText('elalamiz605-tech.github.io/suivi-habitudes', W - 64, H - 64);
+  const blob = await new Promise((res) => c.toBlob(res, 'image/png'));
+  const file = new File([blob], `momentum-annee-${dateKey(today())}.png`, { type: 'image/png' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: 'Momentum' }); return; } catch (_) { /* annulé */ }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = file.name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast(t('year.shared'));
 }
 
 function go(r) {
@@ -142,6 +213,7 @@ S.subscribe(() => {
   checkRewards();
   render();
   B.autoSync('change');
+  if (year) year.setData(V.yearData(st()));
 });
 
 onLangChange(() => { render(); });
@@ -190,6 +262,28 @@ const actions = {
     if (!was) toast(`${h.name} · ${t('today.skipped')}`, { action: { label: t('common.undo'), fn: () => { S.toggleSkip(h, k); S.commit(); } } });
   },
   journal: (el) => F.openJournalModal(S.findHabit(el.dataset.id)),
+  mini(el) {
+    const h = S.findHabit(el.dataset.id);
+    const k = dateKey(today());
+    S.setMini(h, k);
+    ui.stamp = h.id;
+    S.commit();
+    toast(t('recover.mini_done', { name: h.name }), { action: { label: t('common.undo'), fn: () => { delete h.mini[k]; delete h.log[k]; S.commit(); } } });
+  },
+  'apply-suggestion': (el) => applySuggestion(el.dataset.id),
+  async 'ai-review'() {
+    ui.aiBusy = true; ui.aiError = '';
+    render();
+    try { await writeReview({ force: true }); } catch (e) { ui.aiError = e.message; }
+    ui.aiBusy = false;
+    render();
+  },
+  'share-year': () => shareYear(),
+  'year-stage'(el) {
+    ui.yearStage = Number(el.dataset.stage);
+    year?.setStage(ui.yearStage);
+    viewEl.querySelectorAll('[data-action=year-stage]').forEach((b) => b.classList.toggle('on', b === el));
+  },
   timer: (el) => F.openTimerModal(S.findHabit(el.dataset.id)),
   'timer-open': () => F.openTimerModal(F.timer.habit),
   'edit-habit': (el) => F.openHabitModal(S.findHabit(el.dataset.id)),
@@ -310,6 +404,7 @@ const settingHandlers = {
     if (scene) scene.setMotion(el.checked);
     else startScene();
     renderNav();
+    if (route === 'year') mountYear();
   },
   theme(el) {
     st().settings.theme = el.value;
@@ -339,6 +434,11 @@ const settingHandlers = {
     }
   },
   recapTime: (el) => S.updateSettings({ recapTime: el.value }),
+  neverTwice: (el) => S.updateSettings({ neverTwice: el.checked }),
+  aiKey(el) {
+    st().settings.ai.key = el.value.trim();
+    S.save();
+  },
   syncToken(el) {
     st().settings.sync.token = el.value.trim();
     S.save();
@@ -413,6 +513,8 @@ function openPalette() {
     ...NAV.map((n, i) => ({ label: t('palette.goto', { page: t(n.key) }), ic: n.ic, hint: String(i + 1), run: () => go(n.id) })),
     { label: t('palette.new_habit'), ic: 'plus', hint: 'N', run: () => F.openHabitModal() },
     { label: t('palette.new_task'), ic: 'plus', hint: 'T', run: () => F.openTaskModal() },
+    { label: t('review.title'), ic: 'sparkle', run: () => go('review') },
+    { label: t('year.share'), ic: 'share', run: () => { go('year'); setTimeout(() => year && shareYear(), 900); } },
     { label: t('palette.timer'), ic: 'timer', run: () => F.openTimerModal(null, 25) },
     { label: t('palette.export'), ic: 'download', run: B.exportJSON },
     { label: t('palette.theme'), ic: 'moon', run: () => { s.settings.theme = resolvedTheme() === 'dark' ? 'light' : 'dark'; S.save(); applyTheme(); if (route === 'settings') render(); } },
@@ -478,7 +580,7 @@ document.addEventListener('keydown', (e) => {
   if (key === 'n') { e.preventDefault(); F.openHabitModal(); }
   else if (key === 't') { e.preventDefault(); F.openTaskModal(); }
   else if (key === '/') { e.preventDefault(); openPalette(); }
-  else if (/^[1-5]$/.test(key)) go(NAV[Number(key) - 1].id);
+  else if (/^[1-6]$/.test(key)) go(NAV[Number(key) - 1].id);
 });
 
 // Clic sur le fond sombre d'une fenêtre = fermer

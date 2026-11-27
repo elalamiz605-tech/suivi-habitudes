@@ -21,7 +21,13 @@ function makeYear() {
 const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 
-export function createYear(canvas, { motion = true } = {}) {
+/**
+ * Options :
+ *  - motion : animation continue
+ *  - data : tableau de 371 valeurs (0..1) = vos vraies journées (sinon l'année de démonstration)
+ *  - embedded : la scène vit dans un bloc de page (pas en plein écran), cadrage centré
+ */
+export function createYear(canvas, { motion = true, data = null, embedded = false } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -58,7 +64,7 @@ export function createYear(canvas, { motion = true } = {}) {
   halo.rotation.x = -Math.PI / 2;
   scene.add(halo);
 
-  const year = makeYear();
+  const year = data && data.length === N ? data.slice() : makeYear();
   const shown = year.map((v) => v);
   const C_EMPTY = new THREE.Color('#171824'), C_LOW = new THREE.Color('#3b3478'), C_MID = new THREE.Color('#7b6cff'), C_HIGH = new THREE.Color('#ff7a59');
   const colorFor = (v, out) => {
@@ -90,9 +96,24 @@ export function createYear(canvas, { motion = true } = {}) {
     { p: new THREE.Vector3(19, 6, 7), l: new THREE.Vector3(WEEKS / 2 - 1, 0.5, 0) }, // gros plan sur aujourd'hui
   ];
 
+  // Dans l'application, le calendrier se cadre sur les semaines qui ont des données :
+  // un nouvel utilisateur voit ses premières semaines en gros plan, pas une année vide.
+  function frameOnData() {
+    if (!embedded) return;
+    let first = year.findIndex((v) => v > 0);
+    if (first < 0) first = N - 1;
+    const span = Math.max(8, Math.min(WEEKS, WEEKS - Math.floor(first / 7) + 1));
+    const cx = WEEKS / 2 - span / 2;
+    const dist = Math.max(10, Math.min(30, span * 0.55));
+    cams[0].p.set(cx - dist * 0.55, dist * 0.6 + 2, dist * 0.9);
+    cams[0].l.set(cx, 0, 0);
+  }
+  frameOnData();
+
   const WHITE = new THREE.Color('#ffffff');
   const OFF = [0, -7, -8];
   let wide = true;
+  let disposed = false;
   const m = new THREE.Matrix4(), q = new THREE.Quaternion(), pos = new THREE.Vector3(), scl = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0), col = new THREE.Color();
   const camPos = cams[0].p.clone(), camLook = cams[0].l.clone(), tmpP = new THREE.Vector3(), tmpL = new THREE.Vector3();
   let stage = 0, stageShown = 0, focus = 0, focusShown = 0, today = 0, pulse = 0, time = 0, last = performance.now(), raf = 0, running = false;
@@ -151,8 +172,10 @@ export function createYear(canvas, { motion = true } = {}) {
     tmpL.copy(cams[a].l).lerp(cams[b].l, f);
     // Sur grand écran, la forme se range à droite du texte ; sur mobile, on recule la caméra.
     const off = (OFF[a] + (OFF[b] - OFF[a]) * f) * (1 - focusShown);
-    if (wide) { tmpP.x += off; tmpL.x += off; }
+    if (embedded) { /* cadrage centré */ }
+    else if (wide) { tmpP.x += off; tmpL.x += off; }
     else tmpP.sub(tmpL).multiplyScalar(1.3).add(tmpL);
+    if (embedded && !wide) tmpP.sub(tmpL).multiplyScalar(1.25).add(tmpL);
     tmpP.lerp(cams[3].p, focusShown);
     tmpL.lerp(cams[3].l, focusShown);
     const orbit = (motion ? Math.sin(time * 0.05) * 0.35 : 0) * (1 - focusShown);
@@ -181,7 +204,9 @@ export function createYear(canvas, { motion = true } = {}) {
   function still() { if (!motion) update(1); }
 
   function size() {
-    const w = innerWidth, h = innerHeight;
+    if (disposed) return;
+    const w = embedded ? canvas.clientWidth || canvas.parentElement.clientWidth : innerWidth;
+    const h = embedded ? canvas.clientHeight || Math.round(w * 0.6) : innerHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     wide = w / h > 1.1;
@@ -189,9 +214,11 @@ export function createYear(canvas, { motion = true } = {}) {
     camera.updateProjectionMatrix();
     still();
   }
+  const onMove = (e) => { mouse.tx = (e.clientX / innerWidth - 0.5) * 2; mouse.ty = -(e.clientY / innerHeight - 0.5) * 2; };
+  const onVis = () => (document.hidden ? stop() : start());
   addEventListener('resize', size);
-  addEventListener('pointermove', (e) => { mouse.tx = (e.clientX / innerWidth - 0.5) * 2; mouse.ty = -(e.clientY / innerHeight - 0.5) * 2; }, { passive: true });
-  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+  addEventListener('pointermove', onMove, { passive: true });
+  document.addEventListener('visibilitychange', onVis);
   size();
   update(0.016);
   start();
@@ -202,6 +229,28 @@ export function createYear(canvas, { motion = true } = {}) {
     setStage(s) { stage = s; still(); },
     setFocus(f) { focus = f; still(); },
     setToday(v) { today = v; if (!motion) shown[TODAY] = v; still(); },
+    /** Remplace toutes les valeurs (vraies données) ; la dernière case est « aujourd'hui ». */
+    setData(arr) {
+      if (!arr || arr.length !== N) return;
+      for (let i = 0; i < N; i++) { year[i] = arr[i]; if (i !== TODAY) shown[i] = arr[i]; }
+      today = arr[TODAY];
+      frameOnData();
+      still();
+    },
     celebrate() { pulse = 1; },
+    /** Image PNG de la scène telle qu'elle est affichée. */
+    snapshot() {
+      update(0.016);
+      return renderer.domElement.toDataURL('image/png');
+    },
+    resize: size,
+    dispose() {
+      disposed = true;
+      stop();
+      removeEventListener('resize', size);
+      removeEventListener('pointermove', onMove);
+      document.removeEventListener('visibilitychange', onVis);
+      geo.dispose(); mat.dispose(); renderer.dispose();
+    },
   };
 }

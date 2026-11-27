@@ -36,21 +36,21 @@ const radio = (name, value, label, checked) =>
 // ---------- Modèles d'habitudes ----------
 
 const TEMPLATES = [
-  { k: 'water', icon: '💧', cat: 'cat.health', kind: 'count', target: 8, unit: 'tpl.water_unit', color: '#6fc3c9' },
-  { k: 'meditate', icon: '🧘', cat: 'cat.mind', time: '07:00', color: '#e08a9a' },
-  { k: 'read', icon: '📚', cat: 'cat.mind', kind: 'count', target: 20, unit: 'tpl.read_unit', time: '21:30', color: '#b39ddb' },
-  { k: 'sport', icon: '🏋️', cat: 'cat.health', freq: 'weekly', perWeek: 3, color: '#8fbf8a' },
-  { k: 'walk', icon: '🚶', cat: 'cat.health', kind: 'count', target: 30, unit: 'tpl.walk_unit', color: '#8fbf8a' },
-  { k: 'stretch', icon: '🤸', cat: 'cat.health', kind: 'count', target: 5, unit: 'tpl.walk_unit', color: '#d9b36c' },
-  { k: 'sleep', icon: '🌙', cat: 'cat.health', time: '23:00', color: '#7ea6e0' },
-  { k: 'journal', icon: '📝', cat: 'cat.mind', time: '22:00', color: '#e6e8eb' },
-  { k: 'language', icon: '🗣️', cat: 'cat.career', kind: 'count', target: 15, unit: 'tpl.language_unit', color: '#7ea6e0' },
-  { k: 'code', icon: '💻', cat: 'cat.career', kind: 'count', target: 60, unit: 'tpl.code_unit', freq: 'days', days: [0, 1, 2, 3, 4], color: '#d9b36c' },
-  { k: 'budget', icon: '💶', cat: 'cat.money', freq: 'weekly', perWeek: 1, color: '#d9b36c' },
-  { k: 'call', icon: '📞', cat: 'cat.social', freq: 'weekly', perWeek: 2, color: '#e08a9a' },
-  { k: 'nosugar', icon: '🚫', cat: 'cat.health', kind: 'quit', color: '#ff5b3a' },
-  { k: 'noscreen', icon: '📵', cat: 'cat.mind', kind: 'quit', color: '#ff5b3a' },
-  { k: 'nosmoke', icon: '🚭', cat: 'cat.health', kind: 'quit', color: '#ff5b3a' },
+  { k: 'water', identity: 'body', icon: '💧', cat: 'cat.health', kind: 'count', target: 8, unit: 'tpl.water_unit', color: '#6fc3c9' },
+  { k: 'meditate', identity: 'calm', icon: '🧘', cat: 'cat.mind', time: '07:00', color: '#e08a9a' },
+  { k: 'read', identity: 'reader', icon: '📚', cat: 'cat.mind', kind: 'count', target: 20, unit: 'tpl.read_unit', time: '21:30', color: '#b39ddb' },
+  { k: 'sport', identity: 'athlete', icon: '🏋️', cat: 'cat.health', freq: 'weekly', perWeek: 3, color: '#8fbf8a' },
+  { k: 'walk', identity: 'body', icon: '🚶', cat: 'cat.health', kind: 'count', target: 30, unit: 'tpl.walk_unit', color: '#8fbf8a' },
+  { k: 'stretch', identity: 'body', icon: '🤸', cat: 'cat.health', kind: 'count', target: 5, unit: 'tpl.walk_unit', color: '#d9b36c' },
+  { k: 'sleep', identity: 'rested', icon: '🌙', cat: 'cat.health', time: '23:00', color: '#7ea6e0' },
+  { k: 'journal', identity: 'writer', icon: '📝', cat: 'cat.mind', time: '22:00', color: '#e6e8eb' },
+  { k: 'language', identity: 'learner', icon: '🗣️', cat: 'cat.career', kind: 'count', target: 15, unit: 'tpl.language_unit', color: '#7ea6e0' },
+  { k: 'code', identity: 'builder', icon: '💻', cat: 'cat.career', kind: 'count', target: 60, unit: 'tpl.code_unit', freq: 'days', days: [0, 1, 2, 3, 4], color: '#d9b36c' },
+  { k: 'budget', identity: 'money', icon: '💶', cat: 'cat.money', freq: 'weekly', perWeek: 1, color: '#d9b36c' },
+  { k: 'call', identity: 'present', icon: '📞', cat: 'cat.social', freq: 'weekly', perWeek: 2, color: '#e08a9a' },
+  { k: 'nosugar', identity: 'body', icon: '🚫', cat: 'cat.health', kind: 'quit', color: '#ff5b3a' },
+  { k: 'noscreen', identity: 'rested', icon: '📵', cat: 'cat.mind', kind: 'quit', color: '#ff5b3a' },
+  { k: 'nosmoke', identity: 'free', icon: '🚭', cat: 'cat.health', kind: 'quit', color: '#ff5b3a' },
 ];
 
 // ---------- Habitude ----------
@@ -104,6 +104,7 @@ export function openHabitModal(existing) {
           <button type="button" class="btn sm" data-add-rem>${icon('plus')}${t('form.add_reminder')}</button>
         </div>
       </div>
+      <label class="field"><span>${icon('user')}${t('form.identity')} <small>${t('form.identity_hint')}</small></span><input name="identity" value="${esc(h.identity || '')}" maxlength="60" placeholder="${t('form.identity_ph')}"></label>
       <label class="field"><span>${t('form.notes')} <small>${t('form.notes_hint')}</small></span><textarea name="notes" rows="2" maxlength="300">${esc(h.notes)}</textarea></label>
       <p class="form-error" hidden></p>
     </div>
@@ -141,6 +142,7 @@ export function openHabitModal(existing) {
       if (x.perWeek) form.perWeek.value = x.perWeek;
       if (x.days) form.querySelectorAll('[name=days]').forEach((c) => (c.checked = x.days.includes(Number(c.value))));
       form.time.value = x.time || '';
+      form.identity.value = x.identity ? t(`tpl.id_${x.identity}`) : '';
       sync();
       form.name.focus();
     }));
@@ -173,6 +175,7 @@ export function openHabitModal(existing) {
         },
         time: form.time.value,
         reminders: [...new Set(reminders.filter(Boolean))].sort(),
+        identity: form.identity.value.trim(),
         notes: form.notes.value.trim(),
       });
       if (!existing) store.state.habits.push(h);

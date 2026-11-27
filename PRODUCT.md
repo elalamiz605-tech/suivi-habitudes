@@ -28,6 +28,7 @@ Used in short sessions: morning or evening check-ins on the phone, weekly planni
 - Tasks: Kanban (to do / doing / done) with drag and drop, 4 priorities, due dates, projects, subtasks, search, filters, sort.
 - Stats: weekly insights (trend, weak/strong weekday, streaks at risk, struggling/improving habits, mood vs success), 30-day success rate, 20-week or 12-month regularity map, habit ranking, task breakdown, average mood, XP, levels, 12 badges, CSV export.
 - Data: JSON export/import, Web Share, compressed transfer code, daily automatic snapshots (7 days), optional GitHub gist sync (manual or automatic).
+- Signature features: 3D year of real data with shareable image; weekly review page with one-click applicable suggestions and optional AI coach (Claude API key stored locally); "never twice" comeback mode with mini version, identities and votes, rebound stats.
 - Platform: PWA (manifest, service worker, offline, install prompt, update toast), notifications via service worker, dark / light / auto theme.
 - Comfort: command palette (Ctrl+K), keyboard shortcuts, undo after delete/archive/pause/skip, reduced-motion support.
 - Stack: vanilla HTML/CSS/JS ES modules, no build step, Three.js vendored, localStorage, deployed on GitHub Pages via Actions.

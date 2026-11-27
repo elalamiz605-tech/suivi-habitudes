@@ -9,6 +9,11 @@
 
 ## Fonctionnalités
 
+### 🧊 Ce que les autres n'ont pas
+- **Mon année en 3D** : vos 371 derniers jours en blocs, un par jour, dans l'application (calendrier, spirale, anneaux). Un bouton **« Partager mon année »** génère une image carrée prête pour les réseaux.
+- **Bilan de la semaine** : chaque dimanche, une page qui raconte la semaine en phrases (ce qui a marché, ce qui a coincé), habitude par habitude, avec **une seule chose à changer, applicable en un clic** (passer à 3×/semaine, ajouter un rappel, retirer un jour faible, monter l'objectif). En option, un **coach IA** (clé API Claude, stockée dans le navigateur, données envoyées uniquement au clic) rédige le bilan.
+- **« Jamais deux fois »** : après un raté, l'habitude passe en mode reprise avec une **version mini** (la moitié de l'objectif) pour ne pas rater deux fois de suite. Chaque habitude peut porter une **identité** (« je suis quelqu'un qui lit ») et chaque validation devient un vote ; les rebonds après un raté sont comptés et récompensés.
+
 ### 📱 Application installable, hors ligne
 - **PWA** : installation sur l'écran d'accueil (Android, iOS, ordinateur), plein écran, raccourcis vers chaque page.
 - **Mode hors ligne** complet grâce à un service worker (réseau d'abord, cache en secours) ; mise à jour proposée quand une nouvelle version est publiée.
@@ -33,7 +38,7 @@
 ### 📊 Statistiques et motivation
 - **Analyse de la semaine** : tendance par rapport à la semaine précédente, jour le plus faible / le plus fort, séries en jeu aujourd'hui, habitude en difficulté ou en progrès, lien entre humeur et réussite.
 - Taux de réussite sur 30 jours (graphique en barres), **carte de régularité sur 20 semaines ou 12 mois**, classement des habitudes, répartition des tâches, humeur moyenne.
-- **XP et niveaux**, **12 badges** à débloquer (séries de 7, 30 et 100 jours, journée parfaite, 100 validations, 7 notes…).
+- **XP et niveaux**, **14 badges** à débloquer (séries de 7, 30 et 100 jours, journée parfaite, 100 validations, 7 notes, 5 rebonds, 10 votes…).
 - **Export CSV** de tout l'historique (date, habitude, valeur, humeur, note).
 
 ### 💾 Sauvegarde et synchronisation (sans compte)
@@ -47,6 +52,10 @@
 - Raccourcis : `N` nouvelle habitude, `T` nouvelle tâche, `1` à `5` pour changer de page.
 - Annulation après suppression, archivage, pause ou jour passé.
 - Respecte le réglage « réduire les animations » du système. Le fond animé se met en pause quand l'onglet est caché et peut être désactivé.
+
+| Mon année | Bilan de la semaine |
+| --- | --- |
+| ![Mon année en 3D](assets/apercu-annee.jpg) | ![Bilan de la semaine](assets/apercu-bilan.jpg) |
 
 | Tâches | Statistiques |
 | --- | --- |
@@ -93,14 +102,15 @@ js/main.js            → navigation, actions, récompenses, palette de commande
 js/views.js           → rendu de chaque page
 js/forms.js           → fenêtres : habitude (modèles, rappels), tâche, note du jour, minuteur
 js/logic.js           → règles : fréquences, jours passés / pauses / vacances, séries, taux, XP, badges
-js/insights.js        → analyse de la semaine
+js/insights.js        → analyse et bilan de la semaine, suggestions applicables
+js/coach.js           → coach IA optionnel (API Claude, depuis le navigateur)
 js/reminders.js       → rappels et notifications
 js/backup.js          → export / import, CSV, code de transfert, copies automatiques, synchro gist
 js/pwa.js             → installation et mises à jour
 js/i18n.js            → traductions fr / es / en
 js/store.js           → données, sauvegarde, démo
 js/scene.js           → fond animé (champ de points Three.js + shaders)
-js/year.js            → scène 3D de la vitrine (371 blocs)
+js/year.js            → scène 3D de l'année (vitrine et page « Mon année », image à partager)
 js/ui.js              → notifications à l'écran
 vendor/               → Three.js
 ```
@@ -109,4 +119,4 @@ vendor/               → Three.js
 
 - [ ] Notifications push avec un petit serveur (rappels même application fermée, iOS compris)
 - [ ] Widgets d'écran d'accueil (nécessite une application native)
-- [ ] Coach IA : suggestions personnalisées à partir de l'analyse hebdomadaire
+- [ ] Défis à deux (partage d'une habitude avec un ami, sans compte)

@@ -127,6 +127,7 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
 .features { list-style: none; margin: 40px auto 0; padding: 0; max-width: 1040px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .features li { display: grid; gap: 10px; padding: 22px 22px 24px; border-radius: 16px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .features svg { width: 24px; height: 24px; color: var(--coral); }
+.features li.hi { border-color: rgba(255,122,89,.35); background: linear-gradient(160deg, rgba(123,108,255,.14), rgba(14,15,22,.72) 60%); }
 .features b { font-weight: 600; font-size: 17px; letter-spacing: -.01em; }
 .features span { color: var(--muted); font-size: 15px; line-height: 1.55; }
 #nouveautes .head { max-width: 760px; margin: 0 auto; text-align: center; }
@@ -272,10 +273,13 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
 
   <section id="nouveautes" data-stage="2" data-focus="0" data-dim="1">
     <div class="head">
-      <h2 class="rise">Et depuis la version 3, <em>elle vous suit partout.</em></h2>
-      <p class="lead rise d1">Tout ce qu'on attend d'une vraie application d'habitudes, sans compte et sans abonnement.</p>
+      <h2 class="rise">Ce que les autres <em>n'ont pas.</em></h2>
+      <p class="lead rise d1">Trois idées qu'on ne trouve nulle part ailleurs, et tout ce qu'on attend d'une vraie application d'habitudes, sans compte ni abonnement.</p>
     </div>
     <ul class="features rise d2">
+      <li class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg><b>Mon année en 3D, avec vos vraies données</b><span>L'année que vous voyez ici vit dans l'appli, bloc par bloc. Et un bouton pour la partager en image.</span></li>
+      <li class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg><b>Un bilan du dimanche, écrit comme par un coach</b><span>Ce qui a marché, ce qui a coincé, et une seule chose à changer, appliquée en un clic. Coach IA en option.</span></li>
+      <li class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><b>Jamais deux fois</b><span>Rater un jour n'est pas grave. Le lendemain, une version mini vous remet en selle. Chaque validation est un vote pour qui vous devenez.</span></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg><b>Installable, hors ligne</b><span>Une icône sur l'écran d'accueil, plein écran, et tout fonctionne sans réseau.</span></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><b>Rappels</b><span>Jusqu'à trois rappels par habitude et un récapitulatif le soir s'il en reste.</span></li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg><b>Pause et vacances</b><span>Passez un jour, mettez une habitude en pause ou partez en vacances : vos séries sont protégées.</span></li>

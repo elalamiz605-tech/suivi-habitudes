@@ -2,7 +2,8 @@
 import { icon } from './icons.js';
 import * as L from './logic.js';
 import { isPaused, currentVacation, APP_VERSION } from './store.js';
-import { weeklyInsights, moodStats } from './insights.js';
+import { weeklyInsights, moodStats, weeklyReview, reviewWeek } from './insights.js';
+import { hasKey, cachedReview } from './coach.js';
 import { installState } from './pwa.js';
 import { permission as notifPermission, supported as notifSupported } from './reminders.js';
 import { listSnapshots } from './backup.js';
@@ -19,7 +20,7 @@ const activeHabits = (s) => s.habits.filter((h) => !h.archived);
 
 const BADGE_IC = {
   'first-habit': 'plus', 'first-check': 'check', 'streak-7': 'flame', 'streak-30': 'zap', 'streak-100': 'award', 'checks-100': 'target',
-  'perfect-day': 'sun', 'perfect-7': 'award', 'tasks-10': 'list', urgent: 'alert', 'level-5': 'layers', 'journal-7': 'book',
+  'perfect-day': 'sun', 'perfect-7': 'award', 'tasks-10': 'list', urgent: 'alert', 'level-5': 'layers', 'journal-7': 'book', 'rebound-5': 'restore', identity: 'user',
 };
 
 const tick = (c) => `<i class="tick" style="--c:${c}" aria-hidden="true"></i>`;
@@ -69,7 +70,7 @@ function habitMeta(h) {
 function dayCellClass(h, d, k, isLast) {
   const v = L.valueOn(h, k);
   if (L.isSkipped(h, k)) return 'skip';
-  if (L.isDone(h, k)) return 'done';
+  if (L.isDone(h, k)) return L.isMini(h, k) ? 'done mini' : 'done';
   if (v > 0) return 'part';
   if (isPaused(h, k)) return 'off';
   if (!L.isScheduled(h, d)) return L.isPeriodic(h) ? '' : 'off';
@@ -92,6 +93,7 @@ function journalBtn(h, k) {
   return `<button class="icon-btn sm ${j ? 'has-note' : ''}" data-action="journal" data-id="${h.id}" title="${t('today.journal')}" aria-label="${t('today.journal')}">${icon('smile')}</button>`;
 }
 
+let neverTwice = true;
 function habitItem(h, stamp) {
   const k = dateKey(today());
   const v = L.valueOn(h, k);
@@ -100,10 +102,15 @@ function habitItem(h, stamp) {
   const isCount = h.kind === 'count';
   const isQuit = h.kind === 'quit';
   const canTime = isCount && /min/i.test(h.unit);
+  const recovery = neverTwice && L.isRecovery(h);
+  const mini = L.miniTarget(h);
   return `
-  <article class="habit-item ${done ? 'is-done' : ''} ${isQuit ? 'is-quit' : ''}" style="--c:${h.color}">
+  <article class="habit-item ${done ? 'is-done' : ''} ${isQuit ? 'is-quit' : ''} ${recovery ? 'is-recovery' : ''}" style="--c:${h.color}">
     ${tick(h.color)}
-    <div class="hi-title"><h3>${esc(h.name)}</h3><p>${habitMeta(h)}</p></div>
+    <div class="hi-title"><h3>${esc(h.name)}</h3><p>${habitMeta(h)}</p>
+      ${recovery ? `<p class="recover-line">${icon('restore')}${t('recover.line')} <button class="link-btn" data-action="mini" data-id="${h.id}">${isCount ? t('recover.mini_count', { n: mini, unit: esc(h.unit) }) : t('recover.mini_check')}</button></p>` : ''}
+      ${done && h.identity ? `<p class="vote-line">${icon('user')}${t('identity.vote', { identity: esc(h.identity) })}</p>` : ''}
+    </div>
     ${weekDots(h)}
     <span class="streak ${streak ? 'live' : ''}" title="${t('habits.streak_title')}">${icon('flame')}<b>${streak ? (isQuit ? `${streak} ${t('habits.days_without')}` : L.streakLabel(h, streak)) : '0'}</b></span>
     <div class="hi-tools">
@@ -166,6 +173,11 @@ export function viewToday(s, ui = {}) {
     }).join('')
     : `<div class="list">${prog.due.map((h) => habitItem(h, ui.stamp === h.id)).join('')}</div>`;
 
+  neverTwice = s.settings.neverTwice !== false;
+  const rw = reviewWeek();
+  const dow = weekday(tday);
+  const showReview = (dow === 6 || dow === 0) && s.settings.lastReviewWeek !== rw.key;
+  const recovering = neverTwice ? prog.due.filter((h) => L.isRecovery(h)).length : 0;
   const install = installState();
   const showInstall = !s.settings.installDismissed && (install === 'ready' || (install === 'ios' && !sessionStorage.getItem('ios-banner')));
 
@@ -184,6 +196,8 @@ export function viewToday(s, ui = {}) {
 
   ${vacation ? `<div class="banner">${icon('plane')}<span>${t('today.vacation', { date: vacation.to ? fmtShort(parseKey(vacation.to)) : '…' })}</span><button class="btn sm" data-action="vacation-off">${t('today.vacation_end')}</button></div>` : ''}
   ${showInstall ? `<div class="banner install">${icon('phone')}<span>${t('today.install_banner')}</span>${install === 'ready' ? `<button class="btn sm primary" data-action="install">${t('today.install')}</button>` : ''}<button class="icon-btn sm" data-action="install-dismiss" aria-label="${t('today.later')}">${icon('x')}</button>${install === 'ios' ? `<span class="muted small">${t('settings.install_ios')}</span>` : ''}</div>` : ''}
+  ${showReview ? `<div class="banner review-banner">${icon('sparkle')}<span>${t('review.banner')}</span><a class="btn sm primary" href="#/review">${t('review.open')}</a></div>` : ''}
+  ${recovering ? `<div class="banner recover-banner">${icon('restore')}<span>${tn(recovering, 'recover.banner')}</span></div>` : ''}
   ${timer.total ? `<div class="banner timer-banner" data-action="timer-open">${icon('timer')}<span>${t('timer.running', { t: fmtClock(timer.left) })} · ${esc(timer.label)}</span></div>` : ''}
 
   <section class="band" aria-label="${t('today.summary')}">
@@ -242,7 +256,7 @@ function habitRow(h) {
       <div class="hr-title">
         <h3>${esc(h.name)}${h.kind === 'quit' ? ` <span class="tag">${t('form.kind_quit')}</span>` : ''}</h3>
         <p>${habitMeta(h)}${h.kind === 'count' ? `<i class="sep"></i>${h.target} ${esc(h.unit)}${t('habits.per_day')}` : ''}</p>
-        ${paused && pause ? `<p class="hr-notes">${icon('pause')}${t('habits.paused_since', { date: fmtShort(parseKey(pause.from)) })}</p>` : h.notes ? `<p class="hr-notes">${esc(h.notes)}</p>` : ''}
+        ${paused && pause ? `<p class="hr-notes">${icon('pause')}${t('habits.paused_since', { date: fmtShort(parseKey(pause.from)) })}</p>` : h.identity ? `<p class="hr-notes identity">${icon('user')}${esc(h.identity)} · ${t('identity.votes', { n: L.votesFor(h) })}</p>` : h.notes ? `<p class="hr-notes">${esc(h.notes)}</p>` : ''}
       </div>
     </div>
     ${habitStrip(h)}
@@ -438,18 +452,23 @@ export function viewStats(s) {
   const year = s.settings.heatmap === 'year';
   const insights = weeklyInsights(s);
   const mood = moodStats(habits);
+  const rb = L.reboundStats(habits, 30);
+  const ids = L.identities(habits);
 
   return `
   <header class="page-head">
     <div><h1>${t('stats.title')}</h1><p class="lead">${t('stats.lead')}</p></div>
-    <button class="btn" data-action="export-csv">${icon('file')}${t('stats.export_csv')}</button>
+    <div class="head-actions">
+      <a class="btn" href="#/review">${icon('sparkle')}${t('review.title')}</a>
+      <button class="btn" data-action="export-csv">${icon('file')}${t('stats.export_csv')}</button>
+    </div>
   </header>
 
   <section class="band" aria-label="${t('stats.key')}">
     ${metric({ label: t('stats.rate30'), value: `<b>${Math.round(rate30 * 100)}</b><span>%</span>`, sub: t('stats.all_habits') })}
     ${metric({ label: t('stats.checks'), value: `<b>${checks}</b>`, sub: t('stats.xp_earned', { n: checks * 10 }) })}
     ${metric({ label: t('stats.record'), value: `<b>${best}</b><span>${t('common.days')}</span>`, sub: t('stats.longest') })}
-    ${metric({ label: t('stats.tasks_done'), value: `<b>${doneWeek}</b>`, sub: t('stats.last7_level', { n: lv.level }) })}
+    ${metric({ label: t('stats.rebounds'), value: `<b>${rb.rebounds}</b><span>/${rb.rebounds + rb.doubles}</span>`, sub: t('stats.rebounds_sub', { n: rb.doubles }), tone: rb.doubles > rb.rebounds ? 'warn' : '' })}
   </section>
 
   <section class="panel insights">
@@ -477,7 +496,7 @@ export function viewStats(s) {
       ${mood.notes ? `<p class="muted mood-line">${icon('smile')}${t('stats.mood')} : <b>${mood.avg ? mood.avg.toFixed(1) : '—'}</b>/5 · ${t('stats.journal_entries', { n: mood.notes })}</p>` : ''}
     </article>
     <article class="panel">
-      <div class="panel-head"><h3>${t('stats.tasks')}</h3><span class="muted">${t('stats.open', { n: open.length })}</span></div>
+      <div class="panel-head"><h3>${t('stats.tasks')}</h3><span class="muted">${t('stats.open', { n: open.length })} · ${t('stats.done_week', { n: doneWeek })}</span></div>
       ${donut([
         { label: t('status.todo'), n: s.tasks.filter((x) => x.status === 'todo').length, color: 'var(--donut-1)' },
         { label: t('status.doing'), n: s.tasks.filter((x) => x.status === 'doing').length, color: 'var(--donut-2)' },
@@ -486,6 +505,12 @@ export function viewStats(s) {
       <div class="prio-bars">${[3, 2, 1, 0].map((p) => { const n = open.filter((x) => x.priority === p).length; return `<div class="prio-bar ${L.PRIORITIES[p].cls}"><span>${L.PRIORITIES[p].label}</span><div><i style="width:${open.length ? (n / open.length) * 100 : 0}%"></i></div><b>${n}</b></div>`; }).join('')}</div>
     </article>
   </section>
+
+  ${ids.length ? `
+  <section class="panel identities">
+    <div class="panel-head"><h3>${icon('user')}${t('identity.title')}</h3><span class="muted">${t('identity.sub')}</span></div>
+    <div class="id-grid">${ids.map((x) => `<div class="id-card"><b>${esc(x.identity)}</b><span class="id-votes">${x.votes}</span><small>${t('identity.votes_long', { n: x.votes })} · ${x.habits.map((h) => esc(h.name)).join(', ')}</small></div>`).join('')}</div>
+  </section>` : ''}
 
   <section class="section">
     <div class="section-head"><h2>${t('stats.badges')}</h2><span class="muted">${t('stats.unlocked', { n: unlocked.size, total: L.BADGES.length })}</span></div>
@@ -528,6 +553,8 @@ export function viewSettings(s) {
 
     <article class="panel">
       <div class="panel-head"><h3>${icon('sun')}${t('settings.day')}</h3></div>
+      <label class="switch"><input type="checkbox" data-setting="neverTwice" ${st.neverTwice !== false ? 'checked' : ''}><span class="track"></span><span>${t('settings.never_twice')}</span></label>
+      <p class="muted">${t('settings.never_twice_hint')}</p>
       <label class="field"><span>${t('settings.day_start')}</span><select data-setting="dayStart">${[0, 1, 2, 3, 4, 5, 6].map((h) => opt(h, h === 0 ? t('settings.midnight') : t('settings.hour', { h }), st.dayStart)).join('')}</select></label>
       <p class="muted">${t('settings.day_start_hint')}</p>
       <div class="panel-head"><h3>${icon('plane')}${t('settings.vacation')}</h3></div>
@@ -597,12 +624,19 @@ export function viewSettings(s) {
     </article>
 
     <article class="panel">
+      <div class="panel-head"><h3>${icon('sparkle')}${t('settings.coach')}</h3></div>
+      <p class="muted">${t('settings.coach_hint')}</p>
+      <label class="field"><span>${t('settings.coach_key')}</span><input type="password" data-setting="aiKey" value="${esc(st.ai.key)}" placeholder="sk-ant-…" autocomplete="off"></label>
+      <p class="muted">${t('settings.coach_privacy')}</p>
+    </article>
+
+    <article class="panel">
       <div class="panel-head"><h3>${icon('keyboard')}${t('settings.shortcuts')}</h3></div>
       <ul class="shortcuts">
         <li><kbd>Ctrl</kbd><kbd>K</kbd><span>${t('settings.sc_palette')}</span></li>
         <li><kbd>N</kbd><span>${t('settings.sc_habit')}</span></li>
         <li><kbd>T</kbd><span>${t('settings.sc_task')}</span></li>
-        <li><kbd>1</kbd>…<kbd>5</kbd><span>${t('settings.sc_pages')}</span></li>
+        <li><kbd>1</kbd>…<kbd>6</kbd><span>${t('settings.sc_pages')}</span></li>
         <li><kbd>${t('settings.sc_esc')}</kbd><span>${t('settings.sc_close')}</span></li>
       </ul>
     </article>
@@ -621,4 +655,99 @@ export function levelCard(s) {
   return `
   <div class="lv-top"><span class="avatar">${esc(initial)}</span><div><b>${t('level.title', { n: lv.level })}</b><small>${t('level.xp', { into: lv.into, need: lv.need })}</small></div></div>
   <div class="meter xp"><span style="width:${(lv.into / lv.need) * 100}%"></span></div>`;
+}
+
+// ---------- Mon année (3D) ----------
+
+/** 371 valeurs (53 semaines), la dernière = aujourd'hui : part des habitudes tenues chaque jour. */
+export function yearData(s) {
+  const tday = today();
+  const out = [];
+  for (let i = 370; i >= 0; i--) {
+    const d = addDays(tday, -i);
+    const { req, done } = L.dayStats(s.habits, d);
+    out.push(req ? done / req : 0);
+  }
+  return out;
+}
+
+export function yearStats(s) {
+  const data = yearData(s);
+  const kept = data.filter((v) => v > 0).length;
+  const full = data.filter((v) => v >= 1).length;
+  const best = Math.max(0, ...s.habits.filter((h) => !L.isPeriodic(h)).map((h) => L.bestStreak(h)));
+  const first = s.habits.map((h) => h.createdAt).sort()[0];
+  const days = first ? Math.min(371, Math.max(1, Math.round((today() - parseKey(first)) / 864e5) + 1)) : 0;
+  return { data, kept, full, best, days, checks: L.totalChecks(s.habits) };
+}
+
+export function viewYear(s, ui = {}) {
+  const st = yearStats(s);
+  const stage = ui.yearStage ?? 0;
+  return `
+  <header class="page-head">
+    <div><h1>${t('year.title')}</h1><p class="lead">${t('year.lead')}</p></div>
+    <div class="head-actions">
+      <button class="btn primary" data-action="share-year">${icon('share')}${t('year.share')}</button>
+    </div>
+  </header>
+  <div class="year-wrap">
+    <canvas id="year3d" class="year-canvas" aria-label="${t('year.aria')}"></canvas>
+    <div class="year-controls">
+      ${[['0', t('year.calendar')], ['1', t('year.spiral')], ['2', t('year.rings')]].map(([v, l]) => `<button class="chip-btn ${String(stage) === v ? 'on' : ''}" data-action="year-stage" data-stage="${v}">${l}</button>`).join('')}
+    </div>
+  </div>
+  <section class="band" aria-label="${t('year.stats')}">
+    ${metric({ label: t('year.kept'), value: `<b>${st.kept}</b><span>/${st.days || 371}</span>`, sub: t('year.kept_sub') })}
+    ${metric({ label: t('year.full'), value: `<b>${st.full}</b>`, sub: t('year.full_sub') })}
+    ${metric({ label: t('stats.record'), value: `<b>${st.best}</b><span>${t('common.days')}</span>`, sub: t('stats.longest') })}
+    ${metric({ label: t('stats.checks'), value: `<b>${st.checks}</b>`, sub: t('year.checks_sub') })}
+  </section>
+  <p class="hint">${t('year.hint')}</p>`;
+}
+
+// ---------- Bilan de la semaine ----------
+
+export function viewReview(s, ui = {}) {
+  const r = weeklyReview(s);
+  const w = r.week;
+  const ai = cachedReview();
+  const trend = r.cur !== null && r.prev !== null ? Math.round((r.cur - r.prev) * 100) : null;
+  const habits = s.habits.filter((h) => !h.archived);
+  return `
+  <header class="page-head">
+    <div>
+      <h1>${t('review.title')}</h1>
+      <p class="lead">${t('review.range', { from: fmtShort(w.start), to: fmtShort(w.end) })}${w.partial ? ` · ${t('review.partial')}` : ''}</p>
+    </div>
+    <div class="head-actions"><a class="btn" href="#/stats">${icon('chart')}${t('nav.stats')}</a></div>
+  </header>
+
+  <section class="band" aria-label="${t('stats.key')}">
+    ${metric({ label: t('review.rate'), value: `<b>${r.cur === null ? '—' : Math.round(r.cur * 100)}</b><span>%</span>`, sub: trend === null ? t('review.no_prev') : t('review.vs_prev', { d: (trend > 0 ? '+' : '') + trend }), tone: trend !== null && trend < -5 ? 'warn' : '' })}
+    ${metric({ label: t('review.perfect'), value: `<b>${r.perfect}</b><span>/7</span>` })}
+    ${metric({ label: t('review.rebounds'), value: `<b>${r.rebounds.rebounds}</b><span>/${r.rebounds.rebounds + r.rebounds.doubles}</span>`, sub: t('stats.rebounds_sub', { n: r.rebounds.doubles }) })}
+    ${metric({ label: t('stats.tasks_done'), value: `<b>${r.tasksDone}</b>` })}
+  </section>
+
+  <section class="grid-2 review-grid">
+    <article class="panel">
+      <div class="panel-head"><h3>${icon('sparkle')}${t('review.coach')}</h3>${hasKey() ? `<button class="link" data-action="ai-review" ${ui.aiBusy ? 'disabled' : ''}>${ai ? t('review.ai_redo') : t('review.ai_write')}${icon('chev-r')}</button>` : ''}</div>
+      ${ui.aiBusy ? `<p class="muted">${t('review.ai_busy')}</p>` : ai ? `<div class="coach-text">${ai.split(/\n+/).map((p) => `<p>${esc(p)}</p>`).join('')}</div>` : `
+      <ul class="insight-list">${r.sentences.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+      ${hasKey() ? '' : `<p class="muted coach-cta">${t('review.ai_hint')} <a class="link" href="#/settings">${t('nav.settings')}${icon('chev-r')}</a></p>`}`}
+      ${ui.aiError ? `<p class="form-error">${esc(ui.aiError)}</p>` : ''}
+    </article>
+    <article class="panel">
+      <div class="panel-head"><h3>${icon('zap')}${t('review.next')}</h3><span class="muted">${t('review.next_sub')}</span></div>
+      ${r.suggestions.length ? `<ul class="sugs">${r.suggestions.map((x) => `<li>${icon(x.icon)}<span>${esc(x.text)}</span>${x.apply ? `<button class="btn sm" data-action="apply-suggestion" data-id="${x.id}">${t('review.apply')}</button>` : `<button class="btn sm" data-action="edit-habit" data-id="${x.edit}">${t('common.edit')}</button>`}</li>`).join('')}</ul>` : `<p class="muted">${t('review.no_sug')}</p>`}
+    </article>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h3>${t('review.by_habit')}</h3><span class="muted">${t('review.by_habit_sub')}</span></div>
+    ${habits.length ? `<table class="review-table"><thead><tr><th>${t('today.habit')}</th><th>${t('review.col_done')}</th><th>${t('review.col_rate')}</th><th>${t('review.col_trend')}</th><th>${t('habits.streak')}</th></tr></thead><tbody>
+      ${r.rows.map((x) => `<tr style="--c:${x.h.color}"><td>${tick(x.h.color)}${esc(x.h.name)}</td><td class="num">${x.ok}/${x.req}</td><td class="num">${x.rate === null ? '—' : pct(x.rate)}</td><td class="num ${x.trend === null ? '' : x.trend > 0 ? 'up' : x.trend < 0 ? 'down' : ''}">${x.trend === null ? '—' : (x.trend > 0 ? '+' : '') + x.trend}</td><td class="num">${x.streak}</td></tr>`).join('')}
+    </tbody></table>` : `<p class="muted">${t('stats.no_habit')}</p>`}
+  </section>`;
 }

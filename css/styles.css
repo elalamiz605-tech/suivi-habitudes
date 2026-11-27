@@ -851,3 +851,61 @@ dialog[open] .modal-card, dialog[open] .palette-card { animation: dialog-in 0.18
 .grid-2 > .panel { min-width: 0; }
 .grid-2 > .panel.wide { grid-column: 1 / -1; }
 .heatmap { max-width: 100%; }
+
+/* ---------- Mon année (3D) ---------- */
+
+.year-wrap { position: relative; margin-bottom: 16px; border-radius: var(--r); overflow: hidden; border: 1px solid var(--line); background: #07080c; }
+.year-canvas { display: block; width: 100%; height: min(62vh, 560px); }
+.year-controls { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 6px; }
+.year-controls .chip-btn { background: rgba(14, 15, 22, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #cfd0da; border-color: rgba(255, 255, 255, 0.14); }
+.year-controls .chip-btn.on { color: #fff; border-color: #ff7a59; background: rgba(255, 122, 89, 0.18); }
+.nav a:nth-child(5) .ic { stroke-width: 1.6; }
+
+/* ---------- Jamais deux fois ---------- */
+
+.habit-item.is-recovery { background: linear-gradient(90deg, color-mix(in srgb, var(--warn) 9%, transparent), transparent 40%); }
+.habit-item.is-recovery .check { border-color: var(--warn); }
+.recover-line, .vote-line { margin: 4px 0 0 !important; color: var(--text-2) !important; font-size: 12px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.recover-line .ic { color: var(--warn); width: 12px; height: 12px; }
+.vote-line .ic { color: var(--signal); width: 12px; height: 12px; }
+.link-btn { background: none; border: 0; padding: 0; color: var(--warn); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.recover-banner > .ic { color: var(--warn); }
+.dot.done.mini, .cell.done.mini { background: color-mix(in srgb, var(--signal) 55%, transparent); border-style: dashed; }
+.hr-notes.identity .ic { color: var(--signal); }
+
+/* ---------- Identités ---------- */
+
+.identities { margin-top: 12px; }
+.id-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.id-card { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 12px 14px; border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--line); }
+.id-card b { font-weight: 600; font-size: 13.5px; }
+.id-card .id-votes { grid-row: span 2; align-self: center; font: 500 26px var(--mono); color: var(--signal); letter-spacing: -0.03em; }
+.id-card small { color: var(--text-3); font-size: 12px; }
+
+/* ---------- Bilan de la semaine ---------- */
+
+.review-grid { margin-top: 16px; }
+.coach-text p { margin: 0 0 10px; color: var(--text); font-size: 14px; line-height: 1.6; }
+.coach-text p:last-child { margin-bottom: 0; }
+.coach-cta { margin-top: 14px !important; }
+.sugs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.sugs li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--r-sm); background: var(--surface-2); border: 1px solid var(--line); font-size: 13px; color: var(--text-2); }
+.sugs li > .ic { color: var(--signal); }
+.sugs li > span { flex: 1; }
+.review-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.review-table th { text-align: left; font-weight: 500; color: var(--text-3); font-size: 12px; padding: 0 8px 10px 0; border-bottom: 1px solid var(--line); }
+.review-table td { padding: 9px 8px 9px 0; border-bottom: 1px solid var(--line); }
+.review-table td:first-child { display: flex; align-items: center; gap: 9px; }
+.review-table tr:last-child td { border-bottom: 0; }
+.review-table .num { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--text-2); }
+.review-table .num.up { color: #8fbf8a; }
+.review-table .num.down { color: var(--warn); }
+.review-table th:not(:first-child), .review-table td.num { text-align: right; }
+.panel + .panel { margin-top: 12px; }
+.panel-head .link:disabled { opacity: 0.5; }
+
+@media (max-width: 860px) {
+  .year-canvas { height: 56vh; }
+  .nav a { font-size: 10px; padding: 7px 0; }
+  .review-table th:nth-child(4), .review-table td:nth-child(4) { display: none; }
+}

@@ -4,7 +4,7 @@ import { setLang, detectLang, t } from './i18n.js';
 
 const KEY = 'momentum:v2';
 const LEGACY_KEY = 'suivi-habitudes:v1'; // données de la première version
-export const APP_VERSION = '3.0';
+export const APP_VERSION = '3.1';
 
 export const COLORS = ['#ff5b3a', '#e6e8eb', '#7ea6e0', '#8fbf8a', '#d9b36c', '#b39ddb', '#6fc3c9', '#e08a9a'];
 // Couleurs de la première palette, converties vers la palette sobre actuelle.
@@ -31,6 +31,8 @@ export function newHabit(o = {}) {
     skips: {}, // { 'AAAA-MM-JJ': true } jours passés volontairement (la série continue)
     pauses: [], // [{ from, to }] périodes de pause ; to = '' → pause en cours
     journal: {}, // { 'AAAA-MM-JJ': { mood: 1..5, note } }
+    identity: '', // « quelqu'un qui lit tous les jours » : chaque validation est un vote
+    mini: {}, // { 'AAAA-MM-JJ': true } jours validés en version réduite (reprise après un raté)
     ...o,
   };
 }
@@ -63,6 +65,10 @@ export function defaultSettings() {
     vacations: [], // [{ from, to }] ; to = '' → en cours
     heatmap: 'short', // short (20 semaines) | year
     installDismissed: false,
+    neverTwice: true, // mode « jamais deux fois » : reprise guidée après un raté
+    ai: { key: '', model: 'claude-opus-5-5' }, // coach IA optionnel (clé stockée dans ce navigateur)
+    lastReviewWeek: '', // dernière semaine dont le bilan a été consulté
+    reviews: {}, // { 'AAAA-MM-JJ (lundi)': { ai: 'texte du coach' } }
     sync: { token: '', gistId: '', auto: false, lastAt: '' },
   };
 }
@@ -92,8 +98,8 @@ export function demoState() {
   const habits = [
     newHabit({ name: fr('demo.water'), icon: '💧', color: '#6fc3c9', category: fr('cat.health'), kind: 'count', target: 8, unit: fr('tpl.water_unit'), createdAt: created }),
     newHabit({ name: fr('demo.meditate'), icon: '🧘', color: '#e08a9a', category: fr('cat.mind'), schedule: { ...newHabit().schedule, type: 'days', days: [0, 1, 2, 3, 4] }, time: '07:00', reminders: ['07:00'], createdAt: created }),
-    newHabit({ name: fr('demo.sport'), icon: '🏋️', color: '#8fbf8a', category: fr('cat.health'), schedule: { ...newHabit().schedule, type: 'weekly', perWeek: 3 }, time: '18:30', createdAt: created }),
-    newHabit({ name: fr('demo.read'), icon: '📚', color: '#b39ddb', category: fr('cat.mind'), time: '21:30', reminders: ['21:30'], createdAt: created }),
+    newHabit({ name: fr('demo.sport'), icon: '🏋️', color: '#8fbf8a', category: fr('cat.health'), schedule: { ...newHabit().schedule, type: 'weekly', perWeek: 3 }, time: '18:30', identity: fr('demo.id_athlete'), createdAt: created }),
+    newHabit({ name: fr('demo.read'), icon: '📚', color: '#b39ddb', category: fr('cat.mind'), time: '21:30', reminders: ['21:30'], identity: fr('demo.id_reader'), createdAt: created }),
     newHabit({ name: fr('demo.code'), icon: '💻', color: '#d9b36c', category: fr('cat.career'), schedule: { ...newHabit().schedule, type: 'days', days: [0, 1, 2, 3, 4, 5] }, createdAt: created }),
     newHabit({ name: fr('demo.nosugar'), icon: '🚫', color: '#e6e8eb', category: fr('cat.health'), kind: 'quit', createdAt: k(-20) }),
   ];
@@ -162,10 +168,12 @@ export function normalize(s) {
       skips: h.skips || {},
       pauses: Array.isArray(h.pauses) ? h.pauses : [],
       journal: h.journal || {},
+      identity: h.identity || '',
+      mini: h.mini || {},
     })),
     tasks: (s.tasks || []).map((t) => newTask({ ...t, id: t.id || uid(), subtasks: t.subtasks || [] })),
     profile: { ...base.profile, ...(s.profile || {}) },
-    settings: { ...def, ...(s.settings || {}), sync: { ...def.sync, ...((s.settings || {}).sync || {}) } },
+    settings: { ...def, ...(s.settings || {}), sync: { ...def.sync, ...((s.settings || {}).sync || {}) }, ai: { ...def.ai, ...((s.settings || {}).ai || {}) }, reviews: (s.settings || {}).reviews || {} },
     updatedAt: s.updatedAt || new Date().toISOString(),
     version: 2,
   };
@@ -252,6 +260,13 @@ export function toggleSkip(h, key) {
     delete h.log[key];
   }
 }
+
+export function setMini(h, key) {
+  h.mini[key] = true;
+  if (valueOn(h, key) < 1) h.log[key] = h.kind === 'count' ? Math.max(1, Math.ceil(h.target / 2)) : 1;
+}
+
+const valueOn = (h, key) => h.log[key] || 0;
 
 export function setJournal(h, key, { mood = 0, note = '' }) {
   if (!mood && !note.trim()) delete h.journal[key];

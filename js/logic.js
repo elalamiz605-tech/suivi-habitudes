@@ -6,7 +6,11 @@ import { t, tn } from './i18n.js';
 // ---------- Habitudes ----------
 
 export const valueOn = (h, key) => h.log[key] || 0;
-export const isDone = (h, key) => valueOn(h, key) >= (h.target || 1);
+/** Fait : objectif atteint, ou « version mini » acceptée ce jour-là (reprise après un raté). */
+export const isDone = (h, key) => valueOn(h, key) >= (h.target || 1) || (!!h.mini?.[key] && valueOn(h, key) >= 1);
+export const isMini = (h, key) => !!h.mini?.[key];
+/** Objectif réduit proposé le lendemain d'un raté : la moitié, jamais zéro. */
+export const miniTarget = (h) => (h.kind === 'count' ? Math.max(1, Math.ceil((h.target || 1) / 2)) : 1);
 export const isSkipped = (h, key) => !!h.skips[key];
 export const isPeriodic = (h) => h.schedule.type === 'weekly' || h.schedule.type === 'monthly';
 
@@ -230,6 +234,64 @@ export const totalChecks = (habits) =>
 
 export const journalCount = (habits) => habits.reduce((n, h) => n + Object.keys(h.journal).length, 0);
 
+// ---------- « Jamais deux fois » : reprise après un raté ----------
+
+/** Le dernier jour prévu avant aujourd'hui a-t-il été raté ? (habitudes quotidiennes / certains jours / tous les X jours) */
+export function missedLastTime(h, tday = today()) {
+  if (isPeriodic(h)) return false;
+  for (let i = 1; i <= 14; i++) {
+    const d = addDays(tday, -i);
+    const k = dateKey(d);
+    if (k < h.createdAt) return false;
+    if (!isScheduled(h, d)) continue;
+    return !isDone(h, k);
+  }
+  return false;
+}
+
+/** Aujourd'hui est un jour de reprise : prévu, pas encore fait, et la dernière fois a été ratée. */
+export function isRecovery(h, tday = today()) {
+  return isDueToday(h, tday) && !isDone(h, dateKey(tday)) && missedLastTime(h, tday);
+}
+
+/** Sur N jours : ratés suivis d'une reprise (rebonds) et ratés suivis d'un second raté (doubles). */
+export function reboundStats(habits, days = 30, tday = today()) {
+  let rebounds = 0, doubles = 0, misses = 0;
+  for (const h of habits) {
+    if (isPeriodic(h)) continue;
+    let prevMissed = false;
+    for (let i = days; i >= 1; i--) {
+      const d = addDays(tday, -i);
+      const k = dateKey(d);
+      if (k < h.createdAt || !isScheduled(h, d)) continue;
+      const done = isDone(h, k);
+      if (!done) misses++;
+      if (prevMissed) { if (done) rebounds++; else doubles++; }
+      prevMissed = !done;
+    }
+  }
+  return { rebounds, doubles, misses };
+}
+
+// ---------- Identité : chaque validation est un vote ----------
+
+export const votesFor = (h) => Object.keys(h.log).filter((k) => isDone(h, k)).length;
+
+/** Regroupe les habitudes par identité : { identity, votes, habits } */
+export function identities(habits) {
+  const map = new Map();
+  for (const h of habits) {
+    const id = (h.identity || '').trim();
+    if (!id) continue;
+    const key = id.toLowerCase();
+    if (!map.has(key)) map.set(key, { identity: id, votes: 0, habits: [] });
+    const e = map.get(key);
+    e.votes += votesFor(h);
+    e.habits.push(h);
+  }
+  return [...map.values()].sort((a, b) => b.votes - a.votes);
+}
+
 // ---------- Tâches ----------
 
 export const PRIORITIES = [
@@ -301,5 +363,7 @@ export const BADGES = [
   badge('tasks-10', (s) => tasksDone(s) >= 10),
   badge('urgent', (s) => s.tasks.some((x) => x.status === 'done' && x.priority === 3)),
   badge('journal-7', (s) => journalCount(s.habits) >= 7),
+  badge('rebound-5', (s) => reboundStats(s.habits, 365).rebounds >= 5),
+  badge('identity', (s) => s.habits.some((h) => h.identity && votesFor(h) >= 10)),
   badge('level-5', (s) => levelFor(computeXP(s)).level >= 5),
 ];
