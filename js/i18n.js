@@ -2,25 +2,25 @@
 // t('clé', { n: 3 }) remplace {n}. tn(n, 'clé') choisit clé_one / clé_other.
 
 export const LANGS = [
+  { id: 'en', label: 'English', locale: 'en-GB' },
   { id: 'fr', label: 'Français', locale: 'fr-FR' },
   { id: 'es', label: 'Español', locale: 'es-ES' },
-  { id: 'en', label: 'English', locale: 'en-GB' },
 ];
 
 const DICT = { fr: {}, es: {}, en: {} };
-let current = 'fr';
+let current = 'en';
 const listeners = new Set();
 
+/** Langue par défaut : anglais. Changeable à tout moment dans les réglages (le choix est conservé). */
 export function detectLang() {
-  const nav = (navigator.language || 'fr').slice(0, 2).toLowerCase();
-  return LANGS.some((l) => l.id === nav) ? nav : 'fr';
+  return 'en';
 }
 
 export const lang = () => current;
-export const locale = () => LANGS.find((l) => l.id === current)?.locale || 'fr-FR';
+export const locale = () => LANGS.find((l) => l.id === current)?.locale || 'en-GB';
 
 export function setLang(id) {
-  if (!DICT[id]) id = 'fr';
+  if (!DICT[id]) id = 'en';
   if (id === current) return;
   current = id;
   document.documentElement.lang = id;
@@ -33,7 +33,7 @@ export function onLangChange(fn) {
 }
 
 export function t(key, vars) {
-  let s = DICT[current][key] ?? DICT.fr[key];
+  let s = DICT[current][key] ?? DICT.en[key] ?? DICT.fr[key];
   if (s === undefined) {
     console.warn('Traduction manquante :', key);
     s = key;

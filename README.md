@@ -19,7 +19,7 @@
 ### 📱 Installable, offline
 - **PWA**: install on the home screen (Android, iOS, desktop), full screen, shortcuts to each page.
 - Full **offline mode** through a service worker (network first, cache fallback); an update prompt appears when a new version is published.
-- **Dark, light or automatic theme**, interface in **English, Spanish or French**.
+- **Dark, light or automatic theme**, interface in **English by default, Spanish or French** (switchable in Settings, choice remembered).
 
 ### 🔁 Habits
 - **Three tracking types**: done / not done, **numeric goal** (8 glasses of water, 20 pages…) or **bad habit to quit** ("days without" counter).

@@ -32,7 +32,7 @@ Used in short sessions: morning or evening check-ins on the phone, weekly planni
 - Platform: PWA (manifest, service worker, offline, install prompt, update toast), notifications via service worker, dark / light / auto theme.
 - Comfort: command palette (Ctrl+K), keyboard shortcuts, undo after delete/archive/pause/skip, reduced-motion support.
 - Stack: vanilla HTML/CSS/JS ES modules, no build step, Three.js vendored, localStorage, deployed on GitHub Pages via Actions.
-- Interface languages: French (default), Spanish, English (auto-detected, switchable in settings).
+- Interface languages: English (default), French, Spanish (switchable in settings, persisted).
 - Routes: `index.html` is the landing page (3D year of habits, live demo, app screenshots); `app.html` is the application.
 
 ## Brand Commitments

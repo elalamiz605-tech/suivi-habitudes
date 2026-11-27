@@ -1,7 +1,7 @@
 {
-  "name": "Momentum · Habitudes & tâches",
+  "name": "Momentum · Habits & tasks",
   "short_name": "Momentum",
-  "description": "Suivez vos habitudes, organisez vos tâches et visualisez vos progrès. Sans compte : vos données restent sur votre appareil.",
+  "description": "Track your habits, organise your tasks and see your progress. No account: your data stays on your device.",
   "id": "./app.html",
   "start_url": "./app.html",
   "scope": "./",
@@ -9,7 +9,7 @@
   "orientation": "any",
   "background_color": "#090a0c",
   "theme_color": "#090a0c",
-  "lang": "fr",
+  "lang": "en",
   "dir": "ltr",
   "categories": ["productivity", "lifestyle", "health"],
   "icons": [
@@ -18,13 +18,13 @@
     { "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "screenshots": [
-    { "src": "assets/apercu.jpg", "sizes": "1440x900", "type": "image/jpeg", "form_factor": "wide", "label": "Page Aujourd'hui" },
-    { "src": "assets/apercu-stats.jpg", "sizes": "1440x900", "type": "image/jpeg", "form_factor": "wide", "label": "Statistiques" }
+    { "src": "assets/apercu.jpg", "sizes": "1440x900", "type": "image/jpeg", "form_factor": "wide", "label": "Today page" },
+    { "src": "assets/apercu-stats.jpg", "sizes": "1440x900", "type": "image/jpeg", "form_factor": "wide", "label": "Statistics" }
   ],
   "shortcuts": [
-    { "name": "Aujourd'hui", "url": "./app.html#/today", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Habitudes", "url": "./app.html#/habits", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Tâches", "url": "./app.html#/tasks", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Statistiques", "url": "./app.html#/stats", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Today", "url": "./app.html#/today", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Habits", "url": "./app.html#/habits", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Tasks", "url": "./app.html#/tasks", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Statistics", "url": "./app.html#/stats", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }

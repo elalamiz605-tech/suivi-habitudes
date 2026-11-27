@@ -17,7 +17,7 @@
 ### 📱 Application installable, hors ligne
 - **PWA** : installation sur l'écran d'accueil (Android, iOS, ordinateur), plein écran, raccourcis vers chaque page.
 - **Mode hors ligne** complet grâce à un service worker (réseau d'abord, cache en secours) ; mise à jour proposée quand une nouvelle version est publiée.
-- **Thème sombre, clair ou automatique**, et interface en **français, español ou English**.
+- **Thème sombre, clair ou automatique**, et interface en **anglais par défaut, français ou español** (changeable dans les réglages, choix conservé).
 
 ### 🔁 Habitudes
 - **Trois types de suivi** : fait / pas fait, **objectif chiffré** (8 verres d'eau, 20 pages…) ou **mauvaise habitude à arrêter** (compteur de « jours sans »).
