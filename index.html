@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Momentum suit vos habitudes et vos tâches, jour après jour. Sans compte : vos données restent dans votre navigateur.">
+<meta name="description" content="Momentum tracks your habits and tasks, day after day. No account: your data stays in your browser.">
 <meta name="theme-color" content="#07080c">
-<meta property="og:title" content="Momentum · Une année se construit un jour à la fois">
-<meta property="og:description" content="Habitudes, tâches et statistiques dans une seule appli. Essayez la démo.">
+<meta property="og:title" content="Momentum · A year is built one day at a time">
+<meta property="og:description" content="Habits, tasks and statistics in one app. Try the demo.">
 <meta property="og:image" content="https://elalamiz605-tech.github.io/suivi-habitudes/assets/vitrine/today.jpg">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-<title>Momentum · Une année, un jour à la fois</title>
+<title>Momentum · A year, one day at a time</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -189,118 +189,118 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
 
 <header class="nav" id="nav">
   <a class="brand" href="#hero"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7b6cff"/><stop offset="1" stop-color="#ff7a59"/></linearGradient></defs><circle cx="16" cy="16" r="10.5" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="3.5"/><path d="M16 5.5a10.5 10.5 0 1 1-10 13.7" fill="none" stroke="url(#lg)" stroke-width="3.5" stroke-linecap="round"/></svg>Momentum</a>
-  <nav aria-label="Sections"><a href="#aujourdhui">Essayer</a><a href="#serie">Séries</a><a href="#anneaux">Habitudes</a><a href="#appli">L'appli</a><a href="#nouveautes">Nouveautés</a></nav>
-  <a class="btn sm" href="app.html">Ouvrir l'appli</a>
+  <nav aria-label="Sections"><a href="#aujourdhui">Try it</a><a href="#serie">Streaks</a><a href="#anneaux">Habits</a><a href="#appli">The app</a><a href="#nouveautes">What's new</a></nav>
+  <a class="btn sm" href="app.html">Open the app</a>
 </header>
 
 <main>
   <section id="hero" data-stage="0" data-focus="0">
     <div class="col">
-      <h1 class="rise in">Une année se construit <em>un jour à la fois.</em></h1>
-      <p class="lead rise in d1">Une bonne résolution tient trois semaines, puis on la perd de vue parce qu'on ne voit pas ce qu'on a déjà construit. Momentum rend vos progrès visibles : chaque bloc derrière ce texte est une journée, <b>plus il monte, plus vous avez tenu.</b></p>
+      <h1 class="rise in">A year is built <em>one day at a time.</em></h1>
+      <p class="lead rise in d1">A good resolution lasts three weeks, then fades because you can't see what you've already built. Momentum makes your progress visible: every block behind this text is a day, <b>the higher it rises, the more you kept up.</b></p>
       <div class="actions rise in d2">
-        <a class="btn primary" href="#aujourdhui">Valider ma journée <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
-        <a class="btn" href="app.html">Ouvrir l'appli</a>
+        <a class="btn primary" href="#aujourdhui">Check off my day <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+        <a class="btn" href="app.html">Open the app</a>
       </div>
       <div class="legend rise in d3">
         <div class="scale" aria-hidden="true"></div>
-        <div class="ticks"><span>0 habitude</span><span>1</span><span>2</span><span>3 habitudes</span></div>
-        <p><span class="mono" id="days">371</span> jours, dont <span class="mono" id="kept">0</span> avec au moins une habitude tenue. Année de démonstration.</p>
+        <div class="ticks"><span>0 habits</span><span>1</span><span>2</span><span>3 habits</span></div>
+        <p><span class="mono" id="days">371</span> days, <span class="mono" id="kept">0</span> of them with at least one habit kept. Demo year.</p>
       </div>
     </div>
   </section>
 
   <section id="aujourdhui" data-stage="0" data-focus="1">
     <div class="col">
-      <h2 class="rise">Aujourd'hui, c'est <em>le bloc qui manque.</em></h2>
-      <p class="lead rise d1">Il est tout au bout de l'année, encore à plat. Validez vos trois habitudes et regardez-le monter.</p>
-      <div class="try rise d2" aria-label="Démonstration interactive">
-        <div class="try-head"><b>Aujourd'hui</b><span id="date"></span></div>
+      <h2 class="rise">Today is <em>the missing block.</em></h2>
+      <p class="lead rise d1">It sits at the very end of the year, still flat. Check off your three habits and watch it rise.</p>
+      <div class="try rise d2" aria-label="Interactive demo">
+        <div class="try-head"><b>Today</b><span id="date"></span></div>
         <div id="list"></div>
-        <div class="try-foot"><p><span>Progression du jour</span><span class="mono" id="score">0/3</span></p><div class="bar"><i id="fill"></i></div></div>
+        <div class="try-foot"><p><span>Today's progress</span><span class="mono" id="score">0/3</span></p><div class="bar"><i id="fill"></i></div></div>
       </div>
-      <div class="after" id="after"><span id="msg">Cliquez sur un cercle pour valider une habitude.</span></div>
+      <div class="after" id="after"><span id="msg">Click a circle to check off a habit.</span></div>
     </div>
   </section>
 
   <section id="serie" data-stage="1" data-focus="0">
     <div class="col">
-      <h2 class="rise">Une série, <em>ça se voit.</em></h2>
-      <p class="lead rise d1">L'année s'enroule en spirale : chaque tour, c'est un peu plus de quatre semaines. Momentum compte vos jours tenus et ne casse pas votre série les jours où rien n'était prévu.</p>
+      <h2 class="rise">A streak <em>is something you can see.</em></h2>
+      <p class="lead rise d1">The year coils into a spiral: each turn is a little over four weeks. Momentum counts the days you kept and never breaks your streak on days when nothing was planned.</p>
       <div class="stats rise d2">
-        <div><b>15<span>j</span></b><small>série en cours</small></div>
-        <div><b>47<span>j</span></b><small>meilleur record</small></div>
-        <div><b>73<span>%</span></b><small>réussite sur 30 jours</small></div>
+        <div><b>15<span>d</span></b><small>current streak</small></div>
+        <div><b>47<span>d</span></b><small>best record</small></div>
+        <div><b>73<span>%</span></b><small>30-day success</small></div>
       </div>
-      <p class="note rise d2">Chiffres d'exemple, tirés des données de démonstration.</p>
+      <p class="note rise d2">Sample figures, taken from the demo data.</p>
     </div>
   </section>
 
   <section id="anneaux" data-stage="2" data-focus="0">
     <div class="col">
-      <h2 class="rise">Trois habitudes, <em>trois anneaux.</em></h2>
-      <p class="lead rise d1">Vue d'en haut, l'année se range en trois cercles, un par habitude. Chacune a son rythme et son objectif.</p>
+      <h2 class="rise">Three habits, <em>three rings.</em></h2>
+      <p class="lead rise d1">Seen from above, the year arranges itself into three circles, one per habit. Each has its own rhythm and goal.</p>
       <ol class="points rise d2">
-        <li><span class="n">1</span><b>Fait, ou chiffré</b><span>Une case à cocher, ou un objectif comme 8 verres d'eau ou 20 pages.</span></li>
-        <li><span class="n">2</span><b>À votre rythme</b><span>Tous les jours, certains jours, ou 3 fois par semaine.</span></li>
-        <li><span class="n">3</span><b>Avec les tâches</b><span>Un tableau À faire, En cours, Terminé, avec priorités et échéances.</span></li>
+        <li><span class="n">1</span><b>Done, or counted</b><span>A checkbox, or a goal such as 8 glasses of water or 20 pages.</span></li>
+        <li><span class="n">2</span><b>At your own pace</b><span>Every day, specific days, or 3 times a week.</span></li>
+        <li><span class="n">3</span><b>With your tasks</b><span>A To do, Doing, Done board with priorities and due dates.</span></li>
       </ol>
     </div>
   </section>
 
   <section id="appli" data-stage="2" data-focus="0" data-dim="1">
     <div class="head">
-      <h2 class="rise">Et tout le reste, <em>dans l'appli.</em></h2>
-      <p class="lead rise d1">Ce que vous voyez ici est l'application réelle, avec ses données de démonstration. Vos habitudes, vos tâches et vos statistiques sur un seul écran.</p>
+      <h2 class="rise">And everything else, <em>in the app.</em></h2>
+      <p class="lead rise d1">What you see here is the real application, with its demo data. Your habits, tasks and statistics on one screen.</p>
     </div>
-    <div class="tabs rise d2" role="tablist" aria-label="Écrans de l'appli">
-      <button role="tab" aria-selected="true" data-i="0">Aujourd'hui</button>
-      <button role="tab" aria-selected="false" data-i="1">Habitudes</button>
-      <button role="tab" aria-selected="false" data-i="2">Tâches</button>
-      <button role="tab" aria-selected="false" data-i="3">Statistiques</button>
+    <div class="tabs rise d2" role="tablist" aria-label="App screens">
+      <button role="tab" aria-selected="true" data-i="0">Today</button>
+      <button role="tab" aria-selected="false" data-i="1">Habits</button>
+      <button role="tab" aria-selected="false" data-i="2">Tasks</button>
+      <button role="tab" aria-selected="false" data-i="3">Statistics</button>
     </div>
     <div class="window rise d2">
       <div class="window-bar"><i></i><i></i><i></i><span>elalamiz605-tech.github.io/suivi-habitudes/app.html</span></div>
       <div class="shots" id="shots">
-        <img class="on" src="assets/vitrine/today.jpg" alt="Écran Aujourd'hui de Momentum : progression du jour, habitudes et tâches prioritaires" width="1440" height="900">
-        <img src="assets/vitrine/habits.jpg" alt="Écran Habitudes : historique de 14 jours, séries et taux de réussite par habitude" width="1440" height="900" loading="lazy">
-        <img src="assets/vitrine/tasks.jpg" alt="Écran Tâches : tableau À faire, En cours, Terminé" width="1440" height="900" loading="lazy">
-        <img src="assets/vitrine/stats.jpg" alt="Écran Statistiques : analyse de la semaine, réussite sur 30 jours et carte de régularité" width="1440" height="900" loading="lazy">
+        <img class="on" src="assets/vitrine/today.jpg" alt="Momentum's Today screen: daily progress, habits and priority tasks" width="1440" height="900">
+        <img src="assets/vitrine/habits.jpg" alt="Habits screen: 14-day history, streaks and success rate per habit" width="1440" height="900" loading="lazy">
+        <img src="assets/vitrine/tasks.jpg" alt="Tasks screen: To do, Doing, Done board" width="1440" height="900" loading="lazy">
+        <img src="assets/vitrine/stats.jpg" alt="Statistics screen: weekly insights, 30-day success and consistency map" width="1440" height="900" loading="lazy">
       </div>
     </div>
-    <p class="caption" id="caption">Votre journée sur un écran : les habitudes prévues, ce qu'il reste à faire et les tâches urgentes.</p>
+    <p class="caption" id="caption">Your day on one screen: planned habits, what's left to do and urgent tasks.</p>
   </section>
 
   <section id="nouveautes" data-stage="2" data-focus="0" data-dim="1">
     <div class="head">
-      <h2 class="rise">Ce que les autres <em>n'ont pas.</em></h2>
-      <p class="lead rise d1">Trois idées qu'on ne trouve nulle part ailleurs, et tout ce qu'on attend d'une vraie application d'habitudes, sans compte ni abonnement.</p>
+      <h2 class="rise">What the others <em>don't have.</em></h2>
+      <p class="lead rise d1">Three ideas you won't find anywhere else, plus everything you expect from a real habit app, with no account and no subscription.</p>
     </div>
     <ul class="features rise d2">
-      <li class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg><b>Mon année en 3D, avec vos vraies données</b><span>L'année que vous voyez ici vit dans l'appli, bloc par bloc. Et un bouton pour la partager en image.</span></li>
-      <li class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg><b>Un bilan du dimanche, écrit comme par un coach</b><span>Ce qui a marché, ce qui a coincé, et une seule chose à changer, appliquée en un clic. Coach IA en option.</span></li>
-      <li class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><b>Jamais deux fois</b><span>Rater un jour n'est pas grave. Le lendemain, une version mini vous remet en selle. Chaque validation est un vote pour qui vous devenez.</span></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg><b>Installable, hors ligne</b><span>Une icône sur l'écran d'accueil, plein écran, et tout fonctionne sans réseau.</span></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><b>Rappels</b><span>Jusqu'à trois rappels par habitude et un récapitulatif le soir s'il en reste.</span></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg><b>Pause et vacances</b><span>Passez un jour, mettez une habitude en pause ou partez en vacances : vos séries sont protégées.</span></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><b>Vos données restent chez vous</b><span>Pas de compte. Export, code de transfert entre appareils, copies automatiques, synchro GitHub en option.</span></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg><b>Humeur et minuteur</b><span>Une note et une humeur par jour ; un minuteur qui ajoute lui-même les minutes à l'habitude.</span></li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/></svg><b>Clair ou sombre, en 3 langues</b><span>Thème clair, sombre ou automatique. Français, español, English. Sauvegarde et transfert entre appareils.</span></li>
+      <li class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg><b>My year in 3D, from your real data</b><span>The year you see here lives inside the app, block by block. With a button to share it as an image.</span></li>
+      <li class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg><b>A Sunday review, written like a coach</b><span>What worked, what got stuck, and one thing to change, applied in one click. Optional AI coach.</span></li>
+      <li class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><b>Never twice</b><span>Missing a day is fine. The next day, a mini version gets you back on track. Every check-in is a vote for who you are becoming.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg><b>Installable, offline</b><span>A home-screen icon, full screen, and everything works without a network.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><b>Reminders</b><span>Up to three reminders per habit and an evening recap if some are left.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg><b>Pause and vacation</b><span>Skip a day, pause a habit or go on vacation: your streaks are protected.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><b>Your data stays with you</b><span>No account. Export, transfer code between devices, automatic backups, optional GitHub sync.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg><b>Mood and timer</b><span>A note and a mood per day; a timer that adds the minutes to the habit by itself.</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/></svg><b>Light or dark, in 3 languages</b><span>Light, dark or automatic theme. English, español, français. Backup and transfer between devices.</span></li>
     </ul>
   </section>
 
   <section id="fin" data-stage="0" data-focus="0">
-    <h2 class="rise">Le jour 1, <em>c'est aujourd'hui.</em></h2>
-    <p class="lead rise d1">Pas de compte à créer, pas de serveur : vos données restent dans votre navigateur. La démo est déjà remplie pour tout essayer, en trente secondes.</p>
+    <h2 class="rise">Day 1 <em>is today.</em></h2>
+    <p class="lead rise d1">No account to create, no server: your data stays in your browser. The demo is already filled in so you can try everything in thirty seconds.</p>
     <div class="actions rise d2">
-      <a class="btn primary" href="app.html">Ouvrir Momentum <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-      <a class="btn" href="https://github.com/elalamiz605-tech/suivi-habitudes">Voir le code source</a>
+      <a class="btn primary" href="app.html">Open Momentum <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn" href="https://github.com/elalamiz605-tech/suivi-habitudes">View the source code</a>
     </div>
-    <p class="maker rise d3">Conçu et codé seul par <b>Ziad El Alami</b>, développeur full-stack à Madrid : JavaScript natif, Three.js et shaders écrits à la main, sans framework ni étape de build. Le code est ouvert.</p>
+    <p class="maker rise d3">Designed and coded solo by <b>Ziad El Alami</b>, full-stack developer in Madrid: vanilla JavaScript, Three.js and hand-written shaders, no framework and no build step. The code is open.</p>
   </section>
 </main>
 
-<footer class="foot"><span>Momentum, une application de Ziad El Alami</span><a href="https://github.com/elalamiz605-tech/suivi-habitudes">GitHub</a><a href="https://elalamiz605-tech.github.io">Portfolio</a></footer>
+<footer class="foot"><span>Momentum, an app by Ziad El Alami</span><a href="https://github.com/elalamiz605-tech/suivi-habitudes">GitHub</a><a href="https://elalamiz605-tech.github.io">Portfolio</a></footer>
 
 <script type="module">
 {
@@ -315,7 +315,7 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
     $('days').textContent = year.days;
     $('kept').textContent = year.kept;
     onScroll();
-  }).catch((e) => console.warn('Scène 3D indisponible', e));
+  }).catch((e) => console.warn('3D scene unavailable', e));
 
   /* ---------- Défilement : forme de la scène, navigation, apparitions ---------- */
   const sections = [...document.querySelectorAll('main section')];
@@ -344,19 +344,19 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
   const OK = '<svg class="ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
   const SEAL = '<svg class="seal" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18"/></svg>';
   const HABITS = [
-    { id: 'med', name: 'Méditation 10 min', meta: 'Esprit · 07:00', days: [1, 1, 0, 1, 1, 1] },
-    { id: 'eau', name: "Boire de l'eau", meta: 'Santé · 8 verres', days: [1, 1, 1, 1, 0, 1], target: 8, v: 5 },
-    { id: 'lec', name: 'Lecture 20 pages', meta: 'Esprit · 21:30', days: [1, 1, 1, 1, 1, 1] },
+    { id: 'med', name: '10-min meditation', meta: 'Mind · 07:00', days: [1, 1, 0, 1, 1, 1] },
+    { id: 'eau', name: 'Drink water', meta: 'Health · 8 glasses', days: [1, 1, 1, 1, 0, 1], target: 8, v: 5 },
+    { id: 'lec', name: 'Read 20 pages', meta: 'Mind · 21:30', days: [1, 1, 1, 1, 1, 1] },
   ];
   const done = new Set();
   let stamp = '';
-  $('date').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  $('date').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
   const row = (h) => {
     const on = done.has(h.id);
     const ring = h.days.map((d) => `<i class="${d ? 'on' : ''}"></i>`).join('') + '<i class="today"></i>';
-    const counter = h.target ? `<div class="counter"><button data-dec="${h.id}" aria-label="Retirer un verre">−</button><span><b>${h.v}</b>/${h.target}</span><button data-inc="${h.id}" aria-label="Ajouter un verre">+</button></div>` : '';
-    return `<div class="habit ${on ? 'done' : ''}"><div class="t"><b>${h.name}</b><small>${h.meta}</small></div><div class="ring" aria-hidden="true">${ring}</div>${counter}<button class="check ${on ? 'on' : ''} ${stamp === h.id ? 'stamp' : ''}" data-check="${h.id}" aria-pressed="${on}" aria-label="Valider ${h.name}">${SEAL}${OK}</button></div>`;
+    const counter = h.target ? `<div class="counter"><button data-dec="${h.id}" aria-label="Remove a glass">−</button><span><b>${h.v}</b>/${h.target}</span><button data-inc="${h.id}" aria-label="Add a glass">+</button></div>` : '';
+    return `<div class="habit ${on ? 'done' : ''}"><div class="t"><b>${h.name}</b><small>${h.meta}</small></div><div class="ring" aria-hidden="true">${ring}</div>${counter}<button class="check ${on ? 'on' : ''} ${stamp === h.id ? 'stamp' : ''}" data-check="${h.id}" aria-pressed="${on}" aria-label="Check off ${h.name}">${SEAL}${OK}</button></div>`;
   };
   function render() {
     $('list').innerHTML = HABITS.map(row).join('');
@@ -364,10 +364,10 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
     const n = done.size;
     $('score').textContent = `${n}/3`;
     $('fill').style.width = `${(n / 3) * 100}%`;
-    $('msg').textContent = n === 0 ? 'Cliquez sur un cercle pour valider une habitude.' : n < 3 ? `Le bloc monte. Encore ${3 - n} habitude${3 - n > 1 ? 's' : ''}.` : "Journée complète : le bloc d'aujourd'hui est au sommet.";
+    $('msg').textContent = n === 0 ? 'Click a circle to check off a habit.' : n < 3 ? `The block is rising. ${3 - n} habit${3 - n > 1 ? 's' : ''} to go.` : "Day complete: today's block is at the top.";
     const after = $('after');
     after.classList.toggle('complete', n === 3);
-    if (n === 3 && !after.querySelector('a')) after.insertAdjacentHTML('beforeend', `<a class="btn primary" href="${APP}">Continuer dans l'appli <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>`);
+    if (n === 3 && !after.querySelector('a')) after.insertAdjacentHTML('beforeend', `<a class="btn primary" href="${APP}">Continue in the app <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>`);
     if (n < 3) after.querySelector('a')?.remove();
     year?.setToday(n / 3);
   }
@@ -391,10 +391,10 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
 
   /* ---------- L'appli : onglets ---------- */
   const CAPS = [
-    "Votre journée sur un écran : les habitudes prévues, ce qu'il reste à faire et les tâches urgentes.",
-    'Chaque habitude avec ses 14 derniers jours, modifiables d’un clic, sa série et son taux de réussite.',
-    'Un tableau À faire, En cours, Terminé, avec glisser-déposer, priorités, échéances et sous-tâches.',
-    'Réussite jour par jour sur 30 jours, régularité sur 20 semaines, classement, niveaux et badges.',
+    "Your day on one screen: planned habits, what's left to do and urgent tasks.",
+    'Each habit with its last 14 days, editable in one click, its streak and its success rate.',
+    'A To do, Doing, Done board with drag and drop, priorities, due dates and subtasks.',
+    'Day-by-day success over 30 days, 20-week consistency, ranking, levels and badges.',
   ];
   const tabs = [...document.querySelectorAll('[role=tab]')], imgs = [...$('shots').children];
   const show = (i) => {

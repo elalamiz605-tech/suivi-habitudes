@@ -1,122 +1,124 @@
-# Momentum · Habitudes & tâches
+# Momentum · Habits & tasks
 
-**Momentum** est une application web installable (PWA) pour suivre ses habitudes, organiser ses tâches et visualiser ses progrès, dans une interface minimaliste (sombre ou claire) avec un **fond animé**. Sans compte, sans serveur : vos données restent sur votre appareil.
+*[Version française](README.fr.md)*
 
-👉 **Page vitrine :** https://elalamiz605-tech.github.io/suivi-habitudes/
-👉 **Application :** https://elalamiz605-tech.github.io/suivi-habitudes/app.html
+**Momentum** is an installable web app (PWA) to track your habits, organise your tasks and see your progress, in a minimalist interface (dark or light) with an **animated background**. No account, no server: your data stays on your device.
 
-![Page Aujourd'hui](assets/apercu.jpg)
+👉 **Landing page:** https://elalamiz605-tech.github.io/suivi-habitudes/
+👉 **App:** https://elalamiz605-tech.github.io/suivi-habitudes/app.html
 
-## Fonctionnalités
+![Today page](assets/apercu.jpg)
 
-### 🧊 Ce que les autres n'ont pas
-- **Mon année en 3D** : vos 371 derniers jours en blocs, un par jour, dans l'application (calendrier, spirale, anneaux). Un bouton **« Partager mon année »** génère une image carrée prête pour les réseaux.
-- **Bilan de la semaine** : chaque dimanche, une page qui raconte la semaine en phrases (ce qui a marché, ce qui a coincé), habitude par habitude, avec **une seule chose à changer, applicable en un clic** (passer à 3×/semaine, ajouter un rappel, retirer un jour faible, monter l'objectif). En option, un **coach IA** (clé API Claude, stockée dans le navigateur, données envoyées uniquement au clic) rédige le bilan.
-- **« Jamais deux fois »** : après un raté, l'habitude passe en mode reprise avec une **version mini** (la moitié de l'objectif) pour ne pas rater deux fois de suite. Chaque habitude peut porter une **identité** (« je suis quelqu'un qui lit ») et chaque validation devient un vote ; les rebonds après un raté sont comptés et récompensés.
+## Features
 
-### 📱 Application installable, hors ligne
-- **PWA** : installation sur l'écran d'accueil (Android, iOS, ordinateur), plein écran, raccourcis vers chaque page.
-- **Mode hors ligne** complet grâce à un service worker (réseau d'abord, cache en secours) ; mise à jour proposée quand une nouvelle version est publiée.
-- **Thème sombre, clair ou automatique**, et interface en **français, español ou English**.
+### 🧊 What the others don't have
+- **My year in 3D**: your last 371 days as blocks, one per day, inside the app (calendar, spiral, rings). A **"Share my year"** button generates a square image ready for social media.
+- **Weekly review**: every Sunday, a page that tells the week in sentences (what worked, what got stuck), habit by habit, with **one thing to change, applied in one click** (switch to 3×/week, add a reminder, drop a weak day, raise the goal). Optionally, an **AI coach** (Claude API key stored in the browser, data sent only on click) writes the review.
+- **"Never twice"**: after a miss, the habit enters comeback mode with a **mini version** (half the goal) so you never miss twice in a row. Each habit can carry an **identity** ("I am someone who reads") and every check-in becomes a vote; rebounds after a miss are counted and rewarded.
 
-### 🔁 Habitudes
-- **Trois types de suivi** : fait / pas fait, **objectif chiffré** (8 verres d'eau, 20 pages…) ou **mauvaise habitude à arrêter** (compteur de « jours sans »).
-- **Cinq fréquences** : tous les jours, certains jours, **X fois par semaine**, **tous les X jours**, **X fois par mois**.
-- **Bibliothèque de modèles** pour créer une habitude en un clic (eau, méditation, lecture, sport, langue, sans sucre, sans écran…).
-- **Passer un jour** sans casser la série, **mettre une habitude en pause**, **mode vacances** global : les jours neutralisés ne comptent ni comme réussis ni comme manqués.
-- **Début de journée personnalisable** (minuit → 6 h) pour les couche-tard.
-- **Rappels** : jusqu'à 3 heures de rappel par habitude + récapitulatif du soir, par notification (via le service worker).
-- **Note et humeur du jour** sur chaque validation ; **minuteur** intégré pour les habitudes en minutes (le temps écoulé est ajouté automatiquement) et minuteur de concentration (25 min).
-- Page Aujourd'hui **regroupée par moment de la journée** (matin, après-midi, soir).
-- Séries (en cours et record) qui tiennent compte des jours non prévus ; historique sur 14 jours modifiable d'un clic ; catégories, couleur, notes, archivage.
+### 📱 Installable, offline
+- **PWA**: install on the home screen (Android, iOS, desktop), full screen, shortcuts to each page.
+- Full **offline mode** through a service worker (network first, cache fallback); an update prompt appears when a new version is published.
+- **Dark, light or automatic theme**, interface in **English, Spanish or French**.
 
-### ✅ Tâches
-- **Tableau Kanban** (À faire / En cours / Terminé) avec **glisser-déposer**.
-- 4 niveaux de **priorité**, **échéances** (en retard, aujourd'hui, demain…), **projets**, **sous-tâches** avec barre de progression.
-- Recherche instantanée, filtres par priorité et projet, trois modes de tri.
+### 🔁 Habits
+- **Three tracking types**: done / not done, **numeric goal** (8 glasses of water, 20 pages…) or **bad habit to quit** ("days without" counter).
+- **Five frequencies**: every day, specific days, **X times a week**, **every X days**, **X times a month**.
+- **Templates library** to create a habit in one click (water, meditation, reading, workout, language, no sugar, no screens…).
+- **Skip a day** without breaking the streak, **pause a habit**, global **vacation mode**: neutralised days count neither as done nor as missed.
+- **Custom day start** (midnight → 6 am) for night owls.
+- **Reminders**: up to 3 reminder times per habit + evening recap, by notification (through the service worker).
+- **Daily note and mood** on every check-in; built-in **timer** for minute-based habits (elapsed time is added automatically) and a focus timer (25 min).
+- Today page **grouped by time of day** (morning, afternoon, evening).
+- Streaks (current and best) that respect unscheduled days; 14-day editable history; categories, colour, notes, archive.
 
-### 📊 Statistiques et motivation
-- **Analyse de la semaine** : tendance par rapport à la semaine précédente, jour le plus faible / le plus fort, séries en jeu aujourd'hui, habitude en difficulté ou en progrès, lien entre humeur et réussite.
-- Taux de réussite sur 30 jours (graphique en barres), **carte de régularité sur 20 semaines ou 12 mois**, classement des habitudes, répartition des tâches, humeur moyenne.
-- **XP et niveaux**, **14 badges** à débloquer (séries de 7, 30 et 100 jours, journée parfaite, 100 validations, 7 notes, 5 rebonds, 10 votes…).
-- **Export CSV** de tout l'historique (date, habitude, valeur, humeur, note).
+### ✅ Tasks
+- **Kanban board** (To do / Doing / Done) with **drag and drop**.
+- 4 **priority** levels, **due dates** (overdue, today, tomorrow…), **projects**, **subtasks** with progress bar.
+- Instant search, filters by priority and project, three sort modes.
 
-### 💾 Sauvegarde et synchronisation (sans compte)
-- **Export / import JSON**, **partage** de la sauvegarde (Web Share sur mobile).
-- **Code de transfert** compressé à coller dans Momentum sur un autre appareil.
-- **Copies automatiques** quotidiennes (7 derniers jours) restaurables en un clic.
-- **Synchronisation optionnelle par gist GitHub** (jeton personnel à permission « gist ») : envoi, récupération, ou synchro automatique entre appareils.
+### 📊 Statistics and motivation
+- **Weekly insights**: trend versus last week, weakest / strongest weekday, streaks on the line today, struggling or improving habit, link between mood and success.
+- 30-day success rate (bar chart), **consistency map over 20 weeks or 12 months**, habit ranking, task breakdown, average mood.
+- **XP and levels**, **14 badges** to unlock (7-, 30- and 100-day streaks, perfect day, 100 check-ins, 7 notes, 5 rebounds, 10 votes…).
+- **CSV export** of the whole history (date, habit, value, mood, note).
 
-### ⚡ Confort
-- **Palette de commandes** `Ctrl + K` : navigation, création, minuteur, thème, mode vacances, recherche d'habitudes et de tâches.
-- Raccourcis : `N` nouvelle habitude, `T` nouvelle tâche, `1` à `5` pour changer de page.
-- Annulation après suppression, archivage, pause ou jour passé.
-- Respecte le réglage « réduire les animations » du système. Le fond animé se met en pause quand l'onglet est caché et peut être désactivé.
+### 💾 Backup and sync (no account)
+- **JSON export / import**, **share** the backup (Web Share on mobile).
+- Compressed **transfer code** to paste into Momentum on another device.
+- Daily **automatic snapshots** (last 7 days), restorable in one click.
+- **Optional sync through a GitHub gist** (personal token with the "gist" permission only): push, pull, or automatic sync between devices.
 
-| Mon année | Bilan de la semaine |
+### ⚡ Comfort
+- **Command palette** `Ctrl + K`: navigation, creation, timer, theme, vacation mode, habit and task search.
+- Shortcuts: `N` new habit, `T` new task, `1` to `6` to switch page.
+- Undo after delete, archive, pause or skip.
+- Respects the system "reduce motion" setting. The animated background pauses when the tab is hidden and can be turned off.
+
+| My year | Weekly review |
 | --- | --- |
-| ![Mon année en 3D](assets/apercu-annee.jpg) | ![Bilan de la semaine](assets/apercu-bilan.jpg) |
+| ![My year in 3D](assets/apercu-annee.jpg) | ![Weekly review](assets/apercu-bilan.jpg) |
 
-| Tâches | Statistiques |
+| Tasks | Statistics |
 | --- | --- |
-| ![Tableau des tâches](assets/apercu-taches.jpg) | ![Statistiques](assets/apercu-stats.jpg) |
+| ![Task board](assets/apercu-taches.jpg) | ![Statistics](assets/apercu-stats.jpg) |
 
-## Lancer le projet
+## Run it locally
 
-Le projet utilise des modules JavaScript et un service worker : il faut l'ouvrir via un petit serveur local (un double-clic sur `index.html` ou `app.html` ne suffit pas).
+The project uses JavaScript modules and a service worker, so it must be served by a small local server (double-clicking `index.html` or `app.html` is not enough).
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Puis ouvrez http://localhost:8000. Vous pouvez aussi utiliser l'extension **Live Server** de VS Code.
+Then open http://localhost:8000. The **Live Server** extension for VS Code works too.
 
-## Mise en ligne
+## Deployment
 
-Le workflow `.github/workflows/pages.yml` publie le site sur **GitHub Pages** à chaque `push` sur `main`.
-Pour l'activer une fois : **Settings → Pages → Source : « GitHub Actions »**.
+The `.github/workflows/pages.yml` workflow publishes the site to **GitHub Pages** on every `push` to `main`.
+Enable it once: **Settings → Pages → Source: "GitHub Actions"**.
 
-À chaque publication, pensez à incrémenter `VERSION` dans `sw.js` pour que les utilisateurs reçoivent la nouvelle version (une notification « Recharger » leur est proposée).
+On each release, bump `VERSION` in `sw.js` so users receive the new version (a "Reload" prompt is shown to them).
 
-## Limites connues
+## Known limits
 
-- Les **rappels** sont envoyés par la page ou l'application installée : sans serveur de notifications push, un navigateur ne peut pas réveiller Momentum tout seul. Sur ordinateur et Android, l'application installée en arrière-plan suffit ; sur iOS, il faut l'ouvrir.
-- La **synchronisation** repose sur un gist privé GitHub : le jeton reste dans le navigateur, à n'utiliser que sur vos propres appareils.
+- **Reminders** are sent by the page or the installed app: without a push server, a browser cannot wake Momentum by itself. On desktop and Android the installed app running in the background is enough; on iOS it has to be open.
+- **Sync** relies on a private GitHub gist: the token stays in the browser, use it only on your own devices.
 
-## Technologies
+## Tech
 
-- HTML, CSS et JavaScript natifs (modules ES), **sans framework ni étape de build**
-- [Three.js](https://threejs.org/) r170 (fourni dans `vendor/`) et shaders GLSL écrits à la main
-- Graphiques en SVG faits maison, service worker, Web App Manifest, Notifications API, CompressionStream, Web Share
-- `localStorage` pour la sauvegarde
+- Native HTML, CSS and JavaScript (ES modules), **no framework, no build step**
+- [Three.js](https://threejs.org/) r170 (vendored in `vendor/`) and hand-written GLSL shaders
+- Home-made SVG charts, service worker, Web App Manifest, Notifications API, CompressionStream, Web Share
+- `localStorage` for persistence
 
 ## Structure
 
 ```
-index.html            → page vitrine (scène 3D de l'année + démo)
-app.html              → l'application
-manifest.webmanifest  → manifeste PWA (icônes, raccourcis)
-sw.js                 → service worker (hors ligne, notifications)
-css/styles.css        → design (thème sombre et clair, responsive)
-js/main.js            → navigation, actions, récompenses, palette de commandes, réglages
-js/views.js           → rendu de chaque page
-js/forms.js           → fenêtres : habitude (modèles, rappels), tâche, note du jour, minuteur
-js/logic.js           → règles : fréquences, jours passés / pauses / vacances, séries, taux, XP, badges
-js/insights.js        → analyse et bilan de la semaine, suggestions applicables
-js/coach.js           → coach IA optionnel (API Claude, depuis le navigateur)
-js/reminders.js       → rappels et notifications
-js/backup.js          → export / import, CSV, code de transfert, copies automatiques, synchro gist
-js/pwa.js             → installation et mises à jour
-js/i18n.js            → traductions fr / es / en
-js/store.js           → données, sauvegarde, démo
-js/scene.js           → fond animé (champ de points Three.js + shaders)
-js/year.js            → scène 3D de l'année (vitrine et page « Mon année », image à partager)
-js/ui.js              → notifications à l'écran
+index.html            → landing page (3D year scene + demo)
+app.html              → the application
+manifest.webmanifest  → PWA manifest (icons, shortcuts)
+sw.js                 → service worker (offline, notifications)
+css/styles.css        → design (dark and light themes, responsive)
+js/main.js            → navigation, actions, rewards, command palette, settings
+js/views.js           → rendering of each page
+js/forms.js           → dialogs: habit (templates, reminders), task, daily note, timer
+js/logic.js           → rules: frequencies, skipped days / pauses / vacations, streaks, rates, XP, badges
+js/insights.js        → weekly insights and review, applicable suggestions
+js/coach.js           → optional AI coach (Claude API, from the browser)
+js/reminders.js       → reminders and notifications
+js/backup.js          → export / import, CSV, transfer code, snapshots, gist sync
+js/pwa.js             → install and updates
+js/i18n.js            → translations en / es / fr
+js/store.js           → data, persistence, demo
+js/scene.js           → animated background (Three.js point field + shaders)
+js/year.js            → 3D year scene (landing page and "My year" page, shareable image)
+js/ui.js              → on-screen notifications
 vendor/               → Three.js
 ```
 
-## Idées pour la suite
+## Ideas for later
 
-- [ ] Notifications push avec un petit serveur (rappels même application fermée, iOS compris)
-- [ ] Widgets d'écran d'accueil (nécessite une application native)
-- [ ] Défis à deux (partage d'une habitude avec un ami, sans compte)
+- [ ] Push notifications with a small server (reminders even when the app is closed, iOS included)
+- [ ] Home-screen widgets (needs a native app)
+- [ ] Challenges with a friend (share a habit, no account)
