@@ -20,7 +20,7 @@ Habits and tasks in one place, with habit streaks that respect non-scheduled day
 
 ## Operating Context
 
-Used in short sessions: morning or evening check-ins on the phone, weekly planning and stats review on a computer. Also opened cold by portfolio visitors, who see the seeded demo data.
+Used in short sessions: morning or evening check-ins on the phone, weekly planning and stats review on a computer. Also opened cold by portfolio visitors, who see the welcome screen (name, language, first habits from templates) and can load sample data from a discreet link.
 
 ## Capabilities and Constraints
 
@@ -41,7 +41,7 @@ Name: Momentum. The owner asked for a professional, minimalist look and called t
 
 ## Evidence on Hand
 
-Deterministic demo data in `js/store.js`. No real users, testimonials or metrics; none may be invented.
+Deterministic sample data in `js/store.js`, loaded only on request (welcome screen link or Settings). No real users, testimonials or metrics; none may be invented.
 
 ## Product Principles
 

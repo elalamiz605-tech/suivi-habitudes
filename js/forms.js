@@ -35,7 +35,7 @@ const radio = (name, value, label, checked) =>
 
 // ---------- Modèles d'habitudes ----------
 
-const TEMPLATES = [
+export const TEMPLATES = [
   { k: 'water', identity: 'body', icon: '💧', cat: 'cat.health', kind: 'count', target: 8, unit: 'tpl.water_unit', color: '#6fc3c9' },
   { k: 'meditate', identity: 'calm', icon: '🧘', cat: 'cat.mind', time: '07:00', color: '#e08a9a' },
   { k: 'read', identity: 'reader', icon: '📚', cat: 'cat.mind', kind: 'count', target: 20, unit: 'tpl.read_unit', time: '21:30', color: '#b39ddb' },

@@ -798,3 +798,22 @@ addTranslations('en', {
   'tpl.id_builder': 'someone who builds', 'tpl.id_money': 'someone in control of their money', 'tpl.id_present': 'someone present for their people', 'tpl.id_free': 'someone free',
   'demo.id_reader': 'someone who reads every day', 'demo.id_athlete': 'an athlete',
 });
+
+addTranslations('fr', {
+  'ob.title': 'Bienvenue dans Momentum', 'ob.lead': 'Une année se construit un jour à la fois. Choisissez vos premières habitudes, vous pourrez tout modifier ensuite.',
+  'ob.name': 'Votre prénom', 'ob.pick': 'Vos premières habitudes', 'ob.pick_hint': '(touchez pour choisir)',
+  'ob.start_one': 'Commencer avec {n} habitude', 'ob.start_other': 'Commencer avec {n} habitudes', 'ob.start_empty': 'Commencer sans habitude', 'ob.privacy': 'Sans compte. Vos données restent sur cet appareil.',
+  'ob.demo': 'Découvrir avec des données d’exemple', 'ob.welcome': 'Bienvenue{name} ! Validez votre première habitude.', 'ob.demo_loaded': 'Données d’exemple chargées. Effacez-les dans Réglages → Données quand vous voulez.',
+});
+addTranslations('es', {
+  'ob.title': 'Bienvenido a Momentum', 'ob.lead': 'Un año se construye un día a la vez. Elige tus primeros hábitos; podrás cambiarlo todo después.',
+  'ob.name': 'Tu nombre', 'ob.pick': 'Tus primeros hábitos', 'ob.pick_hint': '(toca para elegir)',
+  'ob.start_one': 'Empezar con {n} hábito', 'ob.start_other': 'Empezar con {n} hábitos', 'ob.start_empty': 'Empezar sin hábitos', 'ob.privacy': 'Sin cuenta. Tus datos se quedan en este dispositivo.',
+  'ob.demo': 'Explorar con datos de ejemplo', 'ob.welcome': '¡Bienvenido{name}! Marca tu primer hábito.', 'ob.demo_loaded': 'Datos de ejemplo cargados. Bórralos en Ajustes → Datos cuando quieras.',
+});
+addTranslations('en', {
+  'ob.title': 'Welcome to Momentum', 'ob.lead': 'A year is built one day at a time. Pick your first habits; you can change everything later.',
+  'ob.name': 'Your first name', 'ob.pick': 'Your first habits', 'ob.pick_hint': '(tap to choose)',
+  'ob.start_one': 'Start with {n} habit', 'ob.start_other': 'Start with {n} habits', 'ob.start_empty': 'Start without habits', 'ob.privacy': 'No account. Your data stays on this device.',
+  'ob.demo': 'Explore with sample data', 'ob.welcome': 'Welcome{name}! Check off your first habit.', 'ob.demo_loaded': 'Sample data loaded. Erase it in Settings → Data whenever you like.',
+});

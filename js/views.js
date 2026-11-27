@@ -7,7 +7,7 @@ import { hasKey, cachedReview } from './coach.js';
 import { installState } from './pwa.js';
 import { permission as notifPermission, supported as notifSupported } from './reminders.js';
 import { listSnapshots } from './backup.js';
-import { timer } from './forms.js';
+import { timer, TEMPLATES } from './forms.js';
 import {
   esc, dateKey, today, addDays, startOfWeek, weekday, parseKey, fmtFull, fmtShort, fmtMonth, fmtDateTime, fmtClock,
   weekdays, weekdaysShort, pct, norm, relativeDue as relative,
@@ -750,4 +750,37 @@ export function viewReview(s, ui = {}) {
       ${r.rows.map((x) => `<tr style="--c:${x.h.color}"><td>${tick(x.h.color)}${esc(x.h.name)}</td><td class="num">${x.ok}/${x.req}</td><td class="num">${x.rate === null ? '—' : pct(x.rate)}</td><td class="num ${x.trend === null ? '' : x.trend > 0 ? 'up' : x.trend < 0 ? 'down' : ''}">${x.trend === null ? '—' : (x.trend > 0 ? '+' : '') + x.trend}</td><td class="num">${x.streak}</td></tr>`).join('')}
     </tbody></table>` : `<p class="muted">${t('stats.no_habit')}</p>`}
   </section>`;
+}
+
+// ---------- Bienvenue (premier lancement) ----------
+
+/** L'écran de bienvenue s'affiche tant qu'aucune habitude n'existe et que l'accueil n'a pas été passé. */
+export const needsOnboarding = (s) => !s.settings.onboarded && !s.habits.length && !s.tasks.length;
+
+export function viewWelcome(s, ui = {}) {
+  const picks = ui.obPicks || new Set();
+  return `
+  <div class="welcome">
+    <div class="welcome-card">
+      <div class="welcome-brand"><img src="assets/favicon.svg" alt="" width="36" height="36"><span>Momentum</span></div>
+      <h1>${t('ob.title')}</h1>
+      <p class="lead">${t('ob.lead')}</p>
+
+      <div class="field-row">
+        <label class="field grow"><span>${t('ob.name')} <small>${t('common.optional')}</small></span><input id="ob-name" value="${esc(ui.obName || '')}" maxlength="30" placeholder="${t('settings.name_ph')}" autocomplete="given-name"></label>
+        <label class="field"><span>${t('settings.lang')}</span><select id="ob-lang">${LANGS.map((l) => `<option value="${l.id}" ${l.id === lang() ? 'selected' : ''}>${l.label}</option>`).join('')}</select></label>
+      </div>
+
+      <div class="field">
+        <span class="label">${t('ob.pick')} <small>${t('ob.pick_hint')}</small></span>
+        <div class="ob-grid">${TEMPLATES.map((x, i) => `<button type="button" class="ob-chip ${picks.has(i) ? 'on' : ''}" data-action="ob-toggle" data-i="${i}" aria-pressed="${picks.has(i)}"><span class="ob-ic">${x.icon}</span><b>${esc(t(`tpl.${x.k}`))}</b><small>${esc(t(x.cat))}${x.kind === 'count' ? ` · ${x.target} ${esc(t(x.unit))}` : x.kind === 'quit' ? ` · ${esc(t('form.kind_quit'))}` : ''}</small></button>`).join('')}</div>
+      </div>
+
+      <div class="welcome-actions">
+        <button class="btn primary lg" data-action="ob-start">${icon('check')}${picks.size ? tn(picks.size, 'ob.start') : t('ob.start_empty')}</button>
+        <p class="muted">${t('ob.privacy')}</p>
+      </div>
+      <p class="ob-demo"><button class="link" data-action="ob-demo">${t('ob.demo')}${icon('chev-r')}</button></p>
+    </div>
+  </div>`;
 }

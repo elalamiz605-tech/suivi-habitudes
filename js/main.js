@@ -6,7 +6,7 @@ import * as V from './views.js';
 import * as F from './forms.js';
 import * as B from './backup.js';
 import { toast } from './ui.js';
-import { t, onLangChange } from './i18n.js';
+import { t, tn, onLangChange } from './i18n.js';
 import { initPWA, promptInstall, onInstallChange } from './pwa.js';
 import { startReminders, requestPermission, permission, notify } from './reminders.js';
 import { applySuggestion, reviewWeek } from './insights.js';
@@ -26,7 +26,7 @@ const VIEWS = { today: V.viewToday, habits: V.viewHabits, tasks: V.viewTasks, st
 const TITLE_KEY = { review: 'review.title' };
 
 const viewEl = document.getElementById('view');
-const ui = { habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio', stamp: '', yearStage: 0, aiBusy: false, aiError: '' };
+const ui = { habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio', stamp: '', yearStage: 0, aiBusy: false, aiError: '', obPicks: new Set([0, 1, 2]), obName: '' };
 let route = currentRoute();
 let entering = true;
 let scene = null;
@@ -84,8 +84,11 @@ function renderNav() {
 function render() {
   const s = st();
   viewEl.classList.toggle('enter', entering);
-  viewEl.innerHTML = VIEWS[route](s, ui);
+  const onboarding = V.needsOnboarding(s);
+  document.body.classList.toggle('onboarding', onboarding);
+  viewEl.innerHTML = onboarding ? V.viewWelcome(s, ui) : VIEWS[route](s, ui);
   renderNav();
+  if (onboarding) { document.title = 'Momentum'; unmountYear(); return; }
 
   ui.stamp = '';
   entering = false;
@@ -271,6 +274,42 @@ const actions = {
     toast(t('recover.mini_done', { name: h.name }), { action: { label: t('common.undo'), fn: () => { delete h.mini[k]; delete h.log[k]; S.commit(); } } });
   },
   'apply-suggestion': (el) => applySuggestion(el.dataset.id),
+  'ob-toggle'(el) {
+    const i = Number(el.dataset.i);
+    if (ui.obPicks.has(i)) ui.obPicks.delete(i); else ui.obPicks.add(i);
+    ui.obName = document.getElementById('ob-name')?.value || ui.obName;
+    el.classList.toggle('on', ui.obPicks.has(i));
+    el.setAttribute('aria-pressed', ui.obPicks.has(i));
+    const btn = viewEl.querySelector('[data-action=ob-start]');
+    if (btn) btn.innerHTML = `${icon('check')}${ui.obPicks.size ? tn(ui.obPicks.size, 'ob.start') : t('ob.start_empty')}`;
+  },
+  'ob-start'() {
+    const s = st();
+    const name = document.getElementById('ob-name')?.value.trim() || '';
+    [...ui.obPicks].sort((a, b) => a - b).forEach((i, idx) => {
+      const x = F.TEMPLATES[i];
+      if (!x) return;
+      s.habits.push(S.newHabit({
+        name: t(`tpl.${x.k}`), category: t(x.cat), color: x.color || S.COLORS[idx % S.COLORS.length],
+        kind: x.kind || 'check', target: x.kind === 'count' ? x.target : 1, unit: x.kind === 'count' ? t(x.unit) : '',
+        schedule: { ...S.newHabit().schedule, type: x.freq || 'daily', perWeek: x.perWeek || 3, days: x.days || [0, 1, 2, 3, 4] },
+        time: x.time || '', identity: x.identity ? t(`tpl.id_${x.identity}`) : '',
+      }));
+    });
+    s.settings.name = name;
+    s.settings.onboarded = true;
+    delete s.fresh;
+    S.commit();
+    go('today');
+    toast(t('ob.welcome', { name: name ? `, ${name}` : '' }));
+  },
+  'ob-demo'() {
+    const d = S.demoState();
+    d.settings.onboarded = true;
+    S.replaceState(d);
+    go('today');
+    toast(t('ob.demo_loaded'));
+  },
   async 'ai-review'() {
     ui.aiBusy = true; ui.aiError = '';
     render();
@@ -361,7 +400,9 @@ const actions = {
   },
   'load-demo'() {
     if (confirm(t('settings.demo_confirm'))) {
-      S.replaceState(S.demoState());
+      const d = S.demoState();
+      d.settings.onboarded = true;
+      S.replaceState(d);
       toast(t('settings.demo_loaded'));
     }
   },
@@ -452,6 +493,8 @@ const settingHandlers = {
 
 viewEl.addEventListener('change', (e) => {
   const el = e.target;
+  if (el.id === 'ob-lang') { ui.obName = document.getElementById('ob-name')?.value || ''; S.updateSettings({ lang: el.value }); return; }
+  if (el.id === 'ob-name') { ui.obName = el.value; return; }
   const map = { 'task-prio': 'taskPrio', 'task-proj': 'taskProj', 'task-sort': 'taskSort' };
   if (map[el.id]) {
     ui[map[el.id]] = el.value;
@@ -570,12 +613,12 @@ function openPalette() {
 document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
     e.preventDefault();
-    openPalette();
+    if (!document.body.classList.contains('onboarding')) openPalette();
     return;
   }
   const typing = e.target.closest('input, textarea, select, [contenteditable]');
   const dialogOpen = document.querySelector('dialog[open]');
-  if (typing || dialogOpen || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (typing || dialogOpen || e.ctrlKey || e.metaKey || e.altKey || document.body.classList.contains('onboarding')) return;
   const key = e.key.toLowerCase();
   if (key === 'n') { e.preventDefault(); F.openHabitModal(); }
   else if (key === 't') { e.preventDefault(); F.openTaskModal(); }

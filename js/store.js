@@ -65,6 +65,7 @@ export function defaultSettings() {
     vacations: [], // [{ from, to }] ; to = '' → en cours
     heatmap: 'short', // short (20 semaines) | year
     installDismissed: false,
+    onboarded: false, // écran de bienvenue vu (prénom, langue, premières habitudes)
     neverTwice: true, // mode « jamais deux fois » : reprise guidée après un raté
     ai: { key: '', model: 'claude-opus-5-5' }, // coach IA optionnel (clé stockée dans ce navigateur)
     lastReviewWeek: '', // dernière semaine dont le bilan a été consulté
@@ -201,11 +202,11 @@ function load() {
       if (s && s.habits.length) return s;
     }
   } catch (_) { /* stockage indisponible ou données illisibles */ }
+  // Premier lancement : application vide, l'écran de bienvenue guide l'utilisateur.
   const d = emptyState();
   applySettings(d);
-  const demo = demoState();
-  demo.fresh = true; // premier lancement : données de démonstration
-  return demo;
+  d.fresh = true;
+  return d;
 }
 
 export const store = { state: load() };
@@ -229,6 +230,7 @@ export function commit() {
 
 export function replaceState(s, { silent = false } = {}) {
   store.state = normalize(s);
+  delete store.state.fresh;
   applySettings(store.state);
   if (silent) save();
   else commit();
