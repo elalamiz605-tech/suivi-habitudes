@@ -31,6 +31,8 @@ const ui = { pushOn: false, buddies: [], inviteCode: '', habitCat: '', taskQ: ''
 let route = currentRoute();
 let entering = true;
 let scene = null;
+let mood = 'normal';
+function setMood(x) { mood = x; scene?.setMood(x); }
 let lastLevel = 0;
 const st = () => S.store.state;
 
@@ -58,6 +60,7 @@ function startScene() {
     .then(({ createScene }) => {
       scene = createScene(document.getElementById('bg3d'), { motion: st().settings.motion && !prefersReducedMotion(), theme: resolvedTheme() });
       scene.setRoute(route);
+      scene.setMood(mood);
       scene.setProgress(L.todayProgress(st().habits.filter((h) => !h.archived)).ratio);
       document.body.classList.add('has-3d');
     })
@@ -707,6 +710,7 @@ function splash() {
   const s = st();
   if (V.needsOnboarding(s)) { el.remove(); return; }
   document.body.classList.add('introducing');
+  setMood('calm');
   const stage = document.getElementById('splash-stage');
   const skip = document.getElementById('splash-skip');
   document.getElementById('splash-dots')?.remove();
@@ -728,19 +732,20 @@ function splash() {
   // Phase 1 : le logo bat une fois (tracé de l'arc, battement, halo), le nom lettre par lettre.
   stage.innerHTML = `
     <div class="demo-logo" aria-label="Momentum">
-      <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0c0d10"/><circle class="ring" cx="32" cy="32" r="17" fill="none" stroke-width="5"/><circle class="glow" cx="32" cy="32" r="26"/><path class="arc" d="M32 15a17 17 0 1 1-16.2 22.2" fill="none" stroke-width="5" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><circle class="ring" cx="32" cy="32" r="17" fill="none" stroke-width="5"/><circle class="glow" cx="32" cy="32" r="26"/><path class="arc" d="M32 15a17 17 0 1 1-16.2 22.2" fill="none" stroke-width="5" stroke-linecap="round"/></svg>
       <span class="w">${[...'Momentum'].map((c, i) => `<span style="--i:${i}">${c}</span>`).join('')}</span>
     </div>`;
   skip.textContent = t('intro.skip');
   let closed = false;
   const timers = [];
-  const close = () => { if (closed) return; closed = true; timers.forEach(clearTimeout); el.classList.add('out'); setTimeout(() => { el.remove(); document.body.classList.remove('introducing'); }, 550); };
+  const close = () => { if (closed) return; closed = true; timers.forEach(clearTimeout); el.classList.add('out'); setMood('normal'); setTimeout(() => { el.remove(); document.body.classList.remove('introducing'); }, 550); };
   skip.addEventListener('click', close);
   stage.addEventListener('click', close);
   if (fast) { el.classList.add('fast'); stage.innerHTML = demoHtml; timers.push(setTimeout(close, 1200)); return; }
   const at = (ms, fn) => timers.push(setTimeout(fn, ms));
   // Phase 2 (après le logo) : la journée se valide.
   const LOGO = 2300;
+  at(1300, () => setMood('wake')); // le battement du logo lance l'onde dans la vague
   at(LOGO - 350, () => stage.querySelector('.demo-logo').classList.add('leave'));
   at(LOGO, () => {
     stage.innerHTML = demoHtml;

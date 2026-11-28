@@ -1,7 +1,7 @@
 // Service worker Momentum : l'application fonctionne hors ligne.
 // Stratégie : réseau d'abord (toujours la dernière version quand on est connecté),
 // cache en secours (hors ligne). Les pages et fichiers de l'app sont pré-chargés.
-const VERSION = 'momentum-v17';
+const VERSION = 'momentum-v18';
 const SHELL = [
   './',
   './index.html',

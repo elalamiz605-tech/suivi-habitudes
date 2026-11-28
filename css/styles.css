@@ -977,7 +977,9 @@ details.more > :not(summary) { margin-top: 10px; }
 body.introducing #bg3d { z-index: 150; }
 body.introducing .bg-veil { z-index: 151; opacity: .45; }
 .splash.out { opacity: 0; pointer-events: none; }
-.splash-stage { display: grid; place-items: center; padding: 24px; cursor: pointer; }
+.splash-stage { display: grid; place-items: center; padding: 24px; cursor: pointer; position: relative; }
+.splash-stage::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 55% at 50% 50%, var(--bg) 35%, transparent 100%); pointer-events: none; }
+.splash-stage > * { position: relative; }
 .splash-foot { display: flex; align-items: center; justify-content: space-between; padding: 0 20px max(20px, env(safe-area-inset-bottom)); }
 .splash-dots { display: flex; gap: 6px; }
 .splash-dots i { width: 18px; height: 3px; border-radius: 2px; background: var(--line-2); overflow: hidden; position: relative; }
@@ -1051,7 +1053,7 @@ body.introducing .bg-veil { z-index: 151; opacity: .45; }
 .demo-logo { display: flex; align-items: center; gap: 16px; font-weight: 700; font-size: clamp(30px, 8vw, 40px); letter-spacing: -0.03em; color: var(--text); transition: opacity .35s var(--ease), transform .35s var(--ease); }
 .demo-logo.leave { opacity: 0; transform: scale(.92) translateY(-10px); }
 .demo-logo svg { width: clamp(64px, 16vw, 84px); height: auto; overflow: visible; animation: logo-beat .5s ease 1.25s; }
-.demo-logo .ring { stroke: #2a2e35; opacity: 0; animation: logo-fade .6s ease forwards; }
+.demo-logo .ring { stroke: var(--line-2); opacity: 0; animation: logo-fade .6s ease forwards; }
 .demo-logo .arc { stroke: var(--signal); stroke-dasharray: 81; stroke-dashoffset: 81; animation: logo-draw .9s var(--ease) .2s forwards; }
 .demo-logo .glow { fill: var(--signal); opacity: 0; animation: logo-glow .6s ease 1.25s; }
 .demo-logo .w span { display: inline-block; opacity: 0; transform: translateY(10px); animation: logo-letter .4s var(--ease) forwards; animation-delay: calc(1.3s + var(--i) * .05s); }

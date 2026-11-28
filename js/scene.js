@@ -19,6 +19,8 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
   let shift = 0, shiftTarget = 0;
   let progress = 0, progressTarget = 0;
   let pulse = 0;
+  let calm = 0, calmTarget = 0;        // 1 = vagues discrètes, grises, descendues (intro)
+  let signalOn = 1, signalTarget = 1;  // 0 = ligne orange éteinte
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
   let colors = palette(theme);
 
@@ -41,7 +43,8 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
     ctx.fillStyle = colors.bg;
     ctx.fillRect(0, 0, W, H);
     const step = 6 * dpr;
-    const mid = H * (0.5 + shift) + mouse.y * 14 * dpr;
+    const mid = H * (0.5 + shift + calm * 0.24) + mouse.y * 14 * dpr;
+    const dim = 1 - calm * 0.55;
     const lift = pulse * pulse * H * 0.05;
     const main = 3;
     for (let l = 0; l < LINES; l++) {
@@ -59,14 +62,14 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
       }
       if (isMain) {
         // Halo : un second trait large et pâle, bien moins coûteux qu'un shadowBlur.
-        ctx.strokeStyle = `rgba(${colors.signal}, ${0.1 + progress * 0.15 + pulse * 0.1})`;
+        ctx.strokeStyle = `rgba(${colors.signal}, ${(0.1 + progress * 0.15 + pulse * 0.1) * signalOn})`;
         ctx.lineWidth = (8 + progress * 8 + pulse * 10) * dpr;
         ctx.stroke();
-        ctx.strokeStyle = `rgba(${colors.signal}, ${0.7 + progress * 0.3})`;
+        ctx.strokeStyle = `rgba(${colors.signal}, ${(0.7 + progress * 0.3) * signalOn})`;
         ctx.lineWidth = (1.6 + progress * 1.4 + pulse * 1.5) * dpr;
       } else {
         const near = 1 - Math.abs(l - main) / LINES;
-        ctx.strokeStyle = `rgba(${colors.line}, ${colors.lineAlpha + near * 0.1 + pulse * 0.1})`;
+        ctx.strokeStyle = `rgba(${colors.line}, ${(colors.lineAlpha + near * 0.1 + pulse * 0.1) * dim})`;
         ctx.lineWidth = 1.2 * dpr;
       }
       ctx.stroke();
@@ -80,6 +83,8 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
     progress += (progressTarget - progress) * Math.min(1, dt * 2.5);
     shift += (shiftTarget - shift) * Math.min(1, dt * 2);
     if (pulse > 0) pulse = Math.max(0, pulse - dt * 0.7);
+    calm += (calmTarget - calm) * Math.min(1, dt * 1.6);
+    signalOn += (signalTarget - signalOn) * Math.min(1, dt * 2.2);
     mouse.x += (mouse.tx - mouse.x) * dt * 2;
     mouse.y += (mouse.ty - mouse.y) * dt * 2;
     draw();
@@ -105,6 +110,8 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
   function renderStill() {
     progress = progressTarget;
     shift = shiftTarget;
+    calm = calmTarget;
+    signalOn = signalTarget;
     pulse = 0;
     draw();
   }
@@ -135,6 +142,13 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
     },
     burst() {
       if (running) pulse = 1;
+    },
+    // 'calm' : intro, lignes grises et discrètes ; 'wake' : la ligne orange s'allume ; 'normal' : l'app.
+    setMood(m) {
+      calmTarget = m === 'normal' ? 0 : 1;
+      signalTarget = m === 'calm' ? 0 : 1;
+      if (m === 'wake') this.burst();
+      if (!running) renderStill();
     },
     setTheme(th) {
       colors = palette(th);
