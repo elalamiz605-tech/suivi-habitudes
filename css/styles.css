@@ -967,3 +967,7 @@ details.more > :not(summary) { margin-top: 10px; }
 .buddy-card.perfect { border-color: color-mix(in srgb, var(--signal) 45%, transparent); }
 .buddy-streak { display: inline-flex; align-items: center; gap: 4px; font: 500 12px var(--mono); color: var(--text-2); }
 .buddy-streak .ic { width: 13px; height: 13px; color: var(--signal); }
+
+.ob-cat + .ob-cat { margin-top: 14px; }
+.ob-cat .group-title { margin: 0 2px 6px; }
+.welcome .field > .ob-cat:first-of-type { margin-top: 6px; }

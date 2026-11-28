@@ -8,7 +8,7 @@ import { isSignedIn, DEFAULT_URL, pushSupported, buddiesCached } from './cloud.j
 import { installState } from './pwa.js';
 import { permission as notifPermission, supported as notifSupported } from './reminders.js';
 import { listSnapshots } from './backup.js';
-import { timer, TEMPLATES } from './forms.js';
+import { timer, TEMPLATES, TEMPLATE_CATS } from './forms.js';
 import {
   esc, dateKey, today, addDays, startOfWeek, weekday, parseKey, fmtFull, fmtShort, fmtMonth, fmtDateTime, fmtClock,
   weekdays, weekdaysShort, pct, norm, relativeDue as relative,
@@ -833,7 +833,7 @@ export function viewWelcome(s, ui = {}) {
 
       <div class="field">
         <span class="label">${t('ob.pick')} <small>${t('ob.pick_hint')}</small></span>
-        <div class="ob-grid">${TEMPLATES.map((x, i) => `<button type="button" class="ob-chip ${picks.has(i) ? 'on' : ''}" data-action="ob-toggle" data-i="${i}" aria-pressed="${picks.has(i)}"><span class="ob-ic">${x.icon}</span><b>${esc(t(`tpl.${x.k}`))}</b><small>${esc(t(x.cat))}${x.kind === 'count' ? ` · ${x.target} ${esc(t(x.unit))}` : x.kind === 'quit' ? ` · ${esc(t('form.kind_quit'))}` : ''}</small></button>`).join('')}</div>
+        ${TEMPLATE_CATS.map((cat) => `<div class="ob-cat"><h3 class="group-title">${esc(t(cat))}</h3><div class="ob-grid">${TEMPLATES.map((x, i) => [x, i]).filter(([x]) => x.cat === cat).map(([x, i]) => `<button type="button" class="ob-chip ${picks.has(i) ? 'on' : ''}" data-action="ob-toggle" data-i="${i}" aria-pressed="${picks.has(i)}"><span class="ob-ic">${x.icon}</span><b>${esc(t(`tpl.${x.k}`))}</b><small>${x.kind === 'count' ? `${x.target} ${esc(t(x.unit))}` : x.kind === 'quit' ? esc(t('form.kind_quit')) : x.freq === 'weekly' ? esc(t('sched.weekly', { n: x.perWeek })) : x.freq === 'interval' ? esc(t('sched.interval', { n: x.every })) : x.time ? x.time : esc(t('sched.daily'))}</small></button>`).join('')}</div></div>`).join('')}
       </div>
 
       <div class="welcome-actions">

@@ -98,11 +98,11 @@ export function demoState() {
   const fr = (key) => t(key);
 
   const habits = [
-    newHabit({ name: fr('demo.water'), icon: '💧', color: '#6fc3c9', category: fr('cat.health'), kind: 'count', target: 8, unit: fr('tpl.water_unit'), createdAt: created }),
+    newHabit({ name: fr('demo.water'), icon: '💧', color: '#6fc3c9', category: fr('cat.health'), kind: 'count', target: 8, unit: fr('tpl.u_glasses'), createdAt: created }),
     newHabit({ name: fr('demo.meditate'), icon: '🧘', color: '#e08a9a', category: fr('cat.mind'), schedule: { ...newHabit().schedule, type: 'days', days: [0, 1, 2, 3, 4] }, time: '07:00', reminders: ['07:00'], createdAt: created }),
     newHabit({ name: fr('demo.sport'), icon: '🏋️', color: '#8fbf8a', category: fr('cat.health'), schedule: { ...newHabit().schedule, type: 'weekly', perWeek: 3 }, time: '18:30', identity: fr('demo.id_athlete'), createdAt: created }),
     newHabit({ name: fr('demo.read'), icon: '📚', color: '#b39ddb', category: fr('cat.mind'), time: '21:30', reminders: ['21:30'], identity: fr('demo.id_reader'), createdAt: created }),
-    newHabit({ name: fr('demo.code'), icon: '💻', color: '#d9b36c', category: fr('cat.career'), schedule: { ...newHabit().schedule, type: 'days', days: [0, 1, 2, 3, 4, 5] }, createdAt: created }),
+    newHabit({ name: fr('demo.walk'), icon: '🚶', color: '#d9b36c', category: fr('cat.health'), kind: 'count', target: 30, unit: fr('tpl.u_minutes'), identity: fr('tpl.id_body'), createdAt: created }),
     newHabit({ name: fr('demo.nosugar'), icon: '🚫', color: '#e6e8eb', category: fr('cat.health'), kind: 'quit', createdAt: k(-20) }),
   ];
   const odds = [0.85, 0.8, 0.45, 0.72, 0.8, 0.9];

@@ -27,7 +27,7 @@ const VIEWS = { today: V.viewToday, habits: V.viewHabits, tasks: V.viewTasks, st
 const TITLE_KEY = { review: 'review.title' };
 
 const viewEl = document.getElementById('view');
-const ui = { pushOn: false, buddies: [], inviteCode: '', habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio', stamp: '', yearStage: 0, aiBusy: false, aiError: '', obPicks: new Set([0, 1, 2]), obName: '' };
+const ui = { pushOn: false, buddies: [], inviteCode: '', habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio', stamp: '', yearStage: 0, aiBusy: false, aiError: '', obPicks: new Set([0, 1, 10]), obName: '' };
 let route = currentRoute();
 let entering = true;
 let scene = null;
@@ -295,7 +295,7 @@ const actions = {
       s.habits.push(S.newHabit({
         name: t(`tpl.${x.k}`), category: t(x.cat), color: x.color || S.COLORS[idx % S.COLORS.length],
         kind: x.kind || 'check', target: x.kind === 'count' ? x.target : 1, unit: x.kind === 'count' ? t(x.unit) : '',
-        schedule: { ...S.newHabit().schedule, type: x.freq || 'daily', perWeek: x.perWeek || 3, days: x.days || [0, 1, 2, 3, 4] },
+        schedule: { ...S.newHabit().schedule, type: x.freq || 'daily', perWeek: x.perWeek || 3, every: x.every || 2, days: x.days || [0, 1, 2, 3, 4] },
         time: x.time || '', identity: x.identity ? t(`tpl.id_${x.identity}`) : '',
       }));
     });

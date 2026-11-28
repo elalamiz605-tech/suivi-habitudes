@@ -36,22 +36,55 @@ const radio = (name, value, label, checked) =>
 // ---------- Modèles d'habitudes ----------
 
 export const TEMPLATES = [
-  { k: 'water', identity: 'body', icon: '💧', cat: 'cat.health', kind: 'count', target: 8, unit: 'tpl.water_unit', color: '#6fc3c9' },
-  { k: 'meditate', identity: 'calm', icon: '🧘', cat: 'cat.mind', time: '07:00', color: '#e08a9a' },
-  { k: 'read', identity: 'reader', icon: '📚', cat: 'cat.mind', kind: 'count', target: 20, unit: 'tpl.read_unit', time: '21:30', color: '#b39ddb' },
+  // Santé
+  { k: 'water', identity: 'body', icon: '💧', cat: 'cat.health', kind: 'count', target: 8, unit: 'tpl.u_glasses', color: '#6fc3c9' },
+  { k: 'walk', identity: 'body', icon: '🚶', cat: 'cat.health', kind: 'count', target: 30, unit: 'tpl.u_minutes', color: '#8fbf8a' },
   { k: 'sport', identity: 'athlete', icon: '🏋️', cat: 'cat.health', freq: 'weekly', perWeek: 3, color: '#8fbf8a' },
-  { k: 'walk', identity: 'body', icon: '🚶', cat: 'cat.health', kind: 'count', target: 30, unit: 'tpl.walk_unit', color: '#8fbf8a' },
-  { k: 'stretch', identity: 'body', icon: '🤸', cat: 'cat.health', kind: 'count', target: 5, unit: 'tpl.walk_unit', color: '#d9b36c' },
+  { k: 'stretch', identity: 'body', icon: '🤸', cat: 'cat.health', kind: 'count', target: 5, unit: 'tpl.u_minutes', color: '#d9b36c' },
   { k: 'sleep', identity: 'rested', icon: '🌙', cat: 'cat.health', time: '23:00', color: '#7ea6e0' },
-  { k: 'journal', identity: 'writer', icon: '📝', cat: 'cat.mind', time: '22:00', color: '#e6e8eb' },
-  { k: 'language', identity: 'learner', icon: '🗣️', cat: 'cat.career', kind: 'count', target: 15, unit: 'tpl.language_unit', color: '#7ea6e0' },
-  { k: 'code', identity: 'builder', icon: '💻', cat: 'cat.career', kind: 'count', target: 60, unit: 'tpl.code_unit', freq: 'days', days: [0, 1, 2, 3, 4], color: '#d9b36c' },
-  { k: 'budget', identity: 'money', icon: '💶', cat: 'cat.money', freq: 'weekly', perWeek: 1, color: '#d9b36c' },
-  { k: 'call', identity: 'present', icon: '📞', cat: 'cat.social', freq: 'weekly', perWeek: 2, color: '#e08a9a' },
+  { k: 'fruits', identity: 'body', icon: '🥦', cat: 'cat.health', kind: 'count', target: 5, unit: 'tpl.u_portions', color: '#8fbf8a' },
+  { k: 'meds', identity: 'body', icon: '💊', cat: 'cat.health', time: '08:00', color: '#e08a9a' },
   { k: 'nosugar', identity: 'body', icon: '🚫', cat: 'cat.health', kind: 'quit', color: '#ff5b3a' },
-  { k: 'noscreen', identity: 'rested', icon: '📵', cat: 'cat.mind', kind: 'quit', color: '#ff5b3a' },
   { k: 'nosmoke', identity: 'free', icon: '🚭', cat: 'cat.health', kind: 'quit', color: '#ff5b3a' },
+  { k: 'noalcohol', identity: 'free', icon: '🍷', cat: 'cat.health', kind: 'quit', color: '#ff5b3a' },
+  // Esprit
+  { k: 'meditate', identity: 'calm', icon: '🧘', cat: 'cat.mind', time: '07:00', color: '#e08a9a' },
+  { k: 'journal', identity: 'writer', icon: '📝', cat: 'cat.mind', time: '22:00', color: '#e6e8eb' },
+  { k: 'gratitude', identity: 'calm', icon: '🙏', cat: 'cat.mind', kind: 'count', target: 3, unit: 'tpl.u_things', time: '22:00', color: '#d9b36c' },
+  { k: 'noscreen', identity: 'rested', icon: '📵', cat: 'cat.mind', kind: 'quit', color: '#ff5b3a' },
+  { k: 'nature', identity: 'calm', icon: '🌳', cat: 'cat.mind', freq: 'weekly', perWeek: 2, color: '#8fbf8a' },
+  // Apprendre
+  { k: 'read', identity: 'reader', icon: '📚', cat: 'cat.learning', kind: 'count', target: 20, unit: 'tpl.u_pages', time: '21:30', color: '#b39ddb' },
+  { k: 'language', identity: 'learner', icon: '🗣️', cat: 'cat.learning', kind: 'count', target: 15, unit: 'tpl.u_minutes', color: '#7ea6e0' },
+  { k: 'course', identity: 'learner', icon: '🎓', cat: 'cat.learning', kind: 'count', target: 30, unit: 'tpl.u_minutes', freq: 'weekly', perWeek: 3, color: '#7ea6e0' },
+  { k: 'instrument', identity: 'musician', icon: '🎸', cat: 'cat.learning', kind: 'count', target: 20, unit: 'tpl.u_minutes', color: '#b39ddb' },
+  // Carrière
+  { k: 'deepwork', identity: 'focused', icon: '🎯', cat: 'cat.career', kind: 'count', target: 90, unit: 'tpl.u_minutes', freq: 'days', days: [0, 1, 2, 3, 4], color: '#d9b36c' },
+  { k: 'plan', identity: 'focused', icon: '🗓️', cat: 'cat.career', time: '18:00', freq: 'days', days: [0, 1, 2, 3, 4], color: '#e6e8eb' },
+  { k: 'inbox', identity: 'focused', icon: '📬', cat: 'cat.career', freq: 'days', days: [0, 1, 2, 3, 4], color: '#7ea6e0' },
+  { k: 'network', identity: 'builder', icon: '🤝', cat: 'cat.career', freq: 'weekly', perWeek: 1, color: '#6fc3c9' },
+  // Finances
+  { k: 'budget', identity: 'money', icon: '💶', cat: 'cat.money', freq: 'weekly', perWeek: 1, color: '#d9b36c' },
+  { k: 'save', identity: 'money', icon: '🐷', cat: 'cat.money', freq: 'weekly', perWeek: 1, color: '#8fbf8a' },
+  { k: 'noimpulse', identity: 'money', icon: '🛍️', cat: 'cat.money', kind: 'quit', color: '#ff5b3a' },
+  // Social
+  { k: 'call', identity: 'present', icon: '📞', cat: 'cat.social', freq: 'weekly', perWeek: 2, color: '#e08a9a' },
+  { k: 'message', identity: 'present', icon: '💬', cat: 'cat.social', color: '#e08a9a' },
+  { k: 'date', identity: 'present', icon: '❤️', cat: 'cat.social', freq: 'weekly', perWeek: 1, color: '#ff5b3a' },
+  { k: 'family', identity: 'present', icon: '🍽️', cat: 'cat.social', freq: 'weekly', perWeek: 3, color: '#d9b36c' },
+  // Maison
+  { k: 'bed', identity: 'tidy', icon: '🛏️', cat: 'cat.home', time: '08:00', color: '#e6e8eb' },
+  { k: 'tidy', identity: 'tidy', icon: '🧹', cat: 'cat.home', kind: 'count', target: 10, unit: 'tpl.u_minutes', color: '#6fc3c9' },
+  { k: 'cook', identity: 'cook', icon: '🍳', cat: 'cat.home', freq: 'weekly', perWeek: 5, color: '#d9b36c' },
+  { k: 'plants', identity: 'tidy', icon: '🪴', cat: 'cat.home', freq: 'interval', every: 3, color: '#8fbf8a' },
+  { k: 'clean', identity: 'tidy', icon: '🧽', cat: 'cat.home', freq: 'weekly', perWeek: 1, color: '#7ea6e0' },
+  // Créativité
+  { k: 'write', identity: 'writer', icon: '✍️', cat: 'cat.creative', kind: 'count', target: 300, unit: 'tpl.u_words', color: '#b39ddb' },
+  { k: 'draw', identity: 'creative', icon: '🎨', cat: 'cat.creative', kind: 'count', target: 15, unit: 'tpl.u_minutes', color: '#e08a9a' },
+  { k: 'photo', identity: 'creative', icon: '📷', cat: 'cat.creative', color: '#6fc3c9' },
+  { k: 'project', identity: 'builder', icon: '🛠️', cat: 'cat.creative', kind: 'count', target: 30, unit: 'tpl.u_minutes', freq: 'weekly', perWeek: 3, color: '#d9b36c' },
 ];
+export const TEMPLATE_CATS = ['cat.health', 'cat.mind', 'cat.learning', 'cat.career', 'cat.money', 'cat.social', 'cat.home', 'cat.creative'];
 
 // ---------- Habitude ----------
 
@@ -67,7 +100,7 @@ export function openHabitModal(existing) {
       ${existing ? '' : `
       <div class="templates">
         <p class="label">${icon('sparkle')}${t('form.templates')} <small>${t('form.templates_hint')}</small></p>
-        <div class="tpl-row">${TEMPLATES.map((x, i) => `<button type="button" class="chip" data-tpl="${i}">${x.icon} ${esc(t(`tpl.${x.k}`))}</button>`).join('')}</div>
+        <div class="tpl-row">${TEMPLATES.map((x, i) => `<button type="button" class="chip" data-tpl="${i}" title="${esc(t(x.cat))}">${x.icon} ${esc(t(`tpl.${x.k}`))}</button>`).join('')}</div>
       </div>`}
 
       <label class="field"><span>${t('form.name')}</span><input name="name" value="${esc(h.name)}" maxlength="50" placeholder="${t('form.name_ph')}" required autofocus></label>
@@ -77,7 +110,7 @@ export function openHabitModal(existing) {
           <div class="swatches">${COLORS.map((c) => `<label class="swatch" style="--c:${c}"><input type="radio" name="color" value="${c}" ${c === h.color ? 'checked' : ''} aria-label="${c}"><span></span></label>`).join('')}</div>
         </fieldset>
         <label class="field grow"><span>${t('form.category')}</span><input name="category" value="${esc(h.category)}" list="cat-list" maxlength="24" placeholder="${t('form.category_ph')}">
-          <datalist id="cat-list">${[...new Set([...cats, t('cat.health'), t('cat.mind'), t('cat.career'), t('cat.money'), t('cat.social')])].map((c) => `<option value="${esc(c)}">`).join('')}</datalist></label>
+          <datalist id="cat-list">${[...new Set([...cats, ...TEMPLATE_CATS.map((c) => t(c))])].map((c) => `<option value="${esc(c)}">`).join('')}</datalist></label>
       </div>
 
       <fieldset class="field"><legend>${t('form.kind')}</legend>
@@ -140,6 +173,7 @@ export function openHabitModal(existing) {
       if (x.kind === 'count') { form.target.value = x.target; form.unit.value = t(x.unit); }
       form.querySelector(`[name=freq][value="${x.freq || 'daily'}"]`).checked = true;
       if (x.perWeek) form.perWeek.value = x.perWeek;
+      if (x.every) form.every.value = x.every;
       if (x.days) form.querySelectorAll('[name=days]').forEach((c) => (c.checked = x.days.includes(Number(c.value))));
       form.time.value = x.time || '';
       form.identity.value = x.identity ? t(`tpl.id_${x.identity}`) : '';

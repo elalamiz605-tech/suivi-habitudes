@@ -252,17 +252,13 @@ addTranslations('fr', {
   'pwa.reload': 'Recharger', 'pwa.offline': 'Vous êtes hors ligne : tout continue de fonctionner, les données restent sur l’appareil.', 'pwa.online': 'De retour en ligne',
 
   // Modèles d'habitudes
-  'tpl.water': 'Boire 8 verres d’eau', 'tpl.water_unit': 'verres', 'tpl.meditate': 'Méditer 10 minutes', 'tpl.read': 'Lire 20 pages', 'tpl.read_unit': 'pages',
-  'tpl.sport': 'Faire du sport', 'tpl.walk': 'Marcher 30 minutes', 'tpl.walk_unit': 'minutes', 'tpl.sleep': 'Coucher avant 23 h', 'tpl.journal': 'Écrire 3 lignes de journal',
-  'tpl.language': 'Apprendre une langue 15 min', 'tpl.language_unit': 'minutes', 'tpl.nosugar': 'Pas de sucre ajouté', 'tpl.noscreen': 'Pas d’écran après 22 h',
-  'tpl.nosmoke': 'Ne pas fumer', 'tpl.stretch': 'S’étirer 5 minutes', 'tpl.budget': 'Noter mes dépenses', 'tpl.call': 'Appeler un proche', 'tpl.code': 'Coder 1 heure', 'tpl.code_unit': 'minutes',
 
   // Catégories de la démo / modèles
   'cat.health': 'Santé', 'cat.mind': 'Esprit', 'cat.career': 'Carrière', 'cat.money': 'Finances', 'cat.social': 'Social',
 });
 
 addTranslations('fr', {
-  'demo.water': "Boire de l'eau", 'demo.meditate': 'Méditation 10 min', 'demo.sport': 'Séance de sport', 'demo.read': 'Lecture 20 pages', 'demo.code': 'Coder 1 heure', 'demo.nosugar': 'Pas de sucre ajouté',
+  'demo.water': "Boire de l'eau", 'demo.meditate': 'Méditation 10 min', 'demo.sport': 'Séance de sport', 'demo.read': 'Lecture 20 pages', 'demo.nosugar': 'Pas de sucre ajouté',
   'demo.journal_note': 'Chapitre 4 terminé, super moment.',
   'demo.t1': 'Mettre en ligne le portfolio GitHub', 'demo.t1_notes': 'Mettre en avant 3 projets avec captures et démos en ligne.',
   'demo.t1_s1': 'Choisir les 3 meilleurs projets', 'demo.t1_s2': 'Écrire des README clairs', 'demo.t1_s3': 'Activer GitHub Pages', 'demo.t1_s4': 'Partager sur LinkedIn',
@@ -458,14 +454,9 @@ addTranslations('es', {
   'pwa.installed': 'Momentum está instalado. Lo encontrarás en tu pantalla de inicio.', 'pwa.update': 'Hay una nueva versión de Momentum lista.',
   'pwa.reload': 'Recargar', 'pwa.offline': 'Sin conexión: todo sigue funcionando y los datos se quedan en el dispositivo.', 'pwa.online': 'De nuevo en línea',
 
-  'tpl.water': 'Beber 8 vasos de agua', 'tpl.water_unit': 'vasos', 'tpl.meditate': 'Meditar 10 minutos', 'tpl.read': 'Leer 20 páginas', 'tpl.read_unit': 'páginas',
-  'tpl.sport': 'Hacer deporte', 'tpl.walk': 'Caminar 30 minutos', 'tpl.walk_unit': 'minutos', 'tpl.sleep': 'Acostarme antes de las 23 h', 'tpl.journal': 'Escribir 3 líneas de diario',
-  'tpl.language': 'Aprender un idioma 15 min', 'tpl.language_unit': 'minutos', 'tpl.nosugar': 'Sin azúcar añadido', 'tpl.noscreen': 'Sin pantallas después de las 22 h',
-  'tpl.nosmoke': 'No fumar', 'tpl.stretch': 'Estirar 5 minutos', 'tpl.budget': 'Anotar mis gastos', 'tpl.call': 'Llamar a un ser querido', 'tpl.code': 'Programar 1 hora', 'tpl.code_unit': 'minutos',
-
   'cat.health': 'Salud', 'cat.mind': 'Mente', 'cat.career': 'Carrera', 'cat.money': 'Finanzas', 'cat.social': 'Social',
 
-  'demo.water': 'Beber agua', 'demo.meditate': 'Meditación 10 min', 'demo.sport': 'Sesión de deporte', 'demo.read': 'Lectura 20 páginas', 'demo.code': 'Programar 1 hora', 'demo.nosugar': 'Sin azúcar añadido',
+  'demo.water': 'Beber agua', 'demo.meditate': 'Meditación 10 min', 'demo.sport': 'Sesión de deporte', 'demo.read': 'Lectura 20 páginas', 'demo.nosugar': 'Sin azúcar añadido',
   'demo.journal_note': 'Capítulo 4 terminado, gran momento.',
   'demo.t1': 'Publicar el portfolio en GitHub', 'demo.t1_notes': 'Destacar 3 proyectos con capturas y demos en línea.',
   'demo.t1_s1': 'Elegir los 3 mejores proyectos', 'demo.t1_s2': 'Escribir README claros', 'demo.t1_s3': 'Activar GitHub Pages', 'demo.t1_s4': 'Compartir en LinkedIn',
@@ -661,14 +652,9 @@ addTranslations('en', {
   'pwa.installed': 'Momentum is installed. Find it on your home screen.', 'pwa.update': 'A new version of Momentum is ready.',
   'pwa.reload': 'Reload', 'pwa.offline': "You're offline: everything keeps working, data stays on the device.", 'pwa.online': 'Back online',
 
-  'tpl.water': 'Drink 8 glasses of water', 'tpl.water_unit': 'glasses', 'tpl.meditate': 'Meditate 10 minutes', 'tpl.read': 'Read 20 pages', 'tpl.read_unit': 'pages',
-  'tpl.sport': 'Work out', 'tpl.walk': 'Walk 30 minutes', 'tpl.walk_unit': 'minutes', 'tpl.sleep': 'In bed before 11 pm', 'tpl.journal': 'Write 3 lines of journal',
-  'tpl.language': 'Learn a language 15 min', 'tpl.language_unit': 'minutes', 'tpl.nosugar': 'No added sugar', 'tpl.noscreen': 'No screens after 10 pm',
-  'tpl.nosmoke': 'No smoking', 'tpl.stretch': 'Stretch 5 minutes', 'tpl.budget': 'Log my expenses', 'tpl.call': 'Call a loved one', 'tpl.code': 'Code 1 hour', 'tpl.code_unit': 'minutes',
-
   'cat.health': 'Health', 'cat.mind': 'Mind', 'cat.career': 'Career', 'cat.money': 'Finance', 'cat.social': 'Social',
 
-  'demo.water': 'Drink water', 'demo.meditate': '10-min meditation', 'demo.sport': 'Workout', 'demo.read': 'Read 20 pages', 'demo.code': 'Code 1 hour', 'demo.nosugar': 'No added sugar',
+  'demo.water': 'Drink water', 'demo.meditate': '10-min meditation', 'demo.sport': 'Workout', 'demo.read': 'Read 20 pages', 'demo.nosugar': 'No added sugar',
   'demo.journal_note': 'Finished chapter 4, great moment.',
   'demo.t1': 'Publish the GitHub portfolio', 'demo.t1_notes': 'Showcase 3 projects with screenshots and live demos.',
   'demo.t1_s1': 'Pick the 3 best projects', 'demo.t1_s2': 'Write clear READMEs', 'demo.t1_s3': 'Enable GitHub Pages', 'demo.t1_s4': 'Share on LinkedIn',
@@ -890,4 +876,50 @@ addTranslations('en', {
   'buddy.none': 'No buddy yet.', 'buddy.invite': 'Generate an invite code', 'buddy.invite_hint': 'Valid 48 h, single use. Your friend pastes it in Settings → Buddy challenge.',
   'buddy.code': 'Received code', 'buddy.join': 'Join', 'buddy.joined': 'You are now buddies with {name}', 'buddy.bad_code': 'Invalid or expired code.', 'buddy.own_code': 'That is your own code.',
   'buddy.best': 'best streak: {n}', 'buddy.today_title': 'Your buddy today', 'buddy.manage': 'Manage', 'buddy.progress': '{done}/{total} habits', 'buddy.nothing': 'nothing planned', 'buddy.perfect': 'perfect day',
+});
+
+addTranslations('fr', {
+  'cat.learning': 'Apprendre', 'cat.home': 'Maison', 'cat.creative': 'Créativité',
+  'tpl.u_glasses': 'verres', 'tpl.u_minutes': 'minutes', 'tpl.u_pages': 'pages', 'tpl.u_portions': 'portions', 'tpl.u_things': 'choses', 'tpl.u_words': 'mots',
+  'tpl.water': 'Boire 8 verres d’eau', 'tpl.walk': 'Marcher 30 minutes', 'tpl.sport': 'Faire du sport', 'tpl.stretch': 'S’étirer 5 minutes', 'tpl.sleep': 'Coucher avant 23 h',
+  'tpl.fruits': '5 fruits et légumes', 'tpl.meds': 'Prendre mes médicaments / vitamines', 'tpl.nosugar': 'Pas de sucre ajouté', 'tpl.nosmoke': 'Ne pas fumer', 'tpl.noalcohol': 'Pas d’alcool',
+  'tpl.meditate': 'Méditer 10 minutes', 'tpl.journal': 'Écrire 3 lignes de journal', 'tpl.gratitude': '3 gratitudes du jour', 'tpl.noscreen': 'Pas d’écran après 22 h', 'tpl.nature': 'Sortir dans la nature',
+  'tpl.read': 'Lire 20 pages', 'tpl.language': 'Apprendre une langue 15 min', 'tpl.course': 'Suivre un cours en ligne', 'tpl.instrument': 'Pratiquer un instrument',
+  'tpl.deepwork': 'Travail concentré 90 min', 'tpl.plan': 'Préparer la journée de demain', 'tpl.inbox': 'Vider ma boîte mail', 'tpl.network': 'Contacter quelqu’un de mon réseau',
+  'tpl.budget': 'Noter mes dépenses', 'tpl.save': 'Mettre de l’argent de côté', 'tpl.noimpulse': 'Pas d’achat impulsif',
+  'tpl.call': 'Appeler un proche', 'tpl.message': 'Prendre des nouvelles d’un ami', 'tpl.date': 'Soirée en couple', 'tpl.family': 'Repas en famille',
+  'tpl.bed': 'Faire mon lit', 'tpl.tidy': 'Ranger 10 minutes', 'tpl.cook': 'Cuisiner maison', 'tpl.plants': 'Arroser les plantes', 'tpl.clean': 'Ménage de la semaine',
+  'tpl.write': 'Écrire 300 mots', 'tpl.draw': 'Dessiner 15 minutes', 'tpl.photo': 'Une photo par jour', 'tpl.project': 'Avancer mon projet perso',
+  'tpl.id_musician': 'un musicien', 'tpl.id_focused': 'quelqu’un de concentré', 'tpl.id_tidy': 'quelqu’un d’organisé', 'tpl.id_cook': 'quelqu’un qui cuisine', 'tpl.id_creative': 'quelqu’un de créatif',
+  'demo.walk': 'Marcher 30 min',
+});
+addTranslations('es', {
+  'cat.learning': 'Aprender', 'cat.home': 'Casa', 'cat.creative': 'Creatividad',
+  'tpl.u_glasses': 'vasos', 'tpl.u_minutes': 'minutos', 'tpl.u_pages': 'páginas', 'tpl.u_portions': 'raciones', 'tpl.u_things': 'cosas', 'tpl.u_words': 'palabras',
+  'tpl.water': 'Beber 8 vasos de agua', 'tpl.walk': 'Caminar 30 minutos', 'tpl.sport': 'Hacer deporte', 'tpl.stretch': 'Estirar 5 minutos', 'tpl.sleep': 'Acostarme antes de las 23 h',
+  'tpl.fruits': '5 frutas y verduras', 'tpl.meds': 'Tomar mis medicinas / vitaminas', 'tpl.nosugar': 'Sin azúcar añadido', 'tpl.nosmoke': 'No fumar', 'tpl.noalcohol': 'Sin alcohol',
+  'tpl.meditate': 'Meditar 10 minutos', 'tpl.journal': 'Escribir 3 líneas de diario', 'tpl.gratitude': '3 gratitudes del día', 'tpl.noscreen': 'Sin pantallas después de las 22 h', 'tpl.nature': 'Salir a la naturaleza',
+  'tpl.read': 'Leer 20 páginas', 'tpl.language': 'Aprender un idioma 15 min', 'tpl.course': 'Seguir un curso en línea', 'tpl.instrument': 'Practicar un instrumento',
+  'tpl.deepwork': 'Trabajo concentrado 90 min', 'tpl.plan': 'Preparar el día de mañana', 'tpl.inbox': 'Vaciar el correo', 'tpl.network': 'Contactar a alguien de mi red',
+  'tpl.budget': 'Anotar mis gastos', 'tpl.save': 'Ahorrar dinero', 'tpl.noimpulse': 'Sin compras impulsivas',
+  'tpl.call': 'Llamar a un ser querido', 'tpl.message': 'Escribir a un amigo', 'tpl.date': 'Noche en pareja', 'tpl.family': 'Comida en familia',
+  'tpl.bed': 'Hacer la cama', 'tpl.tidy': 'Ordenar 10 minutos', 'tpl.cook': 'Cocinar en casa', 'tpl.plants': 'Regar las plantas', 'tpl.clean': 'Limpieza semanal',
+  'tpl.write': 'Escribir 300 palabras', 'tpl.draw': 'Dibujar 15 minutos', 'tpl.photo': 'Una foto al día', 'tpl.project': 'Avanzar mi proyecto personal',
+  'tpl.id_musician': 'un músico', 'tpl.id_focused': 'alguien concentrado', 'tpl.id_tidy': 'alguien organizado', 'tpl.id_cook': 'alguien que cocina', 'tpl.id_creative': 'alguien creativo',
+  'demo.walk': 'Caminar 30 min',
+});
+addTranslations('en', {
+  'cat.learning': 'Learning', 'cat.home': 'Home', 'cat.creative': 'Creativity',
+  'tpl.u_glasses': 'glasses', 'tpl.u_minutes': 'minutes', 'tpl.u_pages': 'pages', 'tpl.u_portions': 'portions', 'tpl.u_things': 'things', 'tpl.u_words': 'words',
+  'tpl.water': 'Drink 8 glasses of water', 'tpl.walk': 'Walk 30 minutes', 'tpl.sport': 'Work out', 'tpl.stretch': 'Stretch 5 minutes', 'tpl.sleep': 'In bed before 11 pm',
+  'tpl.fruits': '5 fruits and vegetables', 'tpl.meds': 'Take my meds / vitamins', 'tpl.nosugar': 'No added sugar', 'tpl.nosmoke': 'No smoking', 'tpl.noalcohol': 'No alcohol',
+  'tpl.meditate': 'Meditate 10 minutes', 'tpl.journal': 'Write 3 lines of journal', 'tpl.gratitude': '3 things I am grateful for', 'tpl.noscreen': 'No screens after 10 pm', 'tpl.nature': 'Get out in nature',
+  'tpl.read': 'Read 20 pages', 'tpl.language': 'Learn a language 15 min', 'tpl.course': 'Follow an online course', 'tpl.instrument': 'Practice an instrument',
+  'tpl.deepwork': 'Deep work 90 min', 'tpl.plan': 'Plan tomorrow', 'tpl.inbox': 'Clear my inbox', 'tpl.network': 'Reach out to someone in my network',
+  'tpl.budget': 'Log my expenses', 'tpl.save': 'Put money aside', 'tpl.noimpulse': 'No impulse purchases',
+  'tpl.call': 'Call a loved one', 'tpl.message': 'Check in on a friend', 'tpl.date': 'Date night', 'tpl.family': 'Family meal',
+  'tpl.bed': 'Make my bed', 'tpl.tidy': 'Tidy up 10 minutes', 'tpl.cook': 'Cook at home', 'tpl.plants': 'Water the plants', 'tpl.clean': 'Weekly cleaning',
+  'tpl.write': 'Write 300 words', 'tpl.draw': 'Draw 15 minutes', 'tpl.photo': 'One photo a day', 'tpl.project': 'Move my side project forward',
+  'tpl.id_musician': 'a musician', 'tpl.id_focused': 'someone focused', 'tpl.id_tidy': 'someone organised', 'tpl.id_cook': 'someone who cooks', 'tpl.id_creative': 'someone creative',
+  'demo.walk': 'Walk 30 min',
 });
