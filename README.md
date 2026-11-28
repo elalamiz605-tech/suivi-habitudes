@@ -43,6 +43,10 @@
 - **XP and levels**, **14 badges** to unlock (7-, 30- and 100-day streaks, perfect day, 100 check-ins, 7 notes, 5 rebounds, 10 votes…).
 - **CSV export** of the whole history (date, habit, value, mood, note).
 
+### ☁️ Momentum Cloud account (optional)
+- Sign in from Settings to **sync across devices**: the account's data wins at first sign-in (with confirmation if this device already has check-ins), then every change is pushed automatically and conflicts between devices are resolved by the most recent version.
+- Server: [momentum-cloud](https://github.com/elalamiz605-tech/momentum-cloud) (Node.js, Express, PostgreSQL). The server address can be changed in Settings to self-host it. Local secrets (gist token, Claude key) never leave the device.
+
 ### 💾 Backup and sync (no account)
 - **JSON export / import**, **share** the backup (Web Share on mobile).
 - Compressed **transfer code** to paste into Momentum on another device.

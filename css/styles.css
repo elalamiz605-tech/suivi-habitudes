@@ -940,3 +940,11 @@ body.onboarding .view { margin-left: 0; max-width: none; padding: 32px 16px 60px
   .welcome-actions .btn { width: 100%; }
 }
 @media (max-width: 420px) { .ob-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Compte Momentum Cloud ---------- */
+.cloud-form { display: grid; gap: 12px; }
+details.more summary { cursor: pointer; color: var(--text-3); font-size: 12.5px; list-style: none; }
+details.more summary::-webkit-details-marker { display: none; }
+details.more summary::before { content: '▸ '; }
+details.more[open] summary::before { content: '▾ '; }
+details.more > :not(summary) { margin-top: 10px; }

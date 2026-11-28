@@ -11,6 +11,7 @@ import { initPWA, promptInstall, onInstallChange } from './pwa.js';
 import { startReminders, requestPermission, permission, notify } from './reminders.js';
 import { applySuggestion, reviewWeek } from './insights.js';
 import { writeReview } from './coach.js';
+import * as C from './cloud.js';
 import { dateKey, today, norm, esc, prefersReducedMotion, fmtClock } from './utils.js';
 
 const NAV = [
@@ -216,6 +217,7 @@ S.subscribe(() => {
   checkRewards();
   render();
   B.autoSync('change');
+  C.autoCloud('change');
   if (year) year.setData(V.yearData(st()));
 });
 
@@ -391,6 +393,17 @@ const actions = {
   },
   'snapshot-restore': (el) => B.restoreSnapshot(el.dataset.date),
   'sync-push': () => B.pushSync(),
+  async 'cloud-login'(el, e) { await cloudSubmit(C.login); },
+  async 'cloud-register'() { await cloudSubmit(C.register); },
+  'cloud-push': () => C.push(),
+  'cloud-pull': () => C.pull(),
+  async 'cloud-logout'() { await C.logout(); render(); },
+  async 'cloud-logout-all'() { await C.logout({ everywhere: true }); render(); },
+  async 'cloud-delete'() {
+    const pw = prompt(t('cloud.delete_confirm'));
+    if (!pw) return;
+    try { await C.deleteAccount(pw); render(); } catch (err) { toast(err.message); }
+  },
   'sync-pull': () => B.pullSync(),
   'test-notify': () => notify(t('settings.notify_test_title'), t('settings.notify_test_body'), { tag: 'test' }),
   install: () => promptInstall(),
@@ -416,6 +429,7 @@ const actions = {
 
 viewEl.addEventListener('click', (e) => {
   const el = e.target.closest('[data-action]');
+  if (el && el.dataset.action === 'cloud-login') return; // géré par l'événement submit du formulaire
   if (el && actions[el.dataset.action]) {
     e.preventDefault();
     actions[el.dataset.action](el, e);
@@ -480,6 +494,15 @@ const settingHandlers = {
     st().settings.ai.key = el.value.trim();
     S.save();
   },
+  cloudUrl(el) {
+    st().settings.cloud.url = el.value.trim();
+    S.save();
+  },
+  cloudAuto(el) {
+    st().settings.cloud.auto = el.checked;
+    S.save();
+    if (el.checked) C.autoCloud('change');
+  },
   syncToken(el) {
     st().settings.sync.token = el.value.trim();
     S.save();
@@ -537,6 +560,20 @@ viewEl.addEventListener('drop', (e) => {
     if (finishing) toast(t('tasks.done_toast', { title: x.title }));
   } else render();
 });
+
+// Compte Momentum Cloud : connexion / inscription depuis le formulaire des réglages
+async function cloudSubmit(fn) {
+  const form = document.getElementById('cloud-form');
+  if (!form) return;
+  const email = form.querySelector('#cloud-email').value.trim();
+  const password = form.querySelector('#cloud-password').value;
+  const err = form.querySelector('#cloud-error');
+  if (!email || password.length < 8) { err.textContent = t('cloud.err_validation'); err.hidden = false; return; }
+  form.querySelectorAll('button').forEach((b) => (b.disabled = true));
+  err.hidden = true;
+  try { await fn(email, password); render(); } catch (e) { err.textContent = e.message; err.hidden = false; form.querySelectorAll('button').forEach((b) => (b.disabled = false)); }
+}
+viewEl.addEventListener('submit', (e) => { if (e.target.id === 'cloud-form') { e.preventDefault(); cloudSubmit(C.login); } });
 
 // Minuteur : la bannière se met à jour sans redessiner la page
 document.addEventListener('timer-tick', () => {
@@ -641,6 +678,7 @@ initPWA();
 startReminders();
 B.dailySnapshot();
 B.autoSync('start');
+C.autoCloud('start');
 if (st().settings.notify && permission() !== 'granted') { st().settings.notify = false; S.save(); }
 
 // Mise à jour à minuit (ou à l'heure de début de journée) si la page reste ouverte

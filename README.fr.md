@@ -41,6 +41,10 @@
 - **XP et niveaux**, **14 badges** à débloquer (séries de 7, 30 et 100 jours, journée parfaite, 100 validations, 7 notes, 5 rebonds, 10 votes…).
 - **Export CSV** de tout l'historique (date, habitude, valeur, humeur, note).
 
+### ☁️ Compte Momentum Cloud (optionnel)
+- Connectez-vous depuis les réglages pour **synchroniser vos appareils** : à la première connexion, les données du compte sont prises (avec confirmation si l'appareil a déjà des validations), puis chaque changement est envoyé automatiquement et les conflits entre appareils se règlent par la version la plus récente.
+- Serveur : [momentum-cloud](https://github.com/elalamiz605-tech/momentum-cloud) (Node.js, Express, PostgreSQL). L'adresse du serveur est modifiable dans les réglages pour l'héberger soi-même. Les clés locales (gist, Claude) ne quittent jamais l'appareil.
+
 ### 💾 Sauvegarde et synchronisation (sans compte)
 - **Export / import JSON**, **partage** de la sauvegarde (Web Share sur mobile).
 - **Code de transfert** compressé à coller dans Momentum sur un autre appareil.

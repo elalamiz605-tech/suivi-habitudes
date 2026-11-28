@@ -4,6 +4,7 @@ import * as L from './logic.js';
 import { isPaused, currentVacation, APP_VERSION } from './store.js';
 import { weeklyInsights, moodStats, weeklyReview, reviewWeek } from './insights.js';
 import { hasKey, cachedReview } from './coach.js';
+import { isSignedIn, DEFAULT_URL } from './cloud.js';
 import { installState } from './pwa.js';
 import { permission as notifPermission, supported as notifSupported } from './reminders.js';
 import { listSnapshots } from './backup.js';
@@ -580,6 +581,37 @@ export function viewSettings(s) {
         : install === 'ready' ? `<p class="muted">${t('settings.install_hint')}</p><div class="btn-row"><button class="btn primary" data-action="install">${icon('download')}${t('settings.install_btn')}</button></div>`
         : install === 'ios' ? `<p class="muted">${t('settings.install_hint')}</p><p class="muted">${t('settings.install_ios')}</p>`
         : `<p class="muted">${t('settings.install_unsupported')}</p>`}
+    </article>
+
+    <article class="panel">
+      <div class="panel-head"><h3>${icon('cloud')}${t('cloud.title')}</h3>${isSignedIn() ? `<span class="muted">${esc(st.cloud.email)}</span>` : ''}</div>
+      ${isSignedIn() ? `
+      <p class="muted">${t('cloud.signed_in_hint')}</p>
+      <label class="switch"><input type="checkbox" data-setting="cloudAuto" ${st.cloud.auto !== false ? 'checked' : ''}><span class="track"></span><span>${t('cloud.auto')}</span></label>
+      <div class="btn-row">
+        <button class="btn" data-action="cloud-push">${icon('upload')}${t('settings.sync_push')}</button>
+        <button class="btn" data-action="cloud-pull">${icon('download')}${t('settings.sync_pull')}</button>
+        <button class="btn ghost" data-action="cloud-logout">${t('cloud.sign_out')}</button>
+      </div>
+      <p class="muted">${st.cloud.lastAt ? t('settings.sync_last', { date: fmtDateTime(new Date(st.cloud.lastAt)) }) : t('settings.sync_never')}</p>
+      <details class="more"><summary>${t('cloud.danger')}</summary>
+        <div class="btn-row"><button class="btn ghost" data-action="cloud-logout-all">${t('cloud.sign_out_all')}</button><button class="btn danger" data-action="cloud-delete">${icon('trash')}${t('cloud.delete')}</button></div>
+      </details>`
+      : `
+      <p class="muted">${t('cloud.hint')}</p>
+      <form class="cloud-form" id="cloud-form">
+        <label class="field"><span>${t('cloud.email')}</span><input id="cloud-email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+        <label class="field"><span>${t('cloud.password')}</span><input id="cloud-password" type="password" autocomplete="current-password" minlength="8" required placeholder="${t('cloud.password_ph')}"></label>
+        <div class="btn-row">
+          <button class="btn primary" type="submit" data-action="cloud-login">${t('cloud.sign_in')}</button>
+          <button class="btn" type="button" data-action="cloud-register">${t('cloud.create')}</button>
+        </div>
+        <p class="form-error" id="cloud-error" hidden></p>
+      </form>
+      <details class="more"><summary>${t('cloud.advanced')}</summary>
+        <label class="field"><span>${t('cloud.url')}</span><input data-setting="cloudUrl" value="${esc(st.cloud.url)}" placeholder="${DEFAULT_URL}" autocomplete="off"></label>
+        <p class="muted">${t('cloud.url_hint')}</p>
+      </details>`}
     </article>
 
     <article class="panel">

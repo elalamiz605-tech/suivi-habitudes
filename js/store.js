@@ -4,7 +4,7 @@ import { setLang, detectLang, t } from './i18n.js';
 
 const KEY = 'momentum:v2';
 const LEGACY_KEY = 'suivi-habitudes:v1'; // données de la première version
-export const APP_VERSION = '3.1';
+export const APP_VERSION = '3.2';
 
 export const COLORS = ['#ff5b3a', '#e6e8eb', '#7ea6e0', '#8fbf8a', '#d9b36c', '#b39ddb', '#6fc3c9', '#e08a9a'];
 // Couleurs de la première palette, converties vers la palette sobre actuelle.
@@ -71,6 +71,7 @@ export function defaultSettings() {
     lastReviewWeek: '', // dernière semaine dont le bilan a été consulté
     reviews: {}, // { 'AAAA-MM-JJ (lundi)': { ai: 'texte du coach' } }
     sync: { token: '', gistId: '', auto: false, lastAt: '' },
+    cloud: { url: '', token: '', email: '', version: 0, auto: true, lastAt: '' }, // compte Momentum Cloud (optionnel)
   };
 }
 
@@ -174,7 +175,7 @@ export function normalize(s) {
     })),
     tasks: (s.tasks || []).map((t) => newTask({ ...t, id: t.id || uid(), subtasks: t.subtasks || [] })),
     profile: { ...base.profile, ...(s.profile || {}) },
-    settings: { ...def, ...(s.settings || {}), sync: { ...def.sync, ...((s.settings || {}).sync || {}) }, ai: { ...def.ai, ...((s.settings || {}).ai || {}) }, reviews: (s.settings || {}).reviews || {} },
+    settings: { ...def, ...(s.settings || {}), sync: { ...def.sync, ...((s.settings || {}).sync || {}) }, ai: { ...def.ai, ...((s.settings || {}).ai || {}) }, cloud: { ...def.cloud, ...((s.settings || {}).cloud || {}) }, reviews: (s.settings || {}).reviews || {} },
     updatedAt: s.updatedAt || new Date().toISOString(),
     version: 2,
   };

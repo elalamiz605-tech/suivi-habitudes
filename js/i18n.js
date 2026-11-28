@@ -817,3 +817,46 @@ addTranslations('en', {
   'ob.start_one': 'Start with {n} habit', 'ob.start_other': 'Start with {n} habits', 'ob.start_empty': 'Start without habits', 'ob.privacy': 'No account. Your data stays on this device.',
   'ob.demo': 'Explore with sample data', 'ob.welcome': 'Welcome{name}! Check off your first habit.', 'ob.demo_loaded': 'Sample data loaded. Erase it in Settings → Data whenever you like.',
 });
+
+addTranslations('fr', {
+  'cloud.title': 'Compte Momentum Cloud', 'cloud.hint': 'Optionnel. Un compte synchronise vos habitudes entre vos appareils et les met à l’abri si vous perdez votre téléphone. Sans compte, tout reste sur cet appareil.',
+  'cloud.email': 'E-mail', 'cloud.password': 'Mot de passe', 'cloud.password_ph': '8 caractères minimum', 'cloud.sign_in': 'Se connecter', 'cloud.create': 'Créer un compte',
+  'cloud.advanced': 'Avancé : adresse du serveur', 'cloud.url': 'Adresse du serveur', 'cloud.url_hint': 'Laissez vide pour le serveur par défaut. Utile si vous hébergez votre propre Momentum Cloud.',
+  'cloud.signed_in_hint': 'Vos données sont synchronisées avec votre compte. Le serveur gratuit s’endort après 15 minutes d’inactivité : la première synchro peut prendre 30 à 50 secondes.',
+  'cloud.auto': 'Synchroniser automatiquement', 'cloud.sign_out': 'Se déconnecter', 'cloud.danger': 'Autres appareils et suppression', 'cloud.sign_out_all': 'Déconnecter tous les appareils', 'cloud.delete': 'Supprimer le compte',
+  'cloud.delete_confirm': 'Supprimer définitivement votre compte et vos données en ligne ? Entrez votre mot de passe pour confirmer :',
+  'cloud.signed_in': 'Connecté : {email}', 'cloud.signed_out': 'Déconnecté de Momentum Cloud', 'cloud.deleted': 'Compte supprimé. Vos données restent sur cet appareil.',
+  'cloud.pushed': 'Données envoyées', 'cloud.pulled': 'Données récupérées depuis votre compte', 'cloud.nothing_yet': 'Rien encore en ligne : envoyez d’abord vos données.',
+  'cloud.waking': 'Le serveur se réveille, encore quelques secondes…', 'cloud.timeout': 'Le serveur ne répond pas. Réessayez dans une minute.', 'cloud.unreachable': 'Serveur injoignable. Vérifiez votre connexion ou l’adresse du serveur.',
+  'cloud.err_taken': 'Cet e-mail a déjà un compte : connectez-vous.', 'cloud.err_credentials': 'E-mail ou mot de passe incorrect.', 'cloud.err_validation': 'Vérifiez l’e-mail et le mot de passe (8 caractères minimum).',
+  'cloud.err_conflict': 'Conflit de version.', 'cloud.err_large': 'Données trop volumineuses.', 'cloud.err_server': 'Erreur du serveur',
+  'cloud.use_remote_confirm': 'Votre compte contient déjà des données. OK : les utiliser sur cet appareil (recommandé). Annuler : les remplacer par les données de cet appareil.',
+});
+addTranslations('es', {
+  'cloud.title': 'Cuenta Momentum Cloud', 'cloud.hint': 'Opcional. Una cuenta sincroniza tus hábitos entre dispositivos y los protege si pierdes el teléfono. Sin cuenta, todo se queda en este dispositivo.',
+  'cloud.email': 'Correo', 'cloud.password': 'Contraseña', 'cloud.password_ph': 'mínimo 8 caracteres', 'cloud.sign_in': 'Iniciar sesión', 'cloud.create': 'Crear una cuenta',
+  'cloud.advanced': 'Avanzado: dirección del servidor', 'cloud.url': 'Dirección del servidor', 'cloud.url_hint': 'Déjalo vacío para el servidor por defecto. Útil si alojas tu propio Momentum Cloud.',
+  'cloud.signed_in_hint': 'Tus datos se sincronizan con tu cuenta. El servidor gratuito se duerme tras 15 minutos sin uso: la primera sincronización puede tardar 30-50 segundos.',
+  'cloud.auto': 'Sincronizar automáticamente', 'cloud.sign_out': 'Cerrar sesión', 'cloud.danger': 'Otros dispositivos y eliminación', 'cloud.sign_out_all': 'Cerrar sesión en todos los dispositivos', 'cloud.delete': 'Eliminar la cuenta',
+  'cloud.delete_confirm': '¿Eliminar definitivamente tu cuenta y tus datos en línea? Escribe tu contraseña para confirmar:',
+  'cloud.signed_in': 'Conectado: {email}', 'cloud.signed_out': 'Sesión cerrada en Momentum Cloud', 'cloud.deleted': 'Cuenta eliminada. Tus datos siguen en este dispositivo.',
+  'cloud.pushed': 'Datos enviados', 'cloud.pulled': 'Datos recuperados de tu cuenta', 'cloud.nothing_yet': 'Todavía no hay nada en línea: envía primero tus datos.',
+  'cloud.waking': 'El servidor se está despertando, unos segundos más…', 'cloud.timeout': 'El servidor no responde. Inténtalo en un minuto.', 'cloud.unreachable': 'Servidor inaccesible. Comprueba tu conexión o la dirección del servidor.',
+  'cloud.err_taken': 'Este correo ya tiene una cuenta: inicia sesión.', 'cloud.err_credentials': 'Correo o contraseña incorrectos.', 'cloud.err_validation': 'Comprueba el correo y la contraseña (mínimo 8 caracteres).',
+  'cloud.err_conflict': 'Conflicto de versión.', 'cloud.err_large': 'Datos demasiado grandes.', 'cloud.err_server': 'Error del servidor',
+  'cloud.use_remote_confirm': 'Tu cuenta ya contiene datos. Aceptar: usarlos en este dispositivo (recomendado). Cancelar: sustituirlos por los datos de este dispositivo.',
+});
+addTranslations('en', {
+  'cloud.title': 'Momentum Cloud account', 'cloud.hint': 'Optional. An account syncs your habits across devices and keeps them safe if you lose your phone. Without one, everything stays on this device.',
+  'cloud.email': 'E-mail', 'cloud.password': 'Password', 'cloud.password_ph': 'at least 8 characters', 'cloud.sign_in': 'Sign in', 'cloud.create': 'Create an account',
+  'cloud.advanced': 'Advanced: server address', 'cloud.url': 'Server address', 'cloud.url_hint': 'Leave empty for the default server. Useful if you host your own Momentum Cloud.',
+  'cloud.signed_in_hint': 'Your data is synced with your account. The free server sleeps after 15 idle minutes: the first sync can take 30 to 50 seconds.',
+  'cloud.auto': 'Sync automatically', 'cloud.sign_out': 'Sign out', 'cloud.danger': 'Other devices and deletion', 'cloud.sign_out_all': 'Sign out of all devices', 'cloud.delete': 'Delete account',
+  'cloud.delete_confirm': 'Permanently delete your account and your online data? Enter your password to confirm:',
+  'cloud.signed_in': 'Signed in: {email}', 'cloud.signed_out': 'Signed out of Momentum Cloud', 'cloud.deleted': 'Account deleted. Your data stays on this device.',
+  'cloud.pushed': 'Data pushed', 'cloud.pulled': 'Data pulled from your account', 'cloud.nothing_yet': 'Nothing online yet: push your data first.',
+  'cloud.waking': 'The server is waking up, a few more seconds…', 'cloud.timeout': 'The server is not responding. Try again in a minute.', 'cloud.unreachable': 'Server unreachable. Check your connection or the server address.',
+  'cloud.err_taken': 'This e-mail already has an account: sign in.', 'cloud.err_credentials': 'Wrong e-mail or password.', 'cloud.err_validation': 'Check the e-mail and the password (at least 8 characters).',
+  'cloud.err_conflict': 'Version conflict.', 'cloud.err_large': 'Data too large.', 'cloud.err_server': 'Server error',
+  'cloud.use_remote_confirm': 'Your account already has data. OK: use it on this device (recommended). Cancel: replace it with this device’s data.',
+});
