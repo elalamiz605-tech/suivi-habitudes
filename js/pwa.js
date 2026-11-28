@@ -47,6 +47,7 @@ export function initPWA() {
     listeners.forEach((fn) => fn());
   });
 
+  let reloadWanted = false;
   if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
   navigator.serviceWorker.register('./sw.js').then((reg) => {
     registration = reg;
@@ -55,7 +56,7 @@ export function initPWA() {
       if (!worker) return;
       worker.addEventListener('statechange', () => {
         if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-          toast(t('pwa.update'), { timeout: 12000, action: { label: t('pwa.reload'), fn: () => { worker.postMessage({ type: 'skip-waiting' }); } } });
+          toast(t('pwa.update'), { timeout: 12000, action: { label: t('pwa.reload'), fn: () => { reloadWanted = true; worker.postMessage({ type: 'skip-waiting' }); } } });
         }
       });
     };
@@ -63,9 +64,11 @@ export function initPWA() {
     reg.addEventListener('updatefound', () => watch(reg.installing));
   }).catch((err) => console.warn('Service worker indisponible :', err));
 
+  // On ne recharge que si l'utilisateur l'a demandé : au premier lancement ou
+  // lors d'une activation en arrière-plan, la page continue sans interruption.
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (reloading) return;
+    if (!reloadWanted || reloading) return;
     reloading = true;
     location.reload();
   });

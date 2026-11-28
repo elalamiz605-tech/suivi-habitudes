@@ -1,7 +1,7 @@
 // Service worker Momentum : l'application fonctionne hors ligne.
 // Stratégie : réseau d'abord (toujours la dernière version quand on est connecté),
 // cache en secours (hors ligne). Les pages et fichiers de l'app sont pré-chargés.
-const VERSION = 'momentum-v19';
+const VERSION = 'momentum-v20';
 const SHELL = [
   './',
   './index.html',
@@ -22,8 +22,9 @@ const SHELL = [
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(VERSION)
-      .then((c) => Promise.allSettled(SHELL.map((u) => c.add(u))))
-      .then(() => self.skipWaiting()),
+      .then((c) => Promise.allSettled(SHELL.map((u) => c.add(u)))),
+    // Pas de skipWaiting ici : la nouvelle version attend que l'utilisateur
+    // accepte « Recharger » (message skip-waiting), sinon la page se rechargerait seule.
   );
 });
 
