@@ -60,6 +60,7 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
           + Math.sin(u * 2.3 - time * 0.4 + l) * amp2;
         x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
       }
+      if (isMain && signalOn < 0.03) continue; // ligne éteinte pendant l'intro : rien à dessiner
       if (isMain) {
         // Halo : un second trait large et pâle, bien moins coûteux qu'un shadowBlur.
         ctx.strokeStyle = `rgba(${colors.signal}, ${(0.1 + progress * 0.15 + pulse * 0.1) * signalOn})`;

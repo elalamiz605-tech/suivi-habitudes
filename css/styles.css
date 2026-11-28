@@ -975,7 +975,7 @@ details.more > :not(summary) { margin-top: 10px; }
 /* ---------- Introduction animée à chaque ouverture ---------- */
 .splash { position: fixed; inset: 0; z-index: 200; display: grid; grid-template-rows: 1fr auto; background: transparent; transition: opacity .5s var(--ease); }
 body.introducing #bg3d { z-index: 150; }
-body.introducing .bg-veil { z-index: 151; opacity: .45; }
+body.introducing .bg-veil, body.introducing .sidebar, body.introducing .view { visibility: hidden; }
 .splash.out { opacity: 0; pointer-events: none; }
 .splash-stage { display: grid; place-items: center; padding: 24px; cursor: pointer; position: relative; }
 .splash-stage::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 55% at 50% 50%, var(--bg) 35%, transparent 100%); pointer-events: none; }
@@ -1018,7 +1018,7 @@ body.introducing .bg-veil { z-index: 151; opacity: .45; }
 .demo-t2 { opacity: 0; transform: translateY(8px); }
 .demo-title.swap .demo-t1 { opacity: 0; transform: translateY(-8px); }
 .demo-title.swap .demo-t2 { opacity: 1; transform: none; }
-.demo-card { width: 100%; padding: 14px 14px 12px; background: var(--surface);backdrop-filter: blur(10px); border: 1px solid var(--line-2); border-radius: 14px; box-shadow: 0 30px 80px -30px var(--shadow); display: grid; gap: 8px; text-align: left; animation: step-in .6s var(--ease) both; transition: border-color .3s; }
+.demo-card { width: 100%; padding: 14px 14px 12px; background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 14px; display: grid; gap: 8px; text-align: left; animation: step-in .6s var(--ease) both; transition: border-color .3s; }
 .demo-card.complete { border-color: var(--signal); animation: card-pop .5s var(--ease); }
 @keyframes card-pop { 50% { transform: scale(1.02); } }
 .demo-head { display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
@@ -1052,7 +1052,7 @@ body.introducing .bg-veil { z-index: 151; opacity: .45; }
 /* ---------- Intro : apparition du logo (battement) ---------- */
 .demo-logo { display: flex; align-items: center; gap: 16px; font-weight: 700; font-size: clamp(30px, 8vw, 40px); letter-spacing: -0.03em; color: var(--text); transition: opacity .35s var(--ease), transform .35s var(--ease); }
 .demo-logo.leave { opacity: 0; transform: scale(.92) translateY(-10px); }
-.demo-logo svg { width: clamp(64px, 16vw, 84px); height: auto; overflow: visible; animation: logo-beat .5s ease 1.25s; }
+.demo-logo svg { width: clamp(64px, 16vw, 84px); height: auto; overflow: visible; will-change: transform; animation: logo-beat .5s ease 1.25s; }
 .demo-logo .ring { stroke: var(--line-2); opacity: 0; animation: logo-fade .6s ease forwards; }
 .demo-logo .arc { stroke: var(--signal); stroke-dasharray: 81; stroke-dashoffset: 81; animation: logo-draw .9s var(--ease) .2s forwards; }
 .demo-logo .glow { fill: var(--signal); opacity: 0; animation: logo-glow .6s ease 1.25s; }
