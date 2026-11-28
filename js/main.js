@@ -714,7 +714,7 @@ function splash() {
   const names = (active.length >= 3 ? active : [{ name: t('tpl.water') }, { name: t('tpl.walk') }, { name: t('tpl.read') }]).slice(0, 3).map((h) => h.name);
   const best = active.map((h) => L.currentStreak(h)).sort((a, b) => b - a)[0] || 11;
   const fast = prefersReducedMotion();
-  stage.innerHTML = `
+  const demoHtml = `
     <div class="demo">
       <h2 class="demo-title"><span class="demo-t1">${t('intro.s1')}</span><span class="demo-t2">${t('intro.vote')}</span></h2>
       <div class="demo-card">
@@ -725,26 +725,38 @@ function splash() {
       </div>
       <p class="demo-by"><small>${t('intro.by')}</small><b>Ziad El Alami</b></p>
     </div>`;
+  // Phase 1 : le logo bat une fois (tracé de l'arc, battement, halo), le nom lettre par lettre.
+  stage.innerHTML = `
+    <div class="demo-logo" aria-label="Momentum">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0c0d10"/><circle class="ring" cx="32" cy="32" r="17" fill="none" stroke-width="5"/><circle class="glow" cx="32" cy="32" r="26"/><path class="arc" d="M32 15a17 17 0 1 1-16.2 22.2" fill="none" stroke-width="5" stroke-linecap="round"/></svg>
+      <span class="w">${[...'Momentum'].map((c, i) => `<span style="--i:${i}">${c}</span>`).join('')}</span>
+    </div>`;
   skip.textContent = t('intro.skip');
   let closed = false;
   const timers = [];
   const close = () => { if (closed) return; closed = true; timers.forEach(clearTimeout); el.classList.add('out'); setTimeout(() => { el.remove(); document.body.classList.remove('introducing'); }, 550); };
   skip.addEventListener('click', close);
   stage.addEventListener('click', close);
-  if (fast) { el.classList.add('fast'); timers.push(setTimeout(close, 1200)); return; }
+  if (fast) { el.classList.add('fast'); stage.innerHTML = demoHtml; timers.push(setTimeout(close, 1200)); return; }
   const at = (ms, fn) => timers.push(setTimeout(fn, ms));
-  const rows = stage.querySelectorAll('.demo-row');
-  const segs = stage.querySelectorAll('.demo-seg i');
-  rows.forEach((row, i) => at(900 + i * 750, () => { row.classList.add('on'); segs[i].classList.add('on'); }));
-  at(3300, () => {
-    const n = document.getElementById('demo-streak');
-    n.textContent = best + 1;
-    n.classList.add('bump');
-    stage.querySelector('.demo-card').classList.add('complete');
-    stage.querySelector('.demo-title').classList.add('swap');
+  // Phase 2 (après le logo) : la journée se valide.
+  const LOGO = 2300;
+  at(LOGO - 350, () => stage.querySelector('.demo-logo').classList.add('leave'));
+  at(LOGO, () => {
+    stage.innerHTML = demoHtml;
+    const rows = stage.querySelectorAll('.demo-row');
+    const segs = stage.querySelectorAll('.demo-seg i');
+    rows.forEach((row, i) => at(900 + i * 700, () => { row.classList.add('on'); segs[i].classList.add('on'); }));
+    at(3100, () => {
+      const n = document.getElementById('demo-streak');
+      n.textContent = best + 1;
+      n.classList.add('bump');
+      stage.querySelector('.demo-card').classList.add('complete');
+      stage.querySelector('.demo-title').classList.add('swap');
+    });
+    at(4300, () => stage.querySelector('.demo').classList.add('signed'));
+    at(6200, close);
   });
-  at(4600, () => stage.querySelector('.demo').classList.add('signed'));
-  at(6600, close);
 }
 
 // ---------- Démarrage ----------

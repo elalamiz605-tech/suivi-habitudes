@@ -1046,3 +1046,17 @@ body.introducing .bg-veil { z-index: 151; opacity: .45; }
 .demo.signed .demo-by { opacity: 1; transform: none; }
 .splash.fast .demo-row { opacity: 1; transform: none; animation: none; }
 .splash.fast .demo-by { opacity: 1; transform: none; }
+
+/* ---------- Intro : apparition du logo (battement) ---------- */
+.demo-logo { display: flex; align-items: center; gap: 16px; font-weight: 700; font-size: clamp(30px, 8vw, 40px); letter-spacing: -0.03em; color: var(--text); transition: opacity .35s var(--ease), transform .35s var(--ease); }
+.demo-logo.leave { opacity: 0; transform: scale(.92) translateY(-10px); }
+.demo-logo svg { width: clamp(64px, 16vw, 84px); height: auto; overflow: visible; animation: logo-beat .5s ease 1.25s; }
+.demo-logo .ring { stroke: #2a2e35; opacity: 0; animation: logo-fade .6s ease forwards; }
+.demo-logo .arc { stroke: var(--signal); stroke-dasharray: 81; stroke-dashoffset: 81; animation: logo-draw .9s var(--ease) .2s forwards; }
+.demo-logo .glow { fill: var(--signal); opacity: 0; animation: logo-glow .6s ease 1.25s; }
+.demo-logo .w span { display: inline-block; opacity: 0; transform: translateY(10px); animation: logo-letter .4s var(--ease) forwards; animation-delay: calc(1.3s + var(--i) * .05s); }
+@keyframes logo-draw { to { stroke-dashoffset: 0; } }
+@keyframes logo-fade { to { opacity: 1; } }
+@keyframes logo-beat { 30% { transform: scale(1.12); } }
+@keyframes logo-glow { 40% { opacity: .35; } }
+@keyframes logo-letter { to { opacity: 1; transform: none; } }
