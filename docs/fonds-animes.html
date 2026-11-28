@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Momentum · fonds animés</title>
+<style>
+:root{--bg:#090a0c;--text:#eceef1;--text-2:#a4aab4;--signal:#ff5b3a;--line:#2b3037}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.tabs{position:fixed;top:0;left:0;right:0;display:flex;gap:6px;padding:12px 16px;overflow-x:auto;z-index:2;-webkit-overflow-scrolling:touch}
+.tabs button{flex:none;background:rgba(14,16,19,.85);color:var(--text-2);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer;backdrop-filter:blur(8px)}
+.tabs button.on{color:var(--text);border-color:var(--signal)}
+.card{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(340px,86vw);background:rgba(14,16,19,.82);border:1px solid var(--line);border-radius:14px;padding:16px 18px;backdrop-filter:blur(10px);z-index:1}
+.card b{display:block;font-size:17px;margin-bottom:4px}.card p{margin:0;color:var(--text-2);font-size:13.5px}
+.card .n{font:600 12px ui-monospace,monospace;color:var(--signal);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+</style></head><body>
+<canvas id="c"></canvas>
+<div class="tabs" id="tabs"></div>
+<div class="card"><div class="n" id="num"></div><b id="title"></b><p id="desc"></p></div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');let W,H,DPR,t0=performance.now();
+function size(){DPR=Math.min(devicePixelRatio||1,2);W=C.width=innerWidth*DPR;H=C.height=innerHeight*DPR}addEventListener('resize',()=>{size();cur.init&&cur.init()});size();
+const S='#ff5b3a',SIG=[255,91,58];
+const R=(a,b)=>a+Math.random()*(b-a);
+const demos=[
+{name:'Aurore',desc:'Nappes de couleur floues qui dérivent lentement. Calme, premium, très peu de CPU.',init(){this.b=[...Array(5)].map((_,i)=>({x:R(0,1),y:R(0,1),r:R(.25,.45),vx:R(-.02,.02),vy:R(-.015,.015),c:i%3==0?SIG:i%3==1?[80,120,200]:[60,160,150]}))},
+ draw(t){X.fillStyle='#090a0c';X.fillRect(0,0,W,H);X.globalCompositeOperation='lighter';for(const b of this.b){b.x+=b.vx/60;b.y+=b.vy/60;if(b.x<-.2||b.x>1.2)b.vx*=-1;if(b.y<-.2||b.y>1.2)b.vy*=-1;const g=X.createRadialGradient(b.x*W,b.y*H,0,b.x*W,b.y*H,b.r*Math.max(W,H));g.addColorStop(0,`rgba(${b.c},.22)`);g.addColorStop(1,'rgba(0,0,0,0)');X.fillStyle=g;X.fillRect(0,0,W,H)}X.globalCompositeOperation='source-over'}},
+{name:'Constellation',desc:'Points qui dérivent et se relient quand ils sont proches. Rappelle les habitudes connectées.',init(){const n=Math.round(W*H/(DPR*DPR)/14000);this.p=[...Array(n)].map(()=>({x:R(0,W),y:R(0,H),vx:R(-.3,.3)*DPR,vy:R(-.3,.3)*DPR}))},
+ draw(){X.fillStyle='#090a0c';X.fillRect(0,0,W,H);const p=this.p,d=120*DPR;for(const a of p){a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1}for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++){const dx=p[i].x-p[j].x,dy=p[i].y-p[j].y,q=dx*dx+dy*dy;if(q<d*d){X.strokeStyle=`rgba(236,238,241,${.25*(1-Math.sqrt(q)/d)})`;X.lineWidth=DPR;X.beginPath();X.moveTo(p[i].x,p[i].y);X.lineTo(p[j].x,p[j].y);X.stroke()}}X.fillStyle='rgba(255,91,58,.9)';for(const a of p){X.beginPath();X.arc(a.x,a.y,1.6*DPR,0,7);X.fill()}}},
+{name:'Grille de jours',desc:'Une grille comme la carte de régularité : des cases s’allument au hasard puis s’éteignent. Très « Momentum ».',init(){this.s=14*DPR;this.g=4*DPR;this.cols=Math.ceil(W/(this.s+this.g));this.rows=Math.ceil(H/(this.s+this.g));this.v=new Float32Array(this.cols*this.rows)},
+ draw(){X.fillStyle='#090a0c';X.fillRect(0,0,W,H);const{s,g,cols,rows,v}=this;for(let k=0;k<3;k++)v[Math.floor(Math.random()*v.length)]=1;for(let i=0;i<v.length;i++){v[i]*=.985;const x=(i%cols)*(s+g),y=Math.floor(i/cols)*(s+g);X.fillStyle=`rgba(255,91,58,${.05+v[i]*.85})`;X.fillRect(x,y,s,s)}}},
+{name:'Vagues',desc:'Lignes ondulantes qui traversent l’écran, comme une progression continue.',init(){},
+ draw(t){X.fillStyle='#090a0c';X.fillRect(0,0,W,H);for(let l=0;l<7;l++){X.beginPath();for(let x=0;x<=W;x+=6*DPR){const y=H*.5+Math.sin(x/W*6+t*.0007+l*.7)*H*.08*(1+l*.15)+Math.sin(x/W*2.3-t*.0004+l)*H*.05+(l-3)*22*DPR;x?X.lineTo(x,y):X.moveTo(x,y)}X.strokeStyle=l==3?'rgba(255,91,58,.75)':`rgba(164,170,180,${.08+l*.02})`;X.lineWidth=(l==3?2:1.2)*DPR;X.stroke()}}},
+{name:'Étincelles',desc:'Particules qui montent doucement depuis le bas, couleur flamme : la série qui se nourrit chaque jour.',init(){this.p=[...Array(90)].map(()=>this.n(true))},n(any){return{x:R(0,W),y:any?R(0,H):H+10*DPR,r:R(1,3)*DPR,v:R(.3,1)*DPR,w:R(0,6.28),a:R(.3,.9)}},
+ draw(t){X.fillStyle='#090a0c';X.fillRect(0,0,W,H);for(let i=0;i<this.p.length;i++){const q=this.p[i];q.y-=q.v;q.x+=Math.sin(t*.001+q.w)*.3*DPR;if(q.y<-10)this.p[i]=this.n(false);X.fillStyle=`rgba(255,${120+q.r*20|0},58,${q.a*(q.y/H)})`;X.beginPath();X.arc(q.x,q.y,q.r,0,7);X.fill()}}},
+{name:'Blocs 3D',desc:'Les cubes de « Mon année » flottent lentement en arrière-plan (perspective légère). Lien direct avec la page Année.',init(){this.c=[...Array(28)].map(()=>({x:R(-1,1),y:R(-1,1),z:R(.4,2),s:R(.04,.09),r:R(0,6.28),v:R(.1,.3)}))},
+ draw(t){X.fillStyle='#090a0c';X.fillRect(0,0,W,H);const cs=[...this.c].sort((a,b)=>b.z-a.z);for(const c of cs){c.y-=.00025*c.v*16;if(c.y<-1.3)c.y=1.3;const k=1/c.z,x=W/2+c.x*W*.5*k,y=H/2+c.y*H*.5*k,s=c.s*Math.min(W,H)*k,a=Math.sin(t*.0003*c.v+c.r)*.3;X.save();X.translate(x,y);X.rotate(a);X.fillStyle=`rgba(255,91,58,${.12+.5/c.z})`;X.fillRect(-s/2,-s/2,s,s);X.fillStyle=`rgba(255,160,130,${.1+.3/c.z})`;X.fillRect(-s/2,-s/2-s*.18,s,s*.18);X.restore()}}}
+];
+let cur;const tabs=document.getElementById('tabs');
+demos.forEach((d,i)=>{const b=document.createElement('button');b.textContent=`${i+1}. ${d.name}`;b.onclick=()=>pick(i);tabs.appendChild(b)});
+function pick(i){cur=demos[i];cur.init();[...tabs.children].forEach((b,j)=>b.classList.toggle('on',i==j));num.textContent=`Exemple ${i+1} / ${demos.length}`;title.textContent=cur.name;desc.textContent=cur.desc;location.hash=i+1}
+pick(Math.min(Math.max((+location.hash.slice(1)||1)-1,0),demos.length-1));
+(function loop(t){cur.draw(t);requestAnimationFrame(loop)})(0);
+</script></body></html>
