@@ -949,3 +949,13 @@ addTranslations('en', {
   'intro.s3_title': 'Everything you need to keep going.', 'intro.never_twice': 'Never twice', 'intro.by': 'Developed by', 'intro.by_sub': 'full-stack developer, Madrid · no framework, no server required',
   'intro.skip': 'Skip',
 });
+
+addTranslations('fr', {
+  'intro.vote': 'Chaque validation est un vote pour qui vous devenez.', 'intro.days': 'jours',
+});
+addTranslations('es', {
+  'intro.vote': 'Cada marca es un voto por quien te conviertes.', 'intro.days': 'días',
+});
+addTranslations('en', {
+  'intro.vote': 'Every check-in is a vote for who you are becoming.', 'intro.days': 'days',
+});

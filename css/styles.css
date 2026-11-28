@@ -1006,3 +1006,41 @@ details.more > :not(summary) { margin-top: 10px; }
 .signature small { color: var(--text-3); font-size: 12.5px; }
 .step .avatar.big { width: 44px; height: 44px; font-size: 16px; border-color: var(--signal); color: var(--signal); margin-bottom: 4px; }
 @media (prefers-reduced-motion: reduce) { .step, .feat span, .blocks i, .step-ring .arc, .splash-dots i.on::after { animation: none; } .step-ring .arc { stroke-dashoffset: 34.5; } }
+
+/* ---------- Intro : une journée qui se valide ---------- */
+.demo { display: grid; justify-items: center; gap: 18px; width: min(420px, 100%); text-align: center; }
+.demo-title { position: relative; height: 2.4em; width: 100%; font-size: clamp(20px, 4.6vw, 26px); letter-spacing: -0.02em; line-height: 1.2; }
+.demo-title span { position: absolute; inset: 0; display: grid; place-items: center; transition: opacity .4s var(--ease), transform .4s var(--ease); }
+.demo-t2 { opacity: 0; transform: translateY(8px); }
+.demo-title.swap .demo-t1 { opacity: 0; transform: translateY(-8px); }
+.demo-title.swap .demo-t2 { opacity: 1; transform: none; }
+.demo-card { width: 100%; padding: 14px 14px 12px; background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 14px; box-shadow: 0 30px 80px -30px var(--shadow); display: grid; gap: 8px; text-align: left; animation: step-in .6s var(--ease) both; transition: border-color .3s; }
+.demo-card.complete { border-color: var(--signal); animation: card-pop .5s var(--ease); }
+@keyframes card-pop { 50% { transform: scale(1.02); } }
+.demo-head { display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
+.demo-streak { display: inline-flex; align-items: center; gap: 5px; font: 500 13px var(--mono); color: var(--text-2); }
+.demo-streak .ic { width: 14px; height: 14px; color: var(--signal); }
+.demo-streak em { font-style: normal; color: var(--text); display: inline-block; }
+.demo-streak em.bump { animation: bump .5s var(--ease); color: var(--signal); }
+@keyframes bump { 40% { transform: translateY(-6px) scale(1.25); } }
+.demo-seg { margin: 2px 0 4px; }
+.demo-seg i.on { background: var(--signal); }
+.demo-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; background: var(--field); border: 1px solid var(--line); font-size: 14px; opacity: 0; transform: translateX(-8px); animation: row-in .45s var(--ease) forwards; animation-delay: calc(var(--d) - .6s); }
+@keyframes row-in { to { opacity: 1; transform: none; } }
+.demo-row span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .3s; }
+.demo-row .check { width: 30px; height: 30px; pointer-events: none; }
+.demo-row.on .check { background: var(--signal); border-color: var(--signal); animation: stamp .35s var(--ease); }
+.demo-row.on .check > .ic { opacity: 1; color: var(--signal-ink); }
+.demo-row.on .check .seal { animation: seal .6s var(--ease) forwards; }
+.demo-row.on span { color: var(--text-2); }
+.demo-done { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px; padding: 9px; border-radius: 9px; background: var(--signal); color: var(--signal-ink); font-weight: 600; font-size: 13.5px; opacity: 0; transform: scale(.9); transition: opacity .35s var(--ease), transform .35s var(--ease); position: relative; }
+.demo-done .ic { width: 15px; height: 15px; }
+.demo-card.complete .demo-done { opacity: 1; transform: none; }
+.demo-card.complete .demo-done::after { content: ''; position: absolute; inset: -6px; border-radius: 12px; border: 2px solid var(--signal); animation: burst .9s var(--ease) forwards; }
+@keyframes burst { to { transform: scale(1.25); opacity: 0; } }
+.demo-by { margin: 0; display: grid; gap: 2px; opacity: 0; transform: translateY(8px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+.demo-by small { color: var(--text-3); font-size: 12.5px; }
+.demo-by b { font-size: 17px; }
+.demo.signed .demo-by { opacity: 1; transform: none; }
+.splash.fast .demo-row { opacity: 1; transform: none; animation: none; }
+.splash.fast .demo-by { opacity: 1; transform: none; }
