@@ -1,13 +1,17 @@
 // Traductions : français (défaut), español, English.
 // t('clé', { n: 3 }) remplace {n}. tn(n, 'clé') choisit clé_one / clé_other.
 
+import { AR } from './i18n-ar.js';
+
 export const LANGS = [
   { id: 'en', label: 'English', locale: 'en-GB' },
   { id: 'fr', label: 'Français', locale: 'fr-FR' },
   { id: 'es', label: 'Español', locale: 'es-ES' },
+  { id: 'ar', label: 'العربية', locale: 'ar-MA', rtl: true },
 ];
 
-const DICT = { fr: {}, es: {}, en: {} };
+const DICT = { fr: {}, es: {}, en: {}, ar: AR };
+export const isRTL = () => !!LANGS.find((l) => l.id === current)?.rtl;
 let current = 'en';
 const listeners = new Set();
 
@@ -24,6 +28,7 @@ export function setLang(id) {
   if (id === current) return;
   current = id;
   document.documentElement.lang = id;
+  document.documentElement.dir = isRTL() ? 'rtl' : 'ltr';
   listeners.forEach((fn) => fn(id));
 }
 

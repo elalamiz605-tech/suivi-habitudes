@@ -19,7 +19,7 @@
 ### 📱 Installable, offline
 - **PWA**: install on the home screen (Android, iOS, desktop), full screen, shortcuts to each page.
 - Full **offline mode** through a service worker (network first, cache fallback); an update prompt appears when a new version is published.
-- **Dark, light or automatic theme**, interface in **English by default, Spanish or French** (switchable in Settings, choice remembered).
+- **Dark, light or automatic theme**, interface in **English by default, Spanish, French or Arabic** (right-to-left layout; switchable in Settings, choice remembered).
 
 ### 🔁 Habits
 - **Three tracking types**: done / not done, **numeric goal** (8 glasses of water, 20 pages…) or **bad habit to quit** ("days without" counter).
@@ -119,7 +119,7 @@ js/coach.js           → optional AI coach (Claude API, from the browser)
 js/reminders.js       → reminders and notifications
 js/backup.js          → export / import, CSV, transfer code, snapshots, gist sync
 js/pwa.js             → install and updates
-js/i18n.js            → translations en / es / fr
+js/i18n.js            → translations en / es / fr (+ js/i18n-ar.js for Arabic)
 js/store.js           → data, persistence, demo
 js/scene.js           → animated background (waves on a 2D canvas)
 js/year.js            → 3D year scene (landing page and "My year" page, shareable image)
