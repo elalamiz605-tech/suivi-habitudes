@@ -1,157 +1,88 @@
-// Fond animé (Three.js) : un champ de points en perspective qui ondule lentement.
-// La part de points allumés en vermillon suit la progression du jour.
-import * as THREE from '../vendor/three.module.min.js';
+// Fond animé : des vagues qui traversent l'écran, dessinées sur un canvas 2D.
+// La vague vermillon s'épaissit et s'éclaire avec la progression du jour ;
+// une validation envoie une impulsion qui soulève toutes les lignes.
+// Même interface que l'ancien fond : setRoute, setProgress, burst, setTheme, setMotion.
 
-const vertexShader = /* glsl */ `
-uniform float uTime;
-uniform float uProgress;
-uniform float uPulse;
-uniform float uPulseT;
-uniform float uPx;
-attribute float aRand;
-varying float vLit;
-varying float vFade;
-varying float vGlow;
-
-void main(){
-  vec3 p = position;
-  // Deux houles lentes croisées : le relief du champ.
-  float w = sin(p.x * 0.32 + uTime * 0.35) * 0.45
-          + sin(p.y * 0.41 - uTime * 0.27) * 0.35
-          + sin((p.x + p.y) * 0.18 + uTime * 0.2) * 0.3;
-  p.z += w;
-
-  // Onde circulaire déclenchée par une journée parfaite ou un niveau gagné.
-  float d = length(p.xy);
-  float ring = exp(-pow((d - uPulseT * 22.0) * 0.9, 2.0)) * uPulse;
-  p.z += ring * 0.9;
-
-  vec4 mv = modelViewMatrix * vec4(p, 1.0);
-  gl_Position = projectionMatrix * mv;
-
-  float depth = -mv.z;
-  vFade = smoothstep(34.0, 8.0, depth) * smoothstep(1.5, 5.0, depth);
-  vLit = step(aRand, uProgress);
-  vGlow = ring + smoothstep(0.6, 1.1, w) * 0.35;
-  gl_PointSize = uPx * (3.0 + vLit * 1.4 + ring * 2.0) * (14.0 / depth);
-}`;
-
-const fragmentShader = /* glsl */ `
-uniform vec3 uBase;
-uniform vec3 uSignal;
-varying float vLit;
-varying float vFade;
-varying float vGlow;
-
-void main(){
-  vec2 c = gl_PointCoord - 0.5;
-  float r = length(c);
-  if (r > 0.5) discard;
-  float edge = smoothstep(0.5, 0.2, r);
-  vec3 col = mix(uBase, uSignal, vLit);
-  float a = (0.6 + vLit * 0.4 + vGlow * 0.4) * edge * vFade;
-  gl_FragColor = vec4(col, a);
-}`;
-
-// Couleur des points éteints selon le thème (valeurs sRGB brutes).
-const DARK_BASE = [0.6, 0.63, 0.68];
-const LIGHT_BASE = [0.42, 0.45, 0.5];
-
-// Cadrage de la caméra par page : léger glissement quand on change de section.
-const VIEWS = {
-  today: [0, -9.5, 7.2],
-  habits: [-3, -10, 6.4],
-  tasks: [3, -10.5, 6.8],
-  stats: [-1.5, -8.5, 8.2],
-  settings: [2, -9, 7.6],
-};
+const LINES = 7;
+const ROUTE_SHIFT = { today: 0, habits: -0.06, tasks: 0.06, stats: -0.03, year: 0.04, review: -0.02, settings: 0.03 };
 
 export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'low-power' });
+  const ctx = canvas.getContext('2d', { alpha: false });
   const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-  renderer.setPixelRatio(dpr);
-  renderer.setClearColor(0x000000, 0);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 80);
-
-  // Grille de points
-  const COLS = 120, ROWS = 84, GAP = 0.42;
-  const n = COLS * ROWS;
-  const pos = new Float32Array(n * 3);
-  const rnd = new Float32Array(n);
-  let s = 7;
-  const rand = () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
-  for (let y = 0, i = 0; y < ROWS; y++) {
-    for (let x = 0; x < COLS; x++, i++) {
-      pos[i * 3] = (x - COLS / 2) * GAP;
-      pos[i * 3 + 1] = (y - ROWS / 2) * GAP;
-      pos[i * 3 + 2] = 0;
-      rnd[i] = rand();
-    }
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('aRand', new THREE.BufferAttribute(rnd, 1));
-
-  const uniforms = {
-    uTime: { value: 0 },
-    uProgress: { value: 0 },
-    uPulse: { value: 0 },
-    uPulseT: { value: 0 },
-    uPx: { value: dpr },
-    // Valeurs sRGB brutes : le shader écrit directement la couleur affichée.
-    uBase: { value: new THREE.Vector3(...(theme === 'light' ? LIGHT_BASE : DARK_BASE)) },
-    uSignal: { value: new THREE.Vector3(1.0, 0.357, 0.227) },
-  };
-  const mat = new THREE.ShaderMaterial({
-    uniforms, vertexShader, fragmentShader,
-    transparent: true, depthWrite: false, blending: THREE.NormalBlending,
-  });
-  scene.add(new THREE.Points(geo, mat));
-
-  let route = 'today';
+  let W = 0, H = 0;
   let enabled = motion;
   let running = false;
   let raf = 0;
   let last = 0;
+  let time = 0;
+  let route = 'today';
+  let shift = 0, shiftTarget = 0;
   let progress = 0, progressTarget = 0;
-  let pulse = 0, pulseT = 0;
-  const cam = new THREE.Vector3(...VIEWS.today);
+  let pulse = 0;
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+  let colors = palette(theme);
 
-  function layout() {
-    const w = window.innerWidth, h = window.innerHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
+  function palette(th) {
+    const light = th === 'light';
+    return {
+      bg: light ? '#f4f5f7' : '#090a0c',
+      line: light ? '38, 42, 50' : '164, 170, 180',
+      lineAlpha: light ? 0.14 : 0.16,
+      signal: light ? '232, 73, 42' : '255, 91, 58',
+    };
   }
 
-  function place(k) {
-    const v = VIEWS[route] || VIEWS.today;
-    cam.x += (v[0] - cam.x) * k;
-    cam.y += (v[1] - cam.y) * k;
-    cam.z += (v[2] - cam.z) * k;
-    camera.position.set(cam.x + mouse.x * 0.8, cam.y + mouse.y * 0.5, cam.z);
-    camera.lookAt(cam.x * 0.6, 2.5, 0);
+  function layout() {
+    W = canvas.width = Math.round(window.innerWidth * dpr);
+    H = canvas.height = Math.round(window.innerHeight * dpr);
+  }
+
+  function draw() {
+    ctx.fillStyle = colors.bg;
+    ctx.fillRect(0, 0, W, H);
+    const step = 6 * dpr;
+    const mid = H * (0.5 + shift) + mouse.y * 14 * dpr;
+    const lift = pulse * pulse * H * 0.05;
+    const main = 3;
+    for (let l = 0; l < LINES; l++) {
+      const isMain = l === main;
+      const amp1 = H * 0.08 * (1 + l * 0.15) * (1 + pulse * 0.6);
+      const amp2 = H * 0.05 * (1 + pulse * 0.3);
+      const off = (l - main) * 22 * dpr;
+      ctx.beginPath();
+      for (let x = 0; x <= W + step; x += step) {
+        const u = x / W + mouse.x * 0.04;
+        const y = mid + off - lift
+          + Math.sin(u * 6 + time * 0.7 + l * 0.7) * amp1
+          + Math.sin(u * 2.3 - time * 0.4 + l) * amp2;
+        x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      }
+      if (isMain) {
+        ctx.strokeStyle = `rgba(${colors.signal}, ${0.7 + progress * 0.3})`;
+        ctx.lineWidth = (1.6 + progress * 1.4 + pulse * 1.5) * dpr;
+        ctx.shadowColor = `rgba(${colors.signal}, ${0.25 + progress * 0.45})`;
+        ctx.shadowBlur = (6 + progress * 10 + pulse * 10) * dpr;
+      } else {
+        const near = 1 - Math.abs(l - main) / LINES;
+        ctx.strokeStyle = `rgba(${colors.line}, ${colors.lineAlpha + near * 0.1 + pulse * 0.1})`;
+        ctx.lineWidth = 1.2 * dpr;
+        ctx.shadowBlur = 0;
+      }
+      ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
   }
 
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000 || 0.016);
     last = now;
-    uniforms.uTime.value += dt;
+    time += dt;
     progress += (progressTarget - progress) * Math.min(1, dt * 2.5);
-    uniforms.uProgress.value = progress;
-    if (pulse > 0) {
-      pulseT += dt * 0.55;
-      pulse = Math.max(0, 1 - pulseT);
-    }
-    uniforms.uPulse.value = pulse;
-    uniforms.uPulseT.value = pulseT;
+    shift += (shiftTarget - shift) * Math.min(1, dt * 2);
+    if (pulse > 0) pulse = Math.max(0, pulse - dt * 0.7);
     mouse.x += (mouse.tx - mouse.x) * dt * 2;
     mouse.y += (mouse.ty - mouse.y) * dt * 2;
-    place(Math.min(1, dt * 1.8));
-    renderer.render(scene, camera);
+    draw();
   }
 
   function loop(now) {
@@ -172,9 +103,10 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
   }
 
   function renderStill() {
-    uniforms.uProgress.value = progress = progressTarget;
-    place(1);
-    renderer.render(scene, camera);
+    progress = progressTarget;
+    shift = shiftTarget;
+    pulse = 0;
+    draw();
   }
 
   window.addEventListener('resize', () => {
@@ -194,19 +126,18 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
   return {
     setRoute(r) {
       route = r;
+      shiftTarget = ROUTE_SHIFT[route] ?? 0;
       if (!running) renderStill();
     },
     setProgress(p) {
-      progressTarget = p;
+      progressTarget = Math.max(0, Math.min(1, p || 0));
       if (!running) renderStill();
     },
     burst() {
-      if (!running) return;
-      pulse = 1;
-      pulseT = 0;
+      if (running) pulse = 1;
     },
     setTheme(th) {
-      uniforms.uBase.value.set(...(th === 'light' ? LIGHT_BASE : DARK_BASE));
+      colors = palette(th);
       if (!running) renderStill();
     },
     setMotion(on) {

@@ -118,7 +118,7 @@ js/backup.js          → export / import, CSV, transfer code, snapshots, gist s
 js/pwa.js             → install and updates
 js/i18n.js            → translations en / es / fr
 js/store.js           → data, persistence, demo
-js/scene.js           → animated background (Three.js point field + shaders)
+js/scene.js           → animated background (waves on a 2D canvas)
 js/year.js            → 3D year scene (landing page and "My year" page, shareable image)
 js/ui.js              → on-screen notifications
 vendor/               → Three.js

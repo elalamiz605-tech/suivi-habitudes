@@ -706,6 +706,7 @@ function splash() {
   if (!el) return;
   const s = st();
   if (V.needsOnboarding(s)) { el.remove(); return; }
+  document.body.classList.add('introducing');
   const stage = document.getElementById('splash-stage');
   const skip = document.getElementById('splash-skip');
   document.getElementById('splash-dots')?.remove();
@@ -727,7 +728,7 @@ function splash() {
   skip.textContent = t('intro.skip');
   let closed = false;
   const timers = [];
-  const close = () => { if (closed) return; closed = true; timers.forEach(clearTimeout); el.classList.add('out'); setTimeout(() => el.remove(), 550); };
+  const close = () => { if (closed) return; closed = true; timers.forEach(clearTimeout); el.classList.add('out'); setTimeout(() => { el.remove(); document.body.classList.remove('introducing'); }, 550); };
   skip.addEventListener('click', close);
   stage.addEventListener('click', close);
   if (fast) { el.classList.add('fast'); timers.push(setTimeout(close, 1200)); return; }
