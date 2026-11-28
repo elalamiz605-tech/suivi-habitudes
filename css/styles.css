@@ -971,3 +971,18 @@ details.more > :not(summary) { margin-top: 10px; }
 .ob-cat + .ob-cat { margin-top: 14px; }
 .ob-cat .group-title { margin: 0 2px 6px; }
 .welcome .field > .ob-cat:first-of-type { margin-top: 6px; }
+
+/* ---------- Introduction à chaque ouverture ---------- */
+.splash { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; background: var(--bg); transition: opacity .5s var(--ease); cursor: pointer; }
+.splash.out { opacity: 0; pointer-events: none; }
+.splash-inner { display: grid; justify-items: center; gap: 6px; padding: 0 24px; text-align: center; animation: splash-in .7s var(--ease) both; }
+@keyframes splash-in { from { opacity: 0; transform: translateY(10px) scale(.98); } }
+.splash-ring { width: 72px; height: 72px; margin-bottom: 10px; transform: rotate(-90deg); }
+.splash-ring circle { fill: none; stroke-width: 5; }
+.splash-ring .track { stroke: var(--line-2); }
+.splash-ring .arc { stroke: var(--signal); stroke-linecap: round; stroke-dasharray: 138.2; stroke-dashoffset: 138.2; animation: splash-arc 1.4s var(--ease) .2s forwards; }
+@keyframes splash-arc { to { stroke-dashoffset: 34.5; } }
+.splash-title { margin: 0; font-weight: 600; font-size: 22px; letter-spacing: -0.02em; }
+.splash-line { margin: 0; color: var(--text-2); font-size: 15px; max-width: 34ch; animation: splash-in .7s var(--ease) .35s both; }
+.splash-sub { margin: 6px 0 0; color: var(--text-3); font: 500 12.5px var(--mono); animation: splash-in .7s var(--ease) .6s both; }
+@media (prefers-reduced-motion: reduce) { .splash-inner, .splash-line, .splash-sub { animation: none; } .splash-ring .arc { animation: none; stroke-dashoffset: 34.5; } }

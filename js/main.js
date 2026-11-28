@@ -12,7 +12,7 @@ import { startReminders, requestPermission, permission, notify } from './reminde
 import { applySuggestion, reviewWeek } from './insights.js';
 import { writeReview } from './coach.js';
 import * as C from './cloud.js';
-import { dateKey, today, norm, esc, prefersReducedMotion, fmtClock } from './utils.js';
+import { dateKey, today, norm, esc, prefersReducedMotion, fmtClock, fmtFull } from './utils.js';
 
 const NAV = [
   { id: 'today', key: 'nav.today', ic: 'sun' },
@@ -699,6 +699,23 @@ document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target.id === 'modal') e.target.close();
 });
 
+// ---------- Introduction (à chaque ouverture) ----------
+
+function splash() {
+  const el = document.getElementById('splash');
+  if (!el) return;
+  const s = st();
+  if (V.needsOnboarding(s)) { el.remove(); return; }
+  const prog = L.todayProgress(s.habits.filter((h) => !h.archived));
+  const best = s.habits.filter((h) => !h.archived).map((h) => L.currentStreak(h)).sort((a, b) => b - a)[0] || 0;
+  document.getElementById('splash-line').textContent = s.settings.name ? t('splash.hello', { name: s.settings.name }) : t('splash.tagline');
+  document.getElementById('splash-sub').textContent = `${fmtFull(today())} · ${prog.total ? t('splash.today', { done: prog.done, total: prog.total }) : t('today.nothing')}${best >= 2 ? ` · ${t('splash.streak', { n: best })}` : ''}`;
+  const dur = prefersReducedMotion() ? 700 : 2200;
+  const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 550); };
+  el.addEventListener('click', close, { once: true });
+  setTimeout(close, dur);
+}
+
 // ---------- Démarrage ----------
 
 // Première visite (rien d'enregistré, pas installée, pas venue de la vitrine) : la présentation d'abord.
@@ -711,6 +728,7 @@ if (V.needsOnboarding(st()) && !st().settings.onboarded && !sessionStorage.getIt
 applyTheme();
 checkRewards(true);
 render();
+splash();
 startScene();
 initPWA();
 startReminders();
@@ -718,7 +736,7 @@ B.dailySnapshot();
 B.autoSync('start');
 C.autoCloud('start');
 C.pushSubscription().then((s) => { ui.pushOn = !!s; }).catch(() => {});
-C.checkServerCoach().then(() => { if (route === 'review') render(); });
+if (C.isSignedIn()) C.checkServerCoach().then(() => { if (route === 'review') render(); });
 refreshBuddies();
 setInterval(() => { if (!document.hidden && C.isSignedIn()) refreshBuddies(); }, 150000);
 if (st().settings.notify && permission() !== 'granted') { st().settings.notify = false; S.save(); }

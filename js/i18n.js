@@ -923,3 +923,13 @@ addTranslations('en', {
   'tpl.id_musician': 'a musician', 'tpl.id_focused': 'someone focused', 'tpl.id_tidy': 'someone organised', 'tpl.id_cook': 'someone who cooks', 'tpl.id_creative': 'someone creative',
   'demo.walk': 'Walk 30 min',
 });
+
+addTranslations('fr', {
+  'splash.tagline': 'Une année se construit un jour à la fois.', 'splash.hello': 'Bonjour {name}. Une année se construit un jour à la fois.', 'splash.today': '{done}/{total} habitudes aujourd’hui', 'splash.streak': 'série de {n}',
+});
+addTranslations('es', {
+  'splash.tagline': 'Un año se construye un día a la vez.', 'splash.hello': 'Hola {name}. Un año se construye un día a la vez.', 'splash.today': '{done}/{total} hábitos hoy', 'splash.streak': 'racha de {n}',
+});
+addTranslations('en', {
+  'splash.tagline': 'A year is built one day at a time.', 'splash.hello': 'Hi {name}. A year is built one day at a time.', 'splash.today': '{done}/{total} habits today', 'splash.streak': 'streak of {n}',
+});
