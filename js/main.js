@@ -720,7 +720,7 @@ function splash() {
     `<div class="step"><svg class="step-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" class="track"/><circle cx="32" cy="32" r="22" class="arc"/></svg><h2>Momentum</h2><p>${t('intro.s1')}</p></div>`,
     `<div class="step"><div class="blocks" aria-hidden="true">${blocks}</div><h2>${t('intro.s2_title')}</h2><p>${t('intro.s2')}</p></div>`,
     `<div class="step"><h2>${t('intro.s3_title')}</h2><div class="feat">${[['repeat', t('nav.habits')], ['list', t('nav.tasks')], ['cube', t('nav.year')], ['restore', t('intro.never_twice')], ['sparkle', t('review.title')], ['user', t('buddy.title')]].map(([ic, l], i) => `<span style="--i:${i}">${icon(ic)}${esc(l)}</span>`).join('')}</div></div>`,
-    `<div class="step"><span class="avatar big">Z</span><div class="signature"><small>${t('intro.by')}</small><b>Ziad El Alami</b><small>${t('intro.by_sub')}</small></div><p class="mono-line">${fmtFull(today())} · ${prog.total ? t('splash.today', { done: prog.done, total: prog.total }) : t('today.nothing')}${best >= 2 ? ` · ${t('splash.streak', { n: best })}` : ''}</p></div>`,
+    `<div class="step"><span class="avatar big">Z</span><div class="signature"><small>${t('intro.by')}</small><b>Ziad El Alami</b></div><p class="mono-line">${fmtFull(today())} · ${prog.total ? t('splash.today', { done: prog.done, total: prog.total }) : t('today.nothing')}${best >= 2 ? ` · ${t('splash.streak', { n: best })}` : ''}</p></div>`,
   ];
   const STEP_MS = prefersReducedMotion() ? 900 : 2000;
   el.style.setProperty('--step', `${STEP_MS}ms`);
