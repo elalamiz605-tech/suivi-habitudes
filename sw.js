@@ -1,7 +1,7 @@
 // Service worker Momentum : l'application fonctionne hors ligne.
 // Stratégie : réseau d'abord (toujours la dernière version quand on est connecté),
 // cache en secours (hors ligne). Les pages et fichiers de l'app sont pré-chargés.
-const VERSION = 'momentum-v7';
+const VERSION = 'momentum-v8';
 const SHELL = [
   './',
   './index.html',
@@ -67,6 +67,20 @@ self.addEventListener('message', (e) => {
   } else if (m.type === 'skip-waiting') {
     self.skipWaiting();
   }
+});
+
+// Web Push envoyé par Momentum Cloud (rappels à l'heure, récap du soir, défis).
+self.addEventListener('push', (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { title: 'Momentum', body: e.data ? e.data.text() : '' }; }
+  e.waitUntil(self.registration.showNotification(d.title || 'Momentum', {
+    body: d.body || '',
+    icon: './assets/icons/icon-192.png',
+    badge: './assets/icons/icon-192.png',
+    tag: d.tag || 'momentum',
+    renotify: true,
+    data: { url: d.url || './app.html#/today' },
+  }));
 });
 
 self.addEventListener('notificationclick', (e) => {

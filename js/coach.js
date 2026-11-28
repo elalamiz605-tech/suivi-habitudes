@@ -3,11 +3,12 @@
 import { store, save } from './store.js';
 import { reviewSummary, reviewWeek } from './insights.js';
 import { lang, t } from './i18n.js';
+import { serverCoach, serverReview } from './cloud.js';
 
 const API = 'https://api.anthropic.com/v1/messages';
 const LANG_NAME = { fr: 'français', es: 'español', en: 'English' };
 
-export const hasKey = () => !!store.state.settings.ai.key;
+export const hasKey = () => !!store.state.settings.ai.key || serverCoach();
 export const cachedReview = () => store.state.settings.reviews[reviewWeek().key]?.ai || '';
 
 const SYSTEM = `Tu es le coach de Momentum, une application d'habitudes. Tu écris le bilan hebdomadaire d'une personne à partir de ses données.
@@ -18,9 +19,15 @@ Longueur : 120 à 180 mots. N'invente aucune donnée : si une information manque
 export async function writeReview({ force = false } = {}) {
   const s = store.state;
   const key = s.settings.ai.key;
-  if (!key) throw new Error(t('coach.no_key'));
   const wk = reviewWeek().key;
   if (!force && s.settings.reviews[wk]?.ai) return s.settings.reviews[wk].ai;
+  if (!key && serverCoach()) {
+    const text = await serverReview(reviewSummary(s), lang(), s.settings.name || '');
+    s.settings.reviews[wk] = { ai: text, at: new Date().toISOString() };
+    save();
+    return text;
+  }
+  if (!key) throw new Error(t('coach.no_key'));
 
   const body = {
     model: s.settings.ai.model || 'claude-opus-5-5',

@@ -948,3 +948,22 @@ details.more summary::-webkit-details-marker { display: none; }
 details.more summary::before { content: '▸ '; }
 details.more[open] summary::before { content: '▾ '; }
 details.more > :not(summary) { margin-top: 10px; }
+
+/* ---------- Défi à deux ---------- */
+.buddies { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.buddies li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--r-sm); background: var(--field); border: 1px solid var(--line); font-size: 13px; }
+.buddies li b { flex: 1; font-weight: 500; }
+.buddies li small { color: var(--text-3); font-size: 12px; }
+.buddy-today { font: 500 12.5px var(--mono); color: var(--text-2); }
+.buddy-today.perfect { color: var(--signal); }
+.invite-code { font: 600 16px var(--mono); letter-spacing: .18em; padding: 6px 12px; border-radius: var(--r-sm); background: var(--signal-soft); color: var(--text); }
+.buddy-join { display: flex; gap: 8px; align-items: end; }
+.buddy-join .btn { height: 36px; }
+.buddy-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.buddy-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.buddy-card > div { flex: 1; min-width: 0; }
+.buddy-card b { display: block; font-weight: 500; font-size: 13.5px; }
+.buddy-card small { color: var(--text-3); font-size: 12px; }
+.buddy-card.perfect { border-color: color-mix(in srgb, var(--signal) 45%, transparent); }
+.buddy-streak { display: inline-flex; align-items: center; gap: 4px; font: 500 12px var(--mono); color: var(--text-2); }
+.buddy-streak .ic { width: 13px; height: 13px; color: var(--signal); }

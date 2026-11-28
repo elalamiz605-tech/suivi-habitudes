@@ -4,7 +4,7 @@ import * as L from './logic.js';
 import { isPaused, currentVacation, APP_VERSION } from './store.js';
 import { weeklyInsights, moodStats, weeklyReview, reviewWeek } from './insights.js';
 import { hasKey, cachedReview } from './coach.js';
-import { isSignedIn, DEFAULT_URL } from './cloud.js';
+import { isSignedIn, DEFAULT_URL, pushSupported, buddiesCached } from './cloud.js';
 import { installState } from './pwa.js';
 import { permission as notifPermission, supported as notifSupported } from './reminders.js';
 import { listSnapshots } from './backup.js';
@@ -221,6 +221,12 @@ export function viewToday(s, ui = {}) {
     ${skipped.length ? `<div class="later"><span>${t('today.skipped')}</span>${skipped.map((h) => `<button class="chip" data-action="skip" data-id="${h.id}" title="${t('today.unskip')}">${icon('skip')}${esc(h.name)}</button>`).join('')}</div>` : ''}
     ${paused.length ? `<div class="later"><span>${t('today.paused')}</span>${paused.map((h) => `<button class="chip" data-action="resume-habit" data-id="${h.id}" title="${t('habits.resume')}">${icon('pause')}${esc(h.name)}</button>`).join('')}</div>` : ''}
   </section>
+
+  ${isSignedIn() && buddiesCached().length ? `
+  <section class="section buddies-strip" aria-label="${t('buddy.title')}">
+    <div class="section-head"><h2>${t('buddy.today_title')}</h2><a href="#/settings" class="link">${t('buddy.manage')}${icon('chev-r')}</a></div>
+    <div class="buddy-cards">${buddiesCached().map((b) => `<div class="buddy-card ${b.today.perfect ? 'perfect' : ''}"><span class="avatar">${esc((b.name || '?').charAt(0).toUpperCase())}</span><div><b>${esc(b.name)}</b><small>${b.today.total ? t('buddy.progress', { done: b.today.done, total: b.today.total }) : t('buddy.nothing')}${b.today.perfect ? ' · ' + t('buddy.perfect') : ''}</small></div><span class="buddy-streak">${icon('flame')}${b.bestStreak}</span></div>`).join('')}</div>
+  </section>` : ''}
 
   <section class="section">
     <div class="section-head"><h2>${t('today.priority_tasks')}</h2><a href="#/tasks" class="link">${t('today.open_board')}${icon('chev-r')}</a></div>
@@ -523,7 +529,7 @@ export function viewStats(s) {
 
 // ---------- Réglages ----------
 
-export function viewSettings(s) {
+export function viewSettings(s, ui = {}) {
   const lv = L.levelFor(L.computeXP(s));
   const st = s.settings;
   const install = installState();
@@ -573,7 +579,29 @@ export function viewSettings(s) {
         <button class="btn sm self-end" data-action="test-notify" ${perm !== 'granted' ? 'disabled' : ''}>${icon('bell')}${t('settings.test_notify')}</button>
       </div>
       <p class="muted">${t('settings.recap_hint')}</p>
+      <div class="panel-head"><h3>${icon('cloud')}${t('push.title')}</h3></div>
+      ${isSignedIn()
+        ? (pushSupported()
+          ? `<label class="switch"><input type="checkbox" data-setting="push" ${ui.pushOn ? 'checked' : ''}><span class="track"></span><span>${t('push.label')}</span></label>
+             <p class="muted">${t('push.hint')}</p>
+             <div class="btn-row"><button class="btn sm" data-action="push-test" ${ui.pushOn ? '' : 'disabled'}>${icon('bell')}${t('settings.test_notify')}</button></div>`
+          : `<p class="muted">${t('push.unsupported')}</p>`)
+        : `<p class="muted">${t('push.need_account')}</p>`}
     </article>
+
+    ${isSignedIn() ? `
+    <article class="panel">
+      <div class="panel-head"><h3>${icon('user')}${t('buddy.title')}</h3><span class="muted">${t('buddy.sub')}</span></div>
+      <p class="muted">${t('buddy.hint')}</p>
+      ${(ui.buddies || []).length ? `<ul class="buddies">${ui.buddies.map((b) => `<li><b>${esc(b.name)}</b><span class="buddy-today ${b.today.perfect ? 'perfect' : ''}">${b.today.done}/${b.today.total}${b.today.perfect ? ' ✓' : ''}</span><small>${t('buddy.best', { n: b.bestStreak })}</small><button class="icon-btn sm" data-action="buddy-remove" data-id="${b.id}" aria-label="${t('common.delete')}">${icon('x')}</button></li>`).join('')}</ul>` : `<p class="muted">${t('buddy.none')}</p>`}
+      <div class="btn-row">
+        <button class="btn" data-action="buddy-invite">${icon('sparkle')}${t('buddy.invite')}</button>
+        ${ui.inviteCode ? `<code class="invite-code" id="invite-code">${esc(ui.inviteCode)}</code><button class="btn sm" data-action="buddy-copy">${icon('copy')}${t('common.copy')}</button>` : ''}
+      </div>
+      ${ui.inviteCode ? `<p class="muted">${t('buddy.invite_hint')}</p>` : ''}
+      <form class="buddy-join" id="buddy-form"><label class="field grow"><span>${t('buddy.code')}</span><input id="buddy-code" maxlength="6" placeholder="ABC234" autocomplete="off" style="text-transform:uppercase"></label><button class="btn" type="submit">${t('buddy.join')}</button></form>
+      <p class="form-error" id="buddy-error" hidden></p>
+    </article>` : ''}
 
     <article class="panel">
       <div class="panel-head"><h3>${icon('phone')}${t('settings.install')}</h3></div>

@@ -7,6 +7,7 @@ import { toast } from './ui.js';
 export const DEFAULT_URL = 'https://momentum-cloud.onrender.com';
 const cloud = () => store.state.settings.cloud;
 export const isSignedIn = () => !!cloud().token;
+export const cloudApi = (path, opts) => api(path, opts);
 
 let wakingToast = 0;
 
@@ -155,3 +156,63 @@ export function autoCloud(event) {
     pushTimer = setTimeout(() => push({ quiet: true }), 4000);
   }
 }
+
+// ---------- Notifications push (appareil courant) ----------
+
+const b64ToBytes = (s) => { const b = atob((s + '='.repeat((4 - s.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(b, (c) => c.charCodeAt(0)); };
+export const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+
+export async function pushSubscription() {
+  if (!pushSupported()) return null;
+  const reg = await navigator.serviceWorker.getRegistration();
+  return reg ? reg.pushManager.getSubscription() : null;
+}
+
+export async function enablePush() {
+  if (!pushSupported()) throw new Error(t('push.unsupported'));
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') throw new Error(t('settings.notify_denied'));
+  const reg = await navigator.serviceWorker.ready;
+  const { publicKey } = await api('/push/key', { auth: false });
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(publicKey) });
+  await api('/push/subscribe', { method: 'POST', body: { subscription: sub.toJSON(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone } });
+  toast(t('push.enabled'));
+}
+
+export async function disablePush() {
+  const sub = await pushSubscription();
+  if (sub) {
+    try { await api('/push/subscribe', { method: 'DELETE', body: { endpoint: sub.endpoint } }); } catch (_) { /* déjà parti */ }
+    await sub.unsubscribe();
+  }
+  toast(t('push.disabled'));
+}
+
+export const testPush = () => api('/push/test', { method: 'POST' });
+
+// ---------- Défi à deux ----------
+
+let buddyCache = { at: 0, list: [] };
+export const buddyInvite = () => api('/buddies/invite', { method: 'POST' });
+export const buddyJoin = (code) => api('/buddies/join', { method: 'POST', body: { code } }).then((r) => { buddyCache.at = 0; return r; });
+export const buddyRemove = (id) => api(`/buddies/${id}`, { method: 'DELETE' }).then(() => { buddyCache.at = 0; });
+export async function buddies({ fresh = false } = {}) {
+  if (!isSignedIn()) return [];
+  if (!fresh && Date.now() - buddyCache.at < 20000) return buddyCache.list;
+  const r = await api(`/buddies?tz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}`);
+  buddyCache = { at: Date.now(), list: r.buddies };
+  return r.buddies;
+}
+export const buddiesCached = () => buddyCache.list;
+
+// ---------- Coach côté serveur ----------
+
+let coachState = { enabled: false, checked: false };
+export const serverCoach = () => isSignedIn() && coachState.enabled;
+export async function checkServerCoach() {
+  if (coachState.checked) return coachState.enabled;
+  try { coachState = { enabled: !!(await api('/coach/status', { auth: false })).enabled, checked: true }; } catch (_) { coachState = { enabled: false, checked: true }; }
+  return coachState.enabled;
+}
+export const serverReview = (summary, lang, name) => api('/coach/review', { method: 'POST', body: { summary, lang, name } }).then((r) => r.text);

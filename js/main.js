@@ -27,7 +27,7 @@ const VIEWS = { today: V.viewToday, habits: V.viewHabits, tasks: V.viewTasks, st
 const TITLE_KEY = { review: 'review.title' };
 
 const viewEl = document.getElementById('view');
-const ui = { habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio', stamp: '', yearStage: 0, aiBusy: false, aiError: '', obPicks: new Set([0, 1, 2]), obName: '' };
+const ui = { pushOn: false, buddies: [], inviteCode: '', habitCat: '', taskQ: '', taskPrio: '', taskProj: '', taskSort: 'prio', stamp: '', yearStage: 0, aiBusy: false, aiError: '', obPicks: new Set([0, 1, 2]), obName: '' };
 let route = currentRoute();
 let entering = true;
 let scene = null;
@@ -98,6 +98,7 @@ function render() {
   document.title = `${t(TITLE_KEY[route] || NAV.find((n) => n.id === route)?.key || 'nav.today')} · Momentum`;
   if (route === 'year') mountYear();
   else unmountYear();
+  if ((route === 'today' || route === 'settings') && C.isSignedIn()) refreshBuddies();
   if (route === 'review' && s.settings.lastReviewWeek !== reviewWeek().key) { s.settings.lastReviewWeek = reviewWeek().key; S.save(); }
 }
 
@@ -393,11 +394,15 @@ const actions = {
   },
   'snapshot-restore': (el) => B.restoreSnapshot(el.dataset.date),
   'sync-push': () => B.pushSync(),
+  async 'push-test'() { try { const r = await C.testPush(); toast(t('push.test_sent', { n: r.sent })); } catch (e) { toast(e.message); } },
+  async 'buddy-invite'() { try { ui.inviteCode = (await C.buddyInvite()).code; render(); } catch (e) { toast(e.message); } },
+  async 'buddy-copy'() { try { await navigator.clipboard.writeText(ui.inviteCode); toast(t('common.copied')); } catch (_) { document.getElementById('invite-code')?.focus(); } },
+  async 'buddy-remove'(el) { try { await C.buddyRemove(el.dataset.id); await refreshBuddies(true); render(); } catch (e) { toast(e.message); } },
   async 'cloud-login'(el, e) { await cloudSubmit(C.login); },
   async 'cloud-register'() { await cloudSubmit(C.register); },
   'cloud-push': () => C.push(),
   'cloud-pull': () => C.pull(),
-  async 'cloud-logout'() { await C.logout(); render(); },
+  async 'cloud-logout'() { await C.logout(); ui.buddies = []; ui.inviteCode = ''; render(); },
   async 'cloud-logout-all'() { await C.logout({ everywhere: true }); render(); },
   async 'cloud-delete'() {
     const pw = prompt(t('cloud.delete_confirm'));
@@ -494,6 +499,13 @@ const settingHandlers = {
     st().settings.ai.key = el.value.trim();
     S.save();
   },
+  async push(el) {
+    try {
+      if (el.checked) await C.enablePush(); else await C.disablePush();
+      ui.pushOn = !!(await C.pushSubscription());
+    } catch (e) { toast(e.message); ui.pushOn = false; }
+    render();
+  },
   cloudUrl(el) {
     st().settings.cloud.url = el.value.trim();
     S.save();
@@ -571,9 +583,28 @@ async function cloudSubmit(fn) {
   if (!email || password.length < 8) { err.textContent = t('cloud.err_validation'); err.hidden = false; return; }
   form.querySelectorAll('button').forEach((b) => (b.disabled = true));
   err.hidden = true;
-  try { await fn(email, password); render(); } catch (e) { err.textContent = e.message; err.hidden = false; form.querySelectorAll('button').forEach((b) => (b.disabled = false)); }
+  try { await fn(email, password); ui.pushOn = !!(await C.pushSubscription()); await refreshBuddies(true); render(); } catch (e) { err.textContent = e.message; err.hidden = false; form.querySelectorAll('button').forEach((b) => (b.disabled = false)); }
 }
 viewEl.addEventListener('submit', (e) => { if (e.target.id === 'cloud-form') { e.preventDefault(); cloudSubmit(C.login); } });
+viewEl.addEventListener('submit', async (e) => {
+  if (e.target.id !== 'buddy-form') return;
+  e.preventDefault();
+  const input = document.getElementById('buddy-code'), err = document.getElementById('buddy-error');
+  const code = input.value.trim().toUpperCase();
+  if (code.length !== 6) { err.textContent = t('buddy.bad_code'); err.hidden = false; return; }
+  try { const r = await C.buddyJoin(code); toast(t('buddy.joined', { name: r.buddy.name })); ui.inviteCode = ''; await refreshBuddies(true); render(); }
+  catch (ex) { err.textContent = ex.status === 404 ? t('buddy.bad_code') : ex.status === 400 ? t('buddy.own_code') : ex.message; err.hidden = false; }
+});
+
+/** Défi à deux : liste rafraîchie au plus toutes les 20 secondes, sans bloquer le rendu. */
+async function refreshBuddies(fresh = false) {
+  if (!C.isSignedIn()) { ui.buddies = []; return; }
+  try {
+    const before = JSON.stringify(ui.buddies);
+    ui.buddies = await C.buddies({ fresh });
+    if (JSON.stringify(ui.buddies) !== before && (route === 'today' || route === 'settings')) render();
+  } catch (_) { /* hors ligne : on garde la dernière liste */ }
+}
 
 // Minuteur : la bannière se met à jour sans redessiner la page
 document.addEventListener('timer-tick', () => {
@@ -679,6 +710,10 @@ startReminders();
 B.dailySnapshot();
 B.autoSync('start');
 C.autoCloud('start');
+C.pushSubscription().then((s) => { ui.pushOn = !!s; }).catch(() => {});
+C.checkServerCoach().then(() => { if (route === 'review') render(); });
+refreshBuddies();
+setInterval(() => { if (!document.hidden && C.isSignedIn()) refreshBuddies(); }, 150000);
 if (st().settings.notify && permission() !== 'granted') { st().settings.notify = false; S.save(); }
 
 // Mise à jour à minuit (ou à l'heure de début de journée) si la page reste ouverte

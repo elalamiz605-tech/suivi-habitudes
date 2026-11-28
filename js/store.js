@@ -4,7 +4,7 @@ import { setLang, detectLang, t } from './i18n.js';
 
 const KEY = 'momentum:v2';
 const LEGACY_KEY = 'suivi-habitudes:v1'; // données de la première version
-export const APP_VERSION = '3.2';
+export const APP_VERSION = '3.3';
 
 export const COLORS = ['#ff5b3a', '#e6e8eb', '#7ea6e0', '#8fbf8a', '#d9b36c', '#b39ddb', '#6fc3c9', '#e08a9a'];
 // Couleurs de la première palette, converties vers la palette sobre actuelle.

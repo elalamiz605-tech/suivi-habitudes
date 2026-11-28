@@ -43,6 +43,9 @@
 
 ### ☁️ Compte Momentum Cloud (optionnel)
 - Connectez-vous depuis les réglages pour **synchroniser vos appareils** : à la première connexion, les données du compte sont prises (avec confirmation si l'appareil a déjà des validations), puis chaque changement est envoyé automatiquement et les conflits entre appareils se règlent par la version la plus récente.
+- **Rappels push appli fermée** (iPhone compris une fois installée) : chaque appareil s'abonne, le serveur envoie les rappels et le récap du soir à la bonne heure dans votre fuseau.
+- **Défi à deux** : un code d'invitation à 6 caractères lie deux comptes ; chacun voit la journée de l'autre (fait/total, journée complète, meilleure série) sur la page Aujourd'hui, rien de plus.
+- **Coach IA sans clé** : quand le serveur en a une, le bilan est rédigé côté serveur.
 - Serveur : [momentum-cloud](https://github.com/elalamiz605-tech/momentum-cloud) (Node.js, Express, PostgreSQL). L'adresse du serveur est modifiable dans les réglages pour l'héberger soi-même. Les clés locales (gist, Claude) ne quittent jamais l'appareil.
 
 ### 💾 Sauvegarde et synchronisation (sans compte)
@@ -84,7 +87,7 @@ Pour l'activer une fois : **Settings → Pages → Source : « GitHub Actions »
 
 ## Limites connues
 
-- Les **rappels** sont envoyés par la page ou l'application installée : sans serveur de notifications push, un navigateur ne peut pas réveiller Momentum tout seul. Sur ordinateur et Android, l'application installée en arrière-plan suffit ; sur iOS, il faut l'ouvrir.
+- Sans compte, les **rappels** sont envoyés par la page ou l'application installée (ordinateur et Android en arrière-plan ; iOS doit être ouvert). Avec un compte Momentum Cloud, ce sont de vraies notifications push, appli fermée, iPhone compris une fois installée sur l'écran d'accueil.
 - La **synchronisation** repose sur un gist privé GitHub : le jeton reste dans le navigateur, à n'utiliser que sur vos propres appareils.
 
 ## Technologies
@@ -121,6 +124,4 @@ vendor/               → Three.js
 
 ## Idées pour la suite
 
-- [ ] Notifications push avec un petit serveur (rappels même application fermée, iOS compris)
 - [ ] Widgets d'écran d'accueil (nécessite une application native)
-- [ ] Défis à deux (partage d'une habitude avec un ami, sans compte)

@@ -860,3 +860,34 @@ addTranslations('en', {
   'cloud.err_conflict': 'Version conflict.', 'cloud.err_large': 'Data too large.', 'cloud.err_server': 'Server error',
   'cloud.use_remote_confirm': 'Your account already has data. OK: use it on this device (recommended). Cancel: replace it with this device’s data.',
 });
+
+addTranslations('fr', {
+  'push.title': 'Rappels appli fermée (push)', 'push.label': 'Recevoir les rappels sur cet appareil, même appli fermée',
+  'push.hint': 'Envoyés par le serveur à l’heure de chaque rappel et pour le récap du soir. Sur iPhone, installez d’abord l’appli sur l’écran d’accueil.',
+  'push.unsupported': 'Ce navigateur ne prend pas en charge les notifications push.', 'push.need_account': 'Connectez-vous à un compte Momentum Cloud (ci-dessous) pour recevoir les rappels même appli fermée.',
+  'push.enabled': 'Rappels push activés sur cet appareil', 'push.disabled': 'Rappels push désactivés sur cet appareil', 'push.test_sent': 'Notification de test envoyée à {n} appareil(s)',
+  'buddy.title': 'Défi à deux', 'buddy.sub': 'tenir à deux, c’est tenir plus longtemps', 'buddy.hint': 'Générez un code et envoyez-le à un ami qui a Momentum : chacun verra la progression du jour de l’autre, rien de plus.',
+  'buddy.none': 'Aucun binôme pour l’instant.', 'buddy.invite': 'Générer un code d’invitation', 'buddy.invite_hint': 'Valable 48 h, à usage unique. Votre ami le colle dans Réglages → Défi à deux.',
+  'buddy.code': 'Code reçu', 'buddy.join': 'Rejoindre', 'buddy.joined': 'Vous êtes maintenant en binôme avec {name}', 'buddy.bad_code': 'Code invalide ou expiré.', 'buddy.own_code': 'C’est votre propre code.',
+  'buddy.best': 'meilleure série : {n}', 'buddy.today_title': 'Votre binôme aujourd’hui', 'buddy.manage': 'Gérer', 'buddy.progress': '{done}/{total} habitudes', 'buddy.nothing': 'rien de prévu', 'buddy.perfect': 'journée complète',
+});
+addTranslations('es', {
+  'push.title': 'Recordatorios con la app cerrada (push)', 'push.label': 'Recibir recordatorios en este dispositivo, incluso con la app cerrada',
+  'push.hint': 'Enviados por el servidor a la hora de cada recordatorio y para el resumen nocturno. En iPhone, instala primero la app en la pantalla de inicio.',
+  'push.unsupported': 'Este navegador no admite notificaciones push.', 'push.need_account': 'Inicia sesión en una cuenta Momentum Cloud (abajo) para recibir recordatorios con la app cerrada.',
+  'push.enabled': 'Recordatorios push activados en este dispositivo', 'push.disabled': 'Recordatorios push desactivados en este dispositivo', 'push.test_sent': 'Notificación de prueba enviada a {n} dispositivo(s)',
+  'buddy.title': 'Reto a dos', 'buddy.sub': 'a dos se aguanta más', 'buddy.hint': 'Genera un código y envíaselo a un amigo que tenga Momentum: cada uno verá el progreso del día del otro, nada más.',
+  'buddy.none': 'Todavía sin compañero.', 'buddy.invite': 'Generar un código de invitación', 'buddy.invite_hint': 'Válido 48 h, de un solo uso. Tu amigo lo pega en Ajustes → Reto a dos.',
+  'buddy.code': 'Código recibido', 'buddy.join': 'Unirse', 'buddy.joined': 'Ahora haces equipo con {name}', 'buddy.bad_code': 'Código no válido o caducado.', 'buddy.own_code': 'Es tu propio código.',
+  'buddy.best': 'mejor racha: {n}', 'buddy.today_title': 'Tu compañero hoy', 'buddy.manage': 'Gestionar', 'buddy.progress': '{done}/{total} hábitos', 'buddy.nothing': 'nada previsto', 'buddy.perfect': 'día completo',
+});
+addTranslations('en', {
+  'push.title': 'Reminders with the app closed (push)', 'push.label': 'Get reminders on this device, even with the app closed',
+  'push.hint': 'Sent by the server at each reminder time and for the evening recap. On iPhone, install the app on the home screen first.',
+  'push.unsupported': 'This browser does not support push notifications.', 'push.need_account': 'Sign in to a Momentum Cloud account (below) to get reminders even when the app is closed.',
+  'push.enabled': 'Push reminders enabled on this device', 'push.disabled': 'Push reminders disabled on this device', 'push.test_sent': 'Test notification sent to {n} device(s)',
+  'buddy.title': 'Buddy challenge', 'buddy.sub': 'two keep going longer than one', 'buddy.hint': 'Generate a code and send it to a friend who uses Momentum: each of you sees the other’s progress for the day, nothing more.',
+  'buddy.none': 'No buddy yet.', 'buddy.invite': 'Generate an invite code', 'buddy.invite_hint': 'Valid 48 h, single use. Your friend pastes it in Settings → Buddy challenge.',
+  'buddy.code': 'Received code', 'buddy.join': 'Join', 'buddy.joined': 'You are now buddies with {name}', 'buddy.bad_code': 'Invalid or expired code.', 'buddy.own_code': 'That is your own code.',
+  'buddy.best': 'best streak: {n}', 'buddy.today_title': 'Your buddy today', 'buddy.manage': 'Manage', 'buddy.progress': '{done}/{total} habits', 'buddy.nothing': 'nothing planned', 'buddy.perfect': 'perfect day',
+});

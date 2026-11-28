@@ -27,7 +27,7 @@
 - **Templates library** to create a habit in one click (water, meditation, reading, workout, language, no sugar, no screens…).
 - **Skip a day** without breaking the streak, **pause a habit**, global **vacation mode**: neutralised days count neither as done nor as missed.
 - **Custom day start** (midnight → 6 am) for night owls.
-- **Reminders**: up to 3 reminder times per habit + evening recap, by notification (through the service worker).
+- **Reminders**: up to 3 reminder times per habit + evening recap, by notification; with an account, real push notifications even when the app is closed.
 - **Daily note and mood** on every check-in; built-in **timer** for minute-based habits (elapsed time is added automatically) and a focus timer (25 min).
 - Today page **grouped by time of day** (morning, afternoon, evening).
 - Streaks (current and best) that respect unscheduled days; 14-day editable history; categories, colour, notes, archive.
@@ -45,6 +45,9 @@
 
 ### ☁️ Momentum Cloud account (optional)
 - Sign in from Settings to **sync across devices**: the account's data wins at first sign-in (with confirmation if this device already has check-ins), then every change is pushed automatically and conflicts between devices are resolved by the most recent version.
+- **Push reminders with the app closed** (iPhone included once installed): each device subscribes, the server sends reminders and the evening recap at the right time in your timezone.
+- **Buddy challenge**: a 6-character invite code links two accounts; each sees the other's day (done/total, perfect day, best streak) on the Today page, nothing more.
+- **AI coach without a key**: when the server has one, the weekly review is written server-side.
 - Server: [momentum-cloud](https://github.com/elalamiz605-tech/momentum-cloud) (Node.js, Express, PostgreSQL). The server address can be changed in Settings to self-host it. Local secrets (gist token, Claude key) never leave the device.
 
 ### 💾 Backup and sync (no account)
@@ -86,7 +89,7 @@ On each release, bump `VERSION` in `sw.js` so users receive the new version (a "
 
 ## Known limits
 
-- **Reminders** are sent by the page or the installed app: without a push server, a browser cannot wake Momentum by itself. On desktop and Android the installed app running in the background is enough; on iOS it has to be open.
+- Without an account, **reminders** are sent by the page or the installed app (desktop and Android in the background; iOS needs the app open). With a Momentum Cloud account they are real push notifications, app closed, iOS included once installed on the home screen.
 - **Sync** relies on a private GitHub gist: the token stays in the browser, use it only on your own devices.
 
 ## Tech
@@ -123,6 +126,4 @@ vendor/               → Three.js
 
 ## Ideas for later
 
-- [ ] Push notifications with a small server (reminders even when the app is closed, iOS included)
 - [ ] Home-screen widgets (needs a native app)
-- [ ] Challenges with a friend (share a habit, no account)
