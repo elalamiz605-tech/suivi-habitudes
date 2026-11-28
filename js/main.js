@@ -699,21 +699,45 @@ document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target.id === 'modal') e.target.close();
 });
 
-// ---------- Introduction (à chaque ouverture) ----------
+// ---------- Introduction animée (à chaque ouverture) ----------
 
 function splash() {
   const el = document.getElementById('splash');
   if (!el) return;
   const s = st();
   if (V.needsOnboarding(s)) { el.remove(); return; }
+  const stage = document.getElementById('splash-stage');
+  const dots = document.getElementById('splash-dots');
+  const skip = document.getElementById('splash-skip');
   const prog = L.todayProgress(s.habits.filter((h) => !h.archived));
   const best = s.habits.filter((h) => !h.archived).map((h) => L.currentStreak(h)).sort((a, b) => b - a)[0] || 0;
-  document.getElementById('splash-line').textContent = s.settings.name ? t('splash.hello', { name: s.settings.name }) : t('splash.tagline');
-  document.getElementById('splash-sub').textContent = `${fmtFull(today())} · ${prog.total ? t('splash.today', { done: prog.done, total: prog.total }) : t('today.nothing')}${best >= 2 ? ` · ${t('splash.streak', { n: best })}` : ''}`;
-  const dur = prefersReducedMotion() ? 700 : 2200;
-  const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 550); };
-  el.addEventListener('click', close, { once: true });
-  setTimeout(close, dur);
+  // Une année de blocs : 14 colonnes, hauteurs plausibles, les derniers = vos vrais jours.
+  let data = V.yearData(s).slice(-14);
+  // Pas encore d'historique : une courbe d'exemple, pour que l'animation parle quand même.
+  if (!data.some((v) => v > 0)) data = [0.3, 0.5, 0.4, 0.7, 0.6, 0.8, 0.5, 0.9, 0.7, 1, 0.8, 0.9, 1, 0.6];
+  const blocks = data.map((v, i) => `<i style="--i:${i};--h:${Math.max(8, Math.round(v * 70))}px;--o:${v > 0 ? 1 : 0.25}"></i>`).join('');
+  const STEPS = [
+    `<div class="step"><svg class="step-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" class="track"/><circle cx="32" cy="32" r="22" class="arc"/></svg><h2>Momentum</h2><p>${t('intro.s1')}</p></div>`,
+    `<div class="step"><div class="blocks" aria-hidden="true">${blocks}</div><h2>${t('intro.s2_title')}</h2><p>${t('intro.s2')}</p></div>`,
+    `<div class="step"><h2>${t('intro.s3_title')}</h2><div class="feat">${[['repeat', t('nav.habits')], ['list', t('nav.tasks')], ['cube', t('nav.year')], ['restore', t('intro.never_twice')], ['sparkle', t('review.title')], ['user', t('buddy.title')]].map(([ic, l], i) => `<span style="--i:${i}">${icon(ic)}${esc(l)}</span>`).join('')}</div></div>`,
+    `<div class="step"><span class="avatar big">Z</span><div class="signature"><small>${t('intro.by')}</small><b>Ziad El Alami</b><small>${t('intro.by_sub')}</small></div><p class="mono-line">${fmtFull(today())} · ${prog.total ? t('splash.today', { done: prog.done, total: prog.total }) : t('today.nothing')}${best >= 2 ? ` · ${t('splash.streak', { n: best })}` : ''}</p></div>`,
+  ];
+  const STEP_MS = prefersReducedMotion() ? 900 : 2000;
+  el.style.setProperty('--step', `${STEP_MS}ms`);
+  skip.textContent = t('intro.skip');
+  let i = -1, timer = 0, closed = false;
+  const close = () => { if (closed) return; closed = true; clearTimeout(timer); el.classList.add('out'); setTimeout(() => el.remove(), 550); };
+  const show = (n) => {
+    if (n >= STEPS.length) return close();
+    i = n;
+    stage.innerHTML = STEPS[n];
+    dots.innerHTML = STEPS.map((_, k) => `<i class="${k < n ? 'done' : k === n ? 'on' : ''}"></i>`).join('');
+    clearTimeout(timer);
+    timer = setTimeout(() => show(n + 1), STEP_MS);
+  };
+  stage.addEventListener('click', () => show(i + 1));
+  skip.addEventListener('click', close);
+  show(0);
 }
 
 // ---------- Démarrage ----------

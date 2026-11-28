@@ -933,3 +933,19 @@ addTranslations('es', {
 addTranslations('en', {
   'splash.tagline': 'A year is built one day at a time.', 'splash.hello': 'Hi {name}. A year is built one day at a time.', 'splash.today': '{done}/{total} habits today', 'splash.streak': 'streak of {n}',
 });
+
+addTranslations('fr', {
+  'intro.s1': 'Une année se construit un jour à la fois.', 'intro.s2_title': 'Chaque jour est un bloc.', 'intro.s2': 'Plus il monte, plus vous avez tenu. Vos 14 derniers jours sont là, en vrai.',
+  'intro.s3_title': 'Tout ce qu’il faut pour tenir.', 'intro.never_twice': 'Jamais deux fois', 'intro.by': 'Développé par', 'intro.by_sub': 'développeur full-stack, Madrid · sans framework, sans serveur imposé',
+  'intro.skip': 'Passer',
+});
+addTranslations('es', {
+  'intro.s1': 'Un año se construye un día a la vez.', 'intro.s2_title': 'Cada día es un bloque.', 'intro.s2': 'Cuanto más sube, más has cumplido. Tus últimos 14 días están aquí, de verdad.',
+  'intro.s3_title': 'Todo lo necesario para mantenerte.', 'intro.never_twice': 'Nunca dos veces', 'intro.by': 'Desarrollado por', 'intro.by_sub': 'desarrollador full-stack, Madrid · sin framework, sin servidor obligatorio',
+  'intro.skip': 'Saltar',
+});
+addTranslations('en', {
+  'intro.s1': 'A year is built one day at a time.', 'intro.s2_title': 'Every day is a block.', 'intro.s2': 'The higher it rises, the more you kept up. Your last 14 days are right here, for real.',
+  'intro.s3_title': 'Everything you need to keep going.', 'intro.never_twice': 'Never twice', 'intro.by': 'Developed by', 'intro.by_sub': 'full-stack developer, Madrid · no framework, no server required',
+  'intro.skip': 'Skip',
+});
