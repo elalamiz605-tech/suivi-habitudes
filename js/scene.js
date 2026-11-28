@@ -8,7 +8,7 @@ const ROUTE_SHIFT = { today: 0, habits: -0.06, tasks: 0.06, stats: -0.03, year: 
 
 export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
   const ctx = canvas.getContext('2d', { alpha: false });
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
   let W = 0, H = 0;
   let enabled = motion;
   let running = false;
@@ -58,19 +58,19 @@ export function createScene(canvas, { motion = true, theme = 'dark' } = {}) {
         x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
       }
       if (isMain) {
+        // Halo : un second trait large et pâle, bien moins coûteux qu'un shadowBlur.
+        ctx.strokeStyle = `rgba(${colors.signal}, ${0.1 + progress * 0.15 + pulse * 0.1})`;
+        ctx.lineWidth = (8 + progress * 8 + pulse * 10) * dpr;
+        ctx.stroke();
         ctx.strokeStyle = `rgba(${colors.signal}, ${0.7 + progress * 0.3})`;
         ctx.lineWidth = (1.6 + progress * 1.4 + pulse * 1.5) * dpr;
-        ctx.shadowColor = `rgba(${colors.signal}, ${0.25 + progress * 0.45})`;
-        ctx.shadowBlur = (6 + progress * 10 + pulse * 10) * dpr;
       } else {
         const near = 1 - Math.abs(l - main) / LINES;
         ctx.strokeStyle = `rgba(${colors.line}, ${colors.lineAlpha + near * 0.1 + pulse * 0.1})`;
         ctx.lineWidth = 1.2 * dpr;
-        ctx.shadowBlur = 0;
       }
       ctx.stroke();
     }
-    ctx.shadowBlur = 0;
   }
 
   function frame(now) {
