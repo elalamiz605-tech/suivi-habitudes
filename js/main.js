@@ -415,7 +415,23 @@ const actions = {
   async 'buddy-copy'() { try { await navigator.clipboard.writeText(ui.inviteCode); toast(t('common.copied')); } catch (_) { document.getElementById('invite-code')?.focus(); } },
   async 'buddy-remove'(el) { try { await C.buddyRemove(el.dataset.id); await refreshBuddies(true); render(); } catch (e) { toast(e.message); } },
   async 'cloud-login'(el, e) { await cloudSubmit(C.login); },
-  async 'cloud-register'() { await cloudSubmit(C.register); },
+  async 'cloud-register'() {
+    await cloudSubmit(async (email, password) => { const code = await C.register(email, password); if (code) setTimeout(() => F.openRecoveryModal(code), 50); });
+  },
+  'cloud-forgot'() {
+    const email = document.getElementById('cloud-email')?.value.trim() || '';
+    F.openResetModal(email, async (em, code, password) => {
+      const fresh = await C.resetPassword(em, code, password);
+      ui.pushOn = !!(await C.pushSubscription());
+      await refreshBuddies(true);
+      render();
+      if (fresh) setTimeout(() => F.openRecoveryModal(fresh, { fresh: true }), 50);
+    });
+  },
+  async 'cloud-recovery'() {
+    if (!confirm(t('recovery.new_confirm'))) return;
+    try { F.openRecoveryModal(await C.newRecoveryCode(), { fresh: true }); } catch (e) { toast(e.message); }
+  },
   'cloud-push': () => C.push(),
   'cloud-pull': () => C.pull(),
   async 'cloud-logout'() { await C.logout(); ui.buddies = []; ui.inviteCode = ''; render(); },

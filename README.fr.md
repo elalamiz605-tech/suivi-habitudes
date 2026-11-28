@@ -20,6 +20,8 @@
 - **Thème sombre, clair ou automatique**, et interface en **anglais par défaut, français ou español** (changeable dans les réglages, choix conservé).
 
 ### 🔁 Habitudes
+- **Routines** : regroupez des habitudes en routine du matin, de l’après-midi ou du soir et déroulez-la étape par étape depuis Aujourd’hui, avec minuteur intégré pour les habitudes en minutes.
+- **Page détail par habitude** : série, record, taux 30/90 jours, calendrier mensuel corrigeable, tendance sur 26 semaines, notes et humeurs.
 - **Trois types de suivi** : fait / pas fait, **objectif chiffré** (8 verres d'eau, 20 pages…) ou **mauvaise habitude à arrêter** (compteur de « jours sans »).
 - **Cinq fréquences** : tous les jours, certains jours, **X fois par semaine**, **tous les X jours**, **X fois par mois**.
 - **Bibliothèque de modèles** pour créer une habitude en un clic (eau, méditation, lecture, sport, langue, sans sucre, sans écran…).

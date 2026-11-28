@@ -757,7 +757,8 @@ export function viewSettings(s, ui = {}) {
       </div>
       <p class="muted">${st.cloud.lastAt ? t('settings.sync_last', { date: fmtDateTime(new Date(st.cloud.lastAt)) }) : t('settings.sync_never')}</p>
       <details class="more"><summary>${t('cloud.danger')}</summary>
-        <div class="btn-row"><button class="btn ghost" data-action="cloud-logout-all">${t('cloud.sign_out_all')}</button><button class="btn danger" data-action="cloud-delete">${icon('trash')}${t('cloud.delete')}</button></div>
+        <p class="muted">${t('recovery.settings_hint')}</p>
+        <div class="btn-row"><button class="btn" data-action="cloud-recovery">${icon('key')}${t('recovery.new_code')}</button><button class="btn ghost" data-action="cloud-logout-all">${t('cloud.sign_out_all')}</button><button class="btn danger" data-action="cloud-delete">${icon('trash')}${t('cloud.delete')}</button></div>
       </details>`
       : `
       <p class="muted">${t('cloud.hint')}</p>
@@ -769,6 +770,7 @@ export function viewSettings(s, ui = {}) {
           <button class="btn" type="button" data-action="cloud-register">${t('cloud.create')}</button>
         </div>
         <p class="form-error" id="cloud-error" hidden></p>
+        <p class="muted"><button type="button" class="link-btn quiet" data-action="cloud-forgot">${t('recovery.forgot_link')}</button></p>
       </form>
       <details class="more"><summary>${t('cloud.advanced')}</summary>
         <label class="field"><span>${t('cloud.url')}</span><input data-setting="cloudUrl" value="${esc(st.cloud.url)}" placeholder="${DEFAULT_URL}" autocomplete="off"></label>

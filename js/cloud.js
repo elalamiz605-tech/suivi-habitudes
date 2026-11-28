@@ -42,7 +42,7 @@ async function api(path, { method = 'GET', body, auth = true } = {}) {
 }
 
 function messageFor(code, status) {
-  const known = { email_taken: 'cloud.err_taken', invalid_credentials: 'cloud.err_credentials', validation_error: 'cloud.err_validation', version_conflict: 'cloud.err_conflict', payload_too_large: 'cloud.err_large' };
+  const known = { email_taken: 'cloud.err_taken', invalid_credentials: 'cloud.err_credentials', invalid_recovery: 'recovery.err_code', validation_error: 'cloud.err_validation', version_conflict: 'cloud.err_conflict', payload_too_large: 'cloud.err_large' };
   return known[code] ? t(known[code]) : `${t('cloud.err_server')} (${status})`;
 }
 
@@ -54,7 +54,20 @@ export async function register(email, password) {
   Object.assign(cloud(), { token: res.token, email: res.user.email, version: 0, lastAt: '' });
   save();
   await afterSignIn();
+  return res.recoveryCode || '';
 }
+
+/** Mot de passe oublié : e-mail + code de secours → nouveau mot de passe, puis connexion. Renvoie le nouveau code. */
+export async function resetPassword(email, code, password) {
+  const res = await api('/auth/reset', { method: 'POST', body: { email, code, password }, auth: false });
+  Object.assign(cloud(), { token: res.token, email: res.user.email, version: 0, lastAt: '' });
+  save();
+  await afterSignIn();
+  return res.recoveryCode || '';
+}
+
+/** Nouveau code de secours (l'ancien ne marche plus). */
+export const newRecoveryCode = async () => (await api('/auth/recovery', { method: 'POST' })).recoveryCode;
 
 export async function login(email, password) {
   const res = await api('/auth/login', { method: 'POST', body: { email, password }, auth: false });

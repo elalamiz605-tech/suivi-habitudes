@@ -997,3 +997,32 @@ addTranslations('en', {
   'detail.trend': 'Trend', 'detail.trend_sub': 'Last 26 weeks', 'detail.trend_hint': 'One bar per week: share of scheduled days that were kept.', 'detail.prev': 'Previous month', 'detail.next': 'Next month',
   'detail.notes': 'Notes and mood', 'detail.no_notes': 'No notes for this habit yet.', 'detail.total': 'Check-ins', 'detail.rate90': '{p} over 90 days', 'detail.span': '{p} over 6 months',
 });
+
+// ---------- Code de secours / mot de passe oublié ----------
+addTranslations('fr', {
+  'recovery.title': 'Votre code de secours', 'recovery.text': 'Si vous oubliez votre mot de passe, ce code est le seul moyen de récupérer votre compte. Notez-le dans un endroit sûr : il n’est affiché qu’une fois.',
+  'recovery.fresh_text': 'Voici votre nouveau code de secours. L’ancien ne fonctionne plus. Notez-le dans un endroit sûr : il n’est affiché qu’une fois.',
+  'recovery.saved_check': 'Je l’ai noté en lieu sûr', 'recovery.forgot_link': 'Mot de passe oublié ?', 'recovery.forgot_title': 'Mot de passe oublié',
+  'recovery.forgot_text': 'Entrez l’e-mail du compte et le code de secours reçu à l’inscription. Tous les appareils seront déconnectés et un nouveau code vous sera donné.',
+  'recovery.code': 'Code de secours', 'recovery.new_password': 'Nouveau mot de passe', 'recovery.reset': 'Changer le mot de passe', 'recovery.err_form': 'Vérifiez l’e-mail, le code (16 caractères) et le mot de passe (8 minimum).',
+  'recovery.err_code': 'E-mail ou code de secours incorrect.', 'recovery.new_code': 'Nouveau code de secours', 'recovery.new_confirm': 'Générer un nouveau code de secours ? L’ancien ne fonctionnera plus.',
+  'recovery.settings_hint': 'Code de secours perdu ? Générez-en un nouveau tant que vous êtes connecté.',
+});
+addTranslations('es', {
+  'recovery.title': 'Tu código de recuperación', 'recovery.text': 'Si olvidas tu contraseña, este código es la única forma de recuperar tu cuenta. Guárdalo en un lugar seguro: solo se muestra una vez.',
+  'recovery.fresh_text': 'Este es tu nuevo código de recuperación. El anterior ya no funciona. Guárdalo en un lugar seguro: solo se muestra una vez.',
+  'recovery.saved_check': 'Lo he guardado en un lugar seguro', 'recovery.forgot_link': '¿Olvidaste la contraseña?', 'recovery.forgot_title': 'Contraseña olvidada',
+  'recovery.forgot_text': 'Introduce el correo de la cuenta y el código de recuperación recibido al registrarte. Se cerrará la sesión en todos los dispositivos y recibirás un código nuevo.',
+  'recovery.code': 'Código de recuperación', 'recovery.new_password': 'Nueva contraseña', 'recovery.reset': 'Cambiar la contraseña', 'recovery.err_form': 'Revisa el correo, el código (16 caracteres) y la contraseña (mínimo 8).',
+  'recovery.err_code': 'Correo o código de recuperación incorrecto.', 'recovery.new_code': 'Nuevo código de recuperación', 'recovery.new_confirm': '¿Generar un nuevo código de recuperación? El anterior dejará de funcionar.',
+  'recovery.settings_hint': '¿Perdiste el código de recuperación? Genera uno nuevo mientras tengas la sesión iniciada.',
+});
+addTranslations('en', {
+  'recovery.title': 'Your recovery code', 'recovery.text': 'If you forget your password, this code is the only way to get your account back. Keep it somewhere safe: it is shown only once.',
+  'recovery.fresh_text': 'Here is your new recovery code. The old one no longer works. Keep it somewhere safe: it is shown only once.',
+  'recovery.saved_check': 'I have saved it somewhere safe', 'recovery.forgot_link': 'Forgot your password?', 'recovery.forgot_title': 'Forgot password',
+  'recovery.forgot_text': 'Enter the account e-mail and the recovery code you got at sign-up. Every device will be signed out and you will get a new code.',
+  'recovery.code': 'Recovery code', 'recovery.new_password': 'New password', 'recovery.reset': 'Change password', 'recovery.err_form': 'Check the e-mail, the code (16 characters) and the password (8 minimum).',
+  'recovery.err_code': 'Wrong e-mail or recovery code.', 'recovery.new_code': 'New recovery code', 'recovery.new_confirm': 'Generate a new recovery code? The old one will stop working.',
+  'recovery.settings_hint': 'Lost your recovery code? Generate a new one while you are signed in.',
+});

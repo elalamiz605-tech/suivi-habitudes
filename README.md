@@ -25,6 +25,8 @@
 - **Three tracking types**: done / not done, **numeric goal** (8 glasses of water, 20 pages…) or **bad habit to quit** ("days without" counter).
 - **Five frequencies**: every day, specific days, **X times a week**, **every X days**, **X times a month**.
 - **Templates library** to create a habit in one click (water, meditation, reading, workout, language, no sugar, no screens…).
+- **Routines**: group habits into a morning, afternoon or evening routine and play it step by step from the Today page, with a built-in countdown for minute-based habits.
+- **Habit detail page**: streak, record, 30/90-day rate, a month calendar where any past day can be fixed, a 26-week trend chart, and the habit's notes and moods.
 - **Skip a day** without breaking the streak, **pause a habit**, global **vacation mode**: neutralised days count neither as done nor as missed.
 - **Custom day start** (midnight → 6 am) for night owls.
 - **Reminders**: up to 3 reminder times per habit + evening recap, by notification; with an account, real push notifications even when the app is closed.
@@ -44,6 +46,7 @@
 - **CSV export** of the whole history (date, habit, value, mood, note).
 
 ### ☁️ Momentum Cloud account (optional)
+- **Recovery code** shown once at sign-up (stored hashed on the server) to reset a forgotten password; a new one can be generated from Settings.
 - Sign in from Settings to **sync across devices**: the account's data wins at first sign-in (with confirmation if this device already has check-ins), then every change is pushed automatically and conflicts between devices are resolved by the most recent version.
 - **Push reminders with the app closed** (iPhone included once installed): each device subscribes, the server sends reminders and the evening recap at the right time in your timezone.
 - **Buddy challenge**: a 6-character invite code links two accounts; each sees the other's day (done/total, perfect day, best streak) on the Today page, nothing more.

@@ -465,6 +465,60 @@ export function openRoutinePlayer(r) {
   }, 'narrow');
 }
 
+// ---------- Compte : code de secours, mot de passe oublié ----------
+
+/** Montre le code de secours une seule fois, avec copie et case « je l'ai noté ». */
+export function openRecoveryModal(code, { fresh = false } = {}) {
+  open(`
+    ${head(`${icon('key')}${t('recovery.title')}`)}
+    <div class="modal-body">
+      <p class="muted">${t(fresh ? 'recovery.fresh_text' : 'recovery.text')}</p>
+      <div class="recovery-code" id="recovery-code">${esc(code)}</div>
+      <div class="btn-row center"><button type="button" class="btn" data-copy>${icon('copy')}${t('common.copy')}</button></div>
+      <label class="check-line"><input type="checkbox" name="saved"><span>${t('recovery.saved_check')}</span></label>
+    </div>
+    <footer class="modal-foot"><span class="spacer"></span><button type="submit" class="btn primary" disabled>${icon('check')}${t('common.close')}</button></footer>`,
+  (form) => {
+    const ok = form.querySelector('[type=submit]');
+    form.saved.addEventListener('change', () => { ok.disabled = !form.saved.checked; });
+    form.querySelector('[data-copy]').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(code); toast(t('common.copied')); } catch (_) { const r = document.createRange(); r.selectNodeContents(form.querySelector('#recovery-code')); getSelection().removeAllRanges(); getSelection().addRange(r); }
+    });
+    form.addEventListener('submit', (e) => { e.preventDefault(); if (form.saved.checked) modal().close(); });
+  }, 'narrow');
+}
+
+/** Mot de passe oublié : e-mail + code de secours + nouveau mot de passe. `onReset(email, code, password)` fait l'appel. */
+export function openResetModal(email, onReset) {
+  open(`
+    ${head(t('recovery.forgot_title'))}
+    <div class="modal-body">
+      <p class="muted">${t('recovery.forgot_text')}</p>
+      <label class="field"><span>${t('cloud.email')}</span><input name="email" type="email" autocomplete="email" required value="${esc(email)}" placeholder="you@example.com"></label>
+      <label class="field"><span>${t('recovery.code')}</span><input name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" required minlength="16" placeholder="XXXX-XXXX-XXXX-XXXX" class="mono" autofocus></label>
+      <label class="field"><span>${t('recovery.new_password')}</span><input name="password" type="password" autocomplete="new-password" required minlength="8" placeholder="${t('cloud.password_ph')}"></label>
+      <p class="form-error" data-error hidden></p>
+    </div>
+    <footer class="modal-foot"><span class="spacer"></span><button type="button" class="btn ghost" data-close>${t('common.cancel')}</button><button type="submit" class="btn primary">${icon('check')}${t('recovery.reset')}</button></footer>`,
+  (form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = form.querySelector('[data-error]');
+      const code = form.code.value.trim();
+      if (!form.email.value.trim() || code.replace(/[^A-Za-z0-9]/g, '').length < 16 || form.password.value.length < 8) { err.textContent = t('recovery.err_form'); err.hidden = false; return; }
+      form.querySelectorAll('button').forEach((b) => (b.disabled = true));
+      err.hidden = true;
+      try {
+        await onReset(form.email.value.trim(), code, form.password.value);
+        modal().close();
+      } catch (ex) {
+        err.textContent = ex.message; err.hidden = false;
+        form.querySelectorAll('button').forEach((b) => (b.disabled = false));
+      }
+    });
+  });
+}
+
 // ---------- Tâche ----------
 
 export function openTaskModal(existing, defaults = {}) {
