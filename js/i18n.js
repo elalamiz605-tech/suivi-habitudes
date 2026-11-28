@@ -959,3 +959,41 @@ addTranslations('es', {
 addTranslations('en', {
   'intro.vote': 'Every check-in is a vote for who you are becoming.', 'intro.days': 'days',
 });
+
+// ---------- Routines et page détail d'une habitude ----------
+addTranslations('fr', {
+  'routine.title': 'Routines', 'routine.manage': 'Gérer', 'routine.new': 'Nouvelle routine', 'routine.edit': 'Modifier la routine',
+  'routine.name': 'Nom', 'routine.name_ph': 'Routine du matin', 'routine.when': 'Moment', 'routine.when_morning': 'Matin', 'routine.when_afternoon': 'Après-midi', 'routine.when_evening': 'Soir', 'routine.when_any': 'N’importe quand',
+  'routine.pick': 'Habitudes de la routine', 'routine.order_hint': 'L’ordre de sélection devient l’ordre des étapes.', 'routine.no_habits': 'Créez d’abord des habitudes.',
+  'routine.steps_one': '{n} étape', 'routine.steps_other': '{n} étapes', 'routine.today_progress': '{done}/{total} aujourd’hui',
+  'routine.start': 'Démarrer', 'routine.continue': 'Continuer', 'routine.all_done': 'Terminée', 'routine.none': 'Aucune routine', 'routine.none_text': 'Enchaînez plusieurs habitudes du matin ou du soir en un geste, étape par étape, avec minuteur.',
+  'routine.step': 'Étape {i} sur {n}', 'routine.mark_done': 'Fait', 'routine.next': 'Suivant', 'routine.skip_step': 'Passer', 'routine.finished': 'Routine terminée', 'routine.finished_text': '{done} étape(s) validée(s) sur {total}.',
+  'routine.saved': 'Routine enregistrée', 'routine.deleted': 'Routine « {name} » supprimée',
+  'detail.back': 'Habitudes', 'detail.missing': 'Habitude introuvable', 'detail.since': 'depuis le {date}', 'detail.cal_hint': 'Touchez un jour pour le corriger. Les jours passés volontairement sont barrés.',
+  'detail.trend': 'Tendance', 'detail.trend_sub': '26 dernières semaines', 'detail.trend_hint': 'Une barre par semaine : part des jours prévus qui ont été tenus.', 'detail.prev': 'Mois précédent', 'detail.next': 'Mois suivant',
+  'detail.notes': 'Notes et humeur', 'detail.no_notes': 'Pas encore de note pour cette habitude.', 'detail.total': 'Validations', 'detail.rate90': '{p} sur 90 jours', 'detail.span': '{p} sur 6 mois',
+});
+addTranslations('es', {
+  'routine.title': 'Rutinas', 'routine.manage': 'Gestionar', 'routine.new': 'Nueva rutina', 'routine.edit': 'Editar la rutina',
+  'routine.name': 'Nombre', 'routine.name_ph': 'Rutina de la mañana', 'routine.when': 'Momento', 'routine.when_morning': 'Mañana', 'routine.when_afternoon': 'Tarde', 'routine.when_evening': 'Noche', 'routine.when_any': 'Cualquier momento',
+  'routine.pick': 'Hábitos de la rutina', 'routine.order_hint': 'El orden de selección es el orden de los pasos.', 'routine.no_habits': 'Crea primero algunos hábitos.',
+  'routine.steps_one': '{n} paso', 'routine.steps_other': '{n} pasos', 'routine.today_progress': '{done}/{total} hoy',
+  'routine.start': 'Empezar', 'routine.continue': 'Continuar', 'routine.all_done': 'Completada', 'routine.none': 'Ninguna rutina', 'routine.none_text': 'Encadena varios hábitos de la mañana o de la noche en un gesto, paso a paso, con temporizador.',
+  'routine.step': 'Paso {i} de {n}', 'routine.mark_done': 'Hecho', 'routine.next': 'Siguiente', 'routine.skip_step': 'Saltar', 'routine.finished': 'Rutina completada', 'routine.finished_text': '{done} paso(s) de {total} completados.',
+  'routine.saved': 'Rutina guardada', 'routine.deleted': 'Rutina «{name}» eliminada',
+  'detail.back': 'Hábitos', 'detail.missing': 'Hábito no encontrado', 'detail.since': 'desde el {date}', 'detail.cal_hint': 'Toca un día para corregirlo. Los días saltados aparecen tachados.',
+  'detail.trend': 'Tendencia', 'detail.trend_sub': 'Últimas 26 semanas', 'detail.trend_hint': 'Una barra por semana: parte de los días previstos que se cumplieron.', 'detail.prev': 'Mes anterior', 'detail.next': 'Mes siguiente',
+  'detail.notes': 'Notas y ánimo', 'detail.no_notes': 'Todavía no hay notas para este hábito.', 'detail.total': 'Registros', 'detail.rate90': '{p} en 90 días', 'detail.span': '{p} en 6 meses',
+});
+addTranslations('en', {
+  'routine.title': 'Routines', 'routine.manage': 'Manage', 'routine.new': 'New routine', 'routine.edit': 'Edit routine',
+  'routine.name': 'Name', 'routine.name_ph': 'Morning routine', 'routine.when': 'When', 'routine.when_morning': 'Morning', 'routine.when_afternoon': 'Afternoon', 'routine.when_evening': 'Evening', 'routine.when_any': 'Anytime',
+  'routine.pick': 'Habits in this routine', 'routine.order_hint': 'The order you tick them in becomes the order of the steps.', 'routine.no_habits': 'Create some habits first.',
+  'routine.steps_one': '{n} step', 'routine.steps_other': '{n} steps', 'routine.today_progress': '{done}/{total} today',
+  'routine.start': 'Start', 'routine.continue': 'Continue', 'routine.all_done': 'Done', 'routine.none': 'No routine yet', 'routine.none_text': 'Chain several morning or evening habits in one go, step by step, with a built-in timer.',
+  'routine.step': 'Step {i} of {n}', 'routine.mark_done': 'Done', 'routine.next': 'Next', 'routine.skip_step': 'Skip', 'routine.finished': 'Routine complete', 'routine.finished_text': '{done} of {total} steps checked.',
+  'routine.saved': 'Routine saved', 'routine.deleted': 'Routine “{name}” deleted',
+  'detail.back': 'Habits', 'detail.missing': 'Habit not found', 'detail.since': 'since {date}', 'detail.cal_hint': 'Tap a day to fix it. Skipped days are struck through.',
+  'detail.trend': 'Trend', 'detail.trend_sub': 'Last 26 weeks', 'detail.trend_hint': 'One bar per week: share of scheduled days that were kept.', 'detail.prev': 'Previous month', 'detail.next': 'Next month',
+  'detail.notes': 'Notes and mood', 'detail.no_notes': 'No notes for this habit yet.', 'detail.total': 'Check-ins', 'detail.rate90': '{p} over 90 days', 'detail.span': '{p} over 6 months',
+});

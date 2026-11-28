@@ -37,6 +37,11 @@ export function newHabit(o = {}) {
   };
 }
 
+/** Routine : une suite d'habitudes à enchaîner (matin, soir…), jouée étape par étape. */
+export function newRoutine(o = {}) {
+  return { id: uid(), name: '', when: 'morning', habitIds: [], createdAt: dateKey(today()), ...o };
+}
+
 export function newTask(o = {}) {
   return {
     id: uid(),
@@ -76,7 +81,7 @@ export function defaultSettings() {
 }
 
 export function emptyState() {
-  return { version: 2, habits: [], tasks: [], profile: { badges: [], perfectDays: [] }, settings: defaultSettings(), updatedAt: new Date().toISOString() };
+  return { version: 2, habits: [], tasks: [], routines: [], profile: { badges: [], perfectDays: [] }, settings: defaultSettings(), updatedAt: new Date().toISOString() };
 }
 
 // Générateur pseudo-aléatoire déterministe (même démo à chaque fois).
@@ -174,6 +179,7 @@ export function normalize(s) {
       mini: h.mini || {},
     })),
     tasks: (s.tasks || []).map((t) => newTask({ ...t, id: t.id || uid(), subtasks: t.subtasks || [] })),
+    routines: (s.routines || []).map((r) => newRoutine({ ...r, id: r.id || uid(), habitIds: Array.isArray(r.habitIds) ? r.habitIds : [] })),
     profile: { ...base.profile, ...(s.profile || {}) },
     settings: { ...def, ...(s.settings || {}), sync: { ...def.sync, ...((s.settings || {}).sync || {}) }, ai: { ...def.ai, ...((s.settings || {}).ai || {}) }, cloud: { ...def.cloud, ...((s.settings || {}).cloud || {}) }, reviews: (s.settings || {}).reviews || {} },
     updatedAt: s.updatedAt || new Date().toISOString(),
@@ -248,6 +254,7 @@ export function updateSettings(patch) {
 
 export const findHabit = (id) => store.state.habits.find((h) => h.id === id);
 export const findTask = (id) => store.state.tasks.find((t) => t.id === id);
+export const findRoutine = (id) => (store.state.routines || []).find((r) => r.id === id);
 
 export function setLog(h, key, value) {
   value = Math.max(0, Math.min(999, Math.round(value)));

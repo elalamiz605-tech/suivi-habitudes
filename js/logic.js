@@ -42,6 +42,45 @@ export function isScheduled(h, d) {
 /** Ce jour est-il obligatoire ? (les habitudes « X fois par semaine / mois » n'ont pas de jour imposé) */
 export const isRequired = (h, d) => !isPeriodic(h) && isScheduled(h, d);
 
+// ---------- Routines ----------
+
+/** Habitudes d'une routine, dans l'ordre, encore actives. */
+export const routineHabits = (r, habits = store.state.habits) => r.habitIds.map((id) => habits.find((h) => h.id === id)).filter((h) => h && !h.archived);
+
+export function routineProgress(r, key = dateKey(today())) {
+  const habits = routineHabits(r);
+  return { habits, total: habits.length, done: habits.filter((h) => isDone(h, key)).length };
+}
+
+/** Historique par semaine pour la courbe de tendance : [{ start, ok, req }] du plus ancien au plus récent. */
+export function weeklyHistory(h, weeks = 26, tday = today()) {
+  const out = [];
+  const w0 = startOfWeek(tday);
+  const tk = dateKey(tday);
+  for (let i = weeks - 1; i >= 0; i--) {
+    const start = addDays(w0, -7 * i);
+    let ok = 0, req = 0;
+    if (isPeriodic(h)) {
+      const need = h.schedule.type === 'weekly' ? (h.schedule.perWeek || 3) : Math.max(1, Math.ceil((h.schedule.perMonth || 10) / 4));
+      if (dateKey(addDays(start, 6)) >= h.createdAt && dateKey(start) <= tk) {
+        let c = 0;
+        for (let d = 0; d < 7; d++) { const k = dateKey(addDays(start, d)); if (k > tk) break; if (isDone(h, k)) c++; }
+        req = need; ok = Math.min(c, need);
+      }
+    } else {
+      for (let d = 0; d < 7; d++) {
+        const day = addDays(start, d), k = dateKey(day);
+        if (k < h.createdAt || k > tk || !isScheduled(h, day)) continue;
+        if (k === tk && !isDone(h, k)) continue;
+        req++;
+        if (isDone(h, k)) ok++;
+      }
+    }
+    out.push({ start, ok, req });
+  }
+  return out;
+}
+
 // ---------- Périodes (semaine / mois) ----------
 
 function periodStart(h, d) {

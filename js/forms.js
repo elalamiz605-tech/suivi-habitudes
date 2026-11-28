@@ -1,7 +1,7 @@
 // Fenêtres de création / modification (habitudes, tâches, note du jour, minuteur).
 import { icon } from './icons.js';
-import { store, commit, COLORS, newHabit, newTask, setTaskStatus, removeWithUndo, setJournal, setLog } from './store.js';
-import { PRIORITIES, STATUSES, valueOn } from './logic.js';
+import { store, commit, COLORS, newHabit, newTask, newRoutine, setTaskStatus, removeWithUndo, setJournal, setLog } from './store.js';
+import { PRIORITIES, STATUSES, valueOn, isDone, routineHabits } from './logic.js';
 import { esc, uid, weekdays, dateKey, today, fmtFull, parseKey, fmtClock } from './utils.js';
 import { toast } from './ui.js';
 import { t } from './i18n.js';
@@ -342,6 +342,127 @@ function finishTimer(early) {
   }
   Object.assign(timer, { left: 0, total: 0, habit: null, label: '' });
   document.dispatchEvent(new CustomEvent('timer-tick'));
+}
+
+// ---------- Routines ----------
+
+export function openRoutineModal(existing) {
+  const r = existing || newRoutine();
+  const habits = store.state.habits.filter((h) => !h.archived);
+  let order = r.habitIds.filter((id) => habits.some((h) => h.id === id));
+  open(`
+    ${head(existing ? t('routine.edit') : t('routine.new'))}
+    <div class="modal-body">
+      <label class="field"><span>${t('routine.name')}</span><input name="name" required maxlength="40" value="${esc(r.name)}" placeholder="${t('routine.name_ph')}" autofocus></label>
+      <fieldset class="field"><legend>${t('routine.when')}</legend>
+        <div class="seg wrap">${['morning', 'afternoon', 'evening', 'any'].map((w) => radio('when', w, t(`routine.when_${w}`), r.when === w)).join('')}</div>
+      </fieldset>
+      <fieldset class="field"><legend>${t('routine.pick')}</legend>
+        ${habits.length
+    ? `<div class="pick-list">${habits.map((h) => `<label class="pick ${order.includes(h.id) ? 'on' : ''}"><input type="checkbox" name="habit" value="${h.id}" ${order.includes(h.id) ? 'checked' : ''}><b class="pick-n"></b><i class="tick" style="--c:${h.color}"></i><span>${esc(h.name)}</span><small>${h.kind === 'count' ? `${h.target} ${esc(h.unit)}` : ''}</small></label>`).join('')}</div>
+        <p class="muted">${t('routine.order_hint')}</p>`
+    : `<p class="muted">${t('routine.no_habits')}</p>`}
+      </fieldset>
+    </div>
+    ${foot(!!existing)}`,
+  (form) => {
+    const numbers = () => form.querySelectorAll('.pick').forEach((el) => {
+      const i = order.indexOf(el.querySelector('input').value);
+      el.classList.toggle('on', i >= 0);
+      el.querySelector('.pick-n').textContent = i >= 0 ? String(i + 1) : '';
+    });
+    numbers();
+    form.addEventListener('change', (e) => {
+      if (e.target.name !== 'habit') return;
+      order = order.filter((id) => id !== e.target.value);
+      if (e.target.checked) order.push(e.target.value);
+      numbers();
+    });
+    form.querySelector('[data-delete]')?.addEventListener('click', () => { modal().close(); deleteRoutine(r); });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      if (!name) { form.name.focus(); return; }
+      Object.assign(r, { name, when: form.when.value, habitIds: [...order] });
+      if (!existing) store.state.routines.push(r);
+      modal().close();
+      commit();
+      toast(t('routine.saved'));
+    });
+  });
+}
+
+export function deleteRoutine(r) {
+  const undo = removeWithUndo(store.state.routines, r);
+  commit();
+  toast(t('routine.deleted', { name: r.name }), { action: { label: t('common.undo'), fn: undo } });
+}
+
+/** Lecteur de routine : une étape à la fois, minuteur intégré pour les habitudes en minutes. */
+export function openRoutinePlayer(r) {
+  const k = dateKey(today());
+  const steps = routineHabits(r);
+  if (!steps.length) { toast(t('routine.no_habits')); return; }
+  let i = Math.max(0, steps.findIndex((h) => !isDone(h, k)));
+  let tick = 0, left = 0, total = 0, running = false;
+  const stopClock = () => { clearInterval(tick); running = false; };
+  const markDone = (h) => setLog(h, k, Math.max(valueOn(h, k), h.target || 1));
+  open(`${head(`${icon('play')}${esc(r.name)}`)}<div class="modal-body rp-body"></div>`, (form) => {
+    const body = form.querySelector('.rp-body');
+    form.addEventListener('submit', (e) => e.preventDefault());
+    modal().addEventListener('close', stopClock, { once: true });
+    const finish = () => {
+      stopClock();
+      const done = steps.filter((h) => isDone(h, k)).length;
+      body.innerHTML = `<div class="rp-end">${icon('award')}<h3>${t('routine.finished')}</h3><p class="muted">${t('routine.finished_text', { done, total: steps.length })}</p><div class="segbar">${steps.map((h) => `<i class="${isDone(h, k) ? 'on' : ''}"></i>`).join('')}</div><button type="button" class="btn primary">${t('common.close')}</button></div>`;
+      body.querySelector('button').addEventListener('click', () => modal().close());
+    };
+    const next = () => { i++; if (i >= steps.length) finish(); else paint(); };
+    const paint = () => {
+      stopClock();
+      const h = steps[i];
+      const done = isDone(h, k);
+      const minutes = h.kind === 'count' && /min/i.test(h.unit) && !done ? Math.max(1, h.target - valueOn(h, k)) : 0;
+      total = left = minutes * 60;
+      body.innerHTML = `
+        <p class="muted">${t('routine.step', { i: i + 1, n: steps.length })}</p>
+        <div class="segbar">${steps.map((x, j) => `<i class="${isDone(x, k) ? 'on' : ''} ${j === i ? 'cur' : ''}"></i>`).join('')}</div>
+        <div class="rp-step"><i class="tick" style="--c:${h.color}"></i><h3>${esc(h.name)}</h3>
+          ${h.kind === 'count' ? `<p class="muted">${valueOn(h, k)}/${h.target} ${esc(h.unit)}</p>` : ''}
+          ${h.identity ? `<p class="muted">${icon('user')} ${esc(h.identity)}</p>` : ''}
+        </div>
+        ${minutes ? `<div class="timer-ring sm"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" class="track"/><circle cx="60" cy="60" r="54" class="prog"/></svg><b class="timer-clock">${fmtClock(left)}</b></div>
+        <div class="btn-row center"><button type="button" class="btn" data-clock>${icon('play')}${t('common.start')}</button></div>` : ''}
+        <div class="btn-row center rp-actions">
+          <button type="button" class="btn primary" data-done>${icon('check')}${done ? t('routine.next') : t('routine.mark_done')}</button>
+          <button type="button" class="btn ghost" data-skip>${t('routine.skip_step')}</button>
+        </div>`;
+      body.querySelector('[data-done]').addEventListener('click', () => { if (!done) { markDone(h); commit(); } next(); });
+      body.querySelector('[data-skip]').addEventListener('click', next);
+      const clockBtn = body.querySelector('[data-clock]');
+      if (!clockBtn) return;
+      const clock = body.querySelector('.timer-clock'), prog = body.querySelector('.prog'), C = 2 * Math.PI * 54;
+      const paintClock = () => { clock.textContent = fmtClock(left); prog.style.strokeDasharray = `${C * (1 - left / total)} ${C}`; };
+      clockBtn.addEventListener('click', () => {
+        if (running) { stopClock(); clockBtn.innerHTML = `${icon('play')}${t('common.start')}`; return; }
+        running = true;
+        const endAt = Date.now() + left * 1000;
+        clockBtn.innerHTML = `${icon('pause')}${t('common.pause')}`;
+        tick = setInterval(() => {
+          left = Math.max(0, Math.round((endAt - Date.now()) / 1000));
+          paintClock();
+          if (left <= 0) {
+            stopClock();
+            markDone(h);
+            commit();
+            notify(t('timer.finished'), t('timer.notify_body', { name: h.name }), { tag: 'timer' });
+            next();
+          }
+        }, 250);
+      });
+    };
+    paint();
+  }, 'narrow');
 }
 
 // ---------- Tâche ----------

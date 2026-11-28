@@ -10,7 +10,7 @@ import { permission as notifPermission, supported as notifSupported } from './re
 import { listSnapshots } from './backup.js';
 import { timer, TEMPLATES, TEMPLATE_CATS } from './forms.js';
 import {
-  esc, dateKey, today, addDays, startOfWeek, weekday, parseKey, fmtFull, fmtShort, fmtMonth, fmtDateTime, fmtClock,
+  esc, dateKey, today, addDays, addMonths, startOfMonth, startOfWeek, weekday, parseKey, fmtFull, fmtShort, fmtMonth, fmtDateTime, fmtClock,
   weekdays, weekdaysShort, pct, norm, relativeDue as relative,
 } from './utils.js';
 import { t, tn, LANGS, lang } from './i18n.js';
@@ -108,7 +108,7 @@ function habitItem(h, stamp) {
   return `
   <article class="habit-item ${done ? 'is-done' : ''} ${isQuit ? 'is-quit' : ''} ${recovery ? 'is-recovery' : ''}" style="--c:${h.color}">
     ${tick(h.color)}
-    <div class="hi-title"><h3>${esc(h.name)}</h3><p>${habitMeta(h)}</p>
+    <div class="hi-title"><h3><a class="hr-link" href="#/habit/${h.id}">${esc(h.name)}</a></h3><p>${habitMeta(h)}</p>
       ${recovery ? `<p class="recover-line">${icon('restore')}${t('recover.line')} <button class="link-btn" data-action="mini" data-id="${h.id}">${isCount ? t('recover.mini_count', { n: mini, unit: esc(h.unit) }) : t('recover.mini_check')}</button></p>` : ''}
       ${done && h.identity ? `<p class="vote-line">${icon('user')}${t('identity.vote', { identity: esc(h.identity) })}</p>` : ''}
     </div>
@@ -212,6 +212,8 @@ export function viewToday(s, ui = {}) {
     ${metric({ label: t('today.tasks_todo'), value: `<b>${focus.length}</b>`, sub: overdue ? t('today.of_overdue', { n: overdue }) : '', tone: overdue ? 'warn' : '' })}
   </section>
 
+  ${s.routines?.length ? routinesStrip(s, k) : ''}
+
   <section class="section">
     <div class="section-head"><h2>${t('today.habits_of_day')}</h2><a href="#/habits" class="link">${t('today.manage')}${icon('chev-r')}</a></div>
     ${prog.due.length
@@ -234,6 +236,37 @@ export function viewToday(s, ui = {}) {
       ? `<div class="list">${focus.map(taskRow).join('')}</div>`
       : empty(t('today.no_urgent'), t('today.no_urgent_text'), `<button class="btn" data-action="new-task">${icon('plus')}${t('today.new_task')}</button>`)}
   </section>`;
+}
+
+// ---------- Routines ----------
+
+function routinesStrip(s, k) {
+  return `
+  <section class="section" aria-label="${t('routine.title')}">
+    <div class="section-head"><h2>${t('routine.title')}</h2><a href="#/habits" class="link">${t('routine.manage')}${icon('chev-r')}</a></div>
+    <div class="routine-cards">${s.routines.map((r) => {
+    const p = L.routineProgress(r, k);
+    const full = p.total > 0 && p.done === p.total;
+    return `<div class="routine-card ${full ? 'is-done' : ''}">
+      <div class="rc-main"><b>${esc(r.name)}</b><small>${t(`routine.when_${r.when}`)} · ${tn(p.total, 'routine.steps')}</small>${segments(p.done, p.total)}</div>
+      ${full ? `<span class="rc-done">${icon('check')}${t('routine.all_done')}</span>` : `<button class="btn sm primary" data-action="routine-start" data-id="${r.id}">${icon('play')}${p.done ? t('routine.continue') : t('routine.start')}</button>`}
+    </div>`;
+  }).join('')}</div>
+  </section>`;
+}
+
+function routineRow(r, k) {
+  const p = L.routineProgress(r, k);
+  return `
+  <article class="routine-row">
+    <div class="rr-title"><h3>${esc(r.name)}</h3><p>${t(`routine.when_${r.when}`)} · ${tn(p.total, 'routine.steps')} · ${t('routine.today_progress', { done: p.done, total: p.total })}</p></div>
+    <div class="rr-habits">${p.habits.map((h) => `<span>${tick(h.color)}${esc(h.name)}</span>`).join('')}</div>
+    <div class="hr-actions">
+      <button class="btn sm" data-action="routine-start" data-id="${r.id}">${icon('play')}${t('routine.start')}</button>
+      <button class="icon-btn" data-action="edit-routine" data-id="${r.id}" title="${t('common.edit')}" aria-label="${t('common.edit')}">${icon('edit')}</button>
+      <button class="icon-btn danger" data-action="delete-routine" data-id="${r.id}" title="${t('common.delete')}" aria-label="${t('common.delete')}">${icon('trash')}</button>
+    </div>
+  </article>`;
 }
 
 // ---------- Habitudes ----------
@@ -261,7 +294,7 @@ function habitRow(h) {
     <div class="hr-main">
       ${tick(h.color)}
       <div class="hr-title">
-        <h3>${esc(h.name)}${h.kind === 'quit' ? ` <span class="tag">${t('form.kind_quit')}</span>` : ''}</h3>
+        <h3><a class="hr-link" href="#/habit/${h.id}">${esc(h.name)}</a>${h.kind === 'quit' ? ` <span class="tag">${t('form.kind_quit')}</span>` : ''}</h3>
         <p>${habitMeta(h)}${h.kind === 'count' ? `<i class="sep"></i>${h.target} ${esc(h.unit)}${t('habits.per_day')}` : ''}</p>
         ${paused && pause ? `<p class="hr-notes">${icon('pause')}${t('habits.paused_since', { date: fmtShort(parseKey(pause.from)) })}</p>` : h.identity ? `<p class="hr-notes identity">${icon('user')}${esc(h.identity)} · ${t('identity.votes', { n: L.votesFor(h) })}</p>` : h.notes ? `<p class="hr-notes">${esc(h.notes)}</p>` : ''}
       </div>
@@ -302,11 +335,112 @@ export function viewHabits(s, ui) {
     ${list.length ? list.map(habitRow).join('') : empty(t('habits.none'), t('habits.none_text'), `<button class="btn primary" data-action="new-habit">${icon('plus')}${t('today.create_habit')}</button>`)}
   </div>
   <p class="hint">${t('habits.hint')}</p>
+
+  <section class="section">
+    <div class="section-head"><h2>${t('routine.title')}</h2><button class="btn sm" data-action="new-routine">${icon('plus')}${t('routine.new')}</button></div>
+    ${s.routines.length
+      ? `<div class="list">${s.routines.map((r) => routineRow(r, dateKey(today()))).join('')}</div>`
+      : empty(t('routine.none'), t('routine.none_text'), `<button class="btn" data-action="new-routine">${icon('plus')}${t('routine.new')}</button>`)}
+  </section>
   ${archived.length ? `
   <details class="archived">
     <summary>${icon('archive')}${t('habits.archived', { n: archived.length })}</summary>
     ${archived.map((h) => `<div class="arch-row"><span>${tick(h.color)}${esc(h.name)}</span><span class="spacer"></span><button class="btn sm" data-action="unarchive-habit" data-id="${h.id}">${icon('restore')}${t('common.restore')}</button><button class="icon-btn danger" data-action="delete-habit" data-id="${h.id}" aria-label="${t('common.delete')}">${icon('trash')}</button></div>`).join('')}
   </details>` : ''}`;
+}
+
+// ---------- Détail d'une habitude ----------
+
+const MOOD_FACES = ['😣', '😕', '😐', '🙂', '😄'];
+
+function calendar(h, month, tday) {
+  const first = startOfMonth(month);
+  const offset = weekday(first);
+  const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+  const tk = dateKey(tday);
+  const cells = [];
+  for (let i = 0; i < offset; i++) cells.push('<i></i>');
+  for (let d = 1; d <= days; d++) {
+    const date = new Date(month.getFullYear(), month.getMonth(), d), k = dateKey(date);
+    const future = k > tk, before = k < h.createdAt;
+    const cls = future ? 'future' : before ? 'before' : dayCellClass(h, date, k, k === tk);
+    const v = L.valueOn(h, k);
+    cells.push(`<button class="cal-day ${cls} ${k === tk ? 'is-today' : ''}" ${future ? 'disabled' : ''} data-action="toggle-day" data-id="${h.id}" data-key="${k}" title="${fmtFull(date)}${h.kind === 'count' ? ` · ${v}/${h.target}` : ''}" aria-label="${esc(h.name)}, ${fmtFull(date)}"><em>${d}</em>${h.kind === 'count' && v && !L.isDone(h, k) ? `<small>${v}</small>` : ''}</button>`);
+  }
+  return `<div class="cal"><div class="cal-head">${weekdaysShort().map((w) => `<span>${w}</span>`).join('')}</div><div class="cal-grid">${cells.join('')}</div></div>`;
+}
+
+function trend(hist) {
+  const W = 520, H = 120, bw = W / hist.length;
+  const bars = hist.map((w, i) => {
+    const r = w.req ? w.ok / w.req : null;
+    const hh = r === null ? 0 : Math.max(3, r * (H - 24));
+    const cls = r === null ? 'none' : r >= 0.8 ? 'hi' : r >= 0.5 ? 'mid' : 'lo';
+    return `<rect x="${(i * bw + 2).toFixed(1)}" y="${(H - 18 - hh).toFixed(1)}" width="${(bw - 4).toFixed(1)}" height="${hh.toFixed(1)}" rx="2" class="${cls}"><title>${fmtShort(w.start)} · ${r === null ? '—' : pct(r)}</title></rect>`;
+  }).join('');
+  const last = hist.length - 1;
+  const labels = hist.map((w, i) => (i % 8 === 0 || (i === last && last % 8 >= 4) ? `<text x="${(i * bw + bw / 2).toFixed(1)}" y="${H - 4}" text-anchor="middle">${fmtShort(w.start)}</text>` : '')).join('');
+  return `<svg class="trend" viewBox="0 0 ${W} ${H}" role="img" aria-label="${t('detail.trend')}">${bars}${labels}</svg>`;
+}
+
+export function viewHabit(s, ui = {}) {
+  const h = s.habits.find((x) => x.id === ui.habitId);
+  if (!h) return empty(t('detail.missing'), '', `<a class="btn" href="#/habits">${icon('chev-l')}${t('detail.back')}</a>`);
+  const tday = today();
+  const month = addMonths(tday, ui.calOffset || 0);
+  const streak = L.currentStreak(h), best = L.bestStreak(h);
+  const rate30 = L.completionRate(h, 30), rate90 = L.completionRate(h, 90);
+  const total = Object.keys(h.log).filter((k) => L.isDone(h, k)).length;
+  const hist = L.weeklyHistory(h, 26);
+  const span = hist.reduce((a, w) => ({ ok: a.ok + w.ok, req: a.req + w.req }), { ok: 0, req: 0 });
+  const notes = Object.entries(h.journal).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 8);
+  const paused = isPaused(h);
+  return `
+  <header class="page-head">
+    <div>
+      <a class="link back" href="#/habits">${icon('chev-l')}${t('detail.back')}</a>
+      <h1>${tick(h.color)}${esc(h.name)}${h.kind === 'quit' ? ` <span class="tag">${t('form.kind_quit')}</span>` : ''}${h.archived ? ` <span class="tag">${t('common.archive')}</span>` : ''}</h1>
+      <p class="lead">${habitMeta(h)}${h.kind === 'count' ? `<i class="sep"></i>${h.target} ${esc(h.unit)}${t('habits.per_day')}` : ''}<i class="sep"></i>${t('detail.since', { date: fmtShort(parseKey(h.createdAt)) })}</p>
+      ${h.identity ? `<p class="hr-notes identity">${icon('user')}${esc(h.identity)} · ${t('identity.votes', { n: L.votesFor(h) })}</p>` : ''}
+    </div>
+    <div class="head-actions">
+      <button class="btn" data-action="edit-habit" data-id="${h.id}">${icon('edit')}${t('common.edit')}</button>
+      ${paused
+        ? `<button class="btn" data-action="resume-habit" data-id="${h.id}">${icon('play')}${t('habits.resume')}</button>`
+        : `<button class="btn ghost" data-action="pause-habit" data-id="${h.id}">${icon('pause')}${t('habits.pause')}</button>`}
+      ${h.archived
+        ? `<button class="btn ghost" data-action="unarchive-habit" data-id="${h.id}">${icon('restore')}${t('common.restore')}</button>`
+        : `<button class="btn ghost" data-action="archive-habit" data-id="${h.id}">${icon('archive')}${t('common.archive')}</button>`}
+    </div>
+  </header>
+
+  <section class="band" aria-label="${t('today.summary')}">
+    ${metric({ label: h.kind === 'quit' ? t('habits.days_without') : t('habits.streak'), value: `<b>${streak}</b><span>${L.streakShort(h)}</span>` })}
+    ${metric({ label: t('habits.record'), value: `<b>${best}</b><span>${L.streakShort(h)}</span>` })}
+    ${metric({ label: t('habits.30d'), value: `<b>${rate30 === null ? '—' : Math.round(rate30 * 100)}</b><span>%</span>`, sub: rate90 === null ? '' : t('detail.rate90', { p: pct(rate90) }) })}
+    ${metric({ label: t('detail.total'), value: `<b>${total}</b>`, sub: span.req ? t('detail.span', { p: pct(span.ok / span.req) }) : '' })}
+  </section>
+
+  <div class="grid-2 detail-grid">
+    <article class="panel">
+      <div class="panel-head"><h3>${icon('calendar')}${fmtMonth(month)}</h3><div class="cal-nav"><button class="icon-btn" data-action="cal-prev" aria-label="${t('detail.prev')}">${icon('chev-l')}</button><button class="icon-btn" data-action="cal-next" ${(ui.calOffset || 0) >= 0 ? 'disabled' : ''} aria-label="${t('detail.next')}">${icon('chev-r')}</button></div></div>
+      ${calendar(h, month, tday)}
+      <p class="muted">${t('detail.cal_hint')}</p>
+    </article>
+    <article class="panel">
+      <div class="panel-head"><h3>${icon('chart')}${t('detail.trend')}</h3><span class="muted">${t('detail.trend_sub')}</span></div>
+      ${trend(hist)}
+      <p class="muted">${t('detail.trend_hint')}</p>
+    </article>
+  </div>
+
+  <article class="panel detail-notes">
+    <div class="panel-head"><h3>${icon('book')}${t('detail.notes')}</h3><button class="btn sm" data-action="journal" data-id="${h.id}">${icon('plus')}${t('today.journal')}</button></div>
+    ${notes.length
+      ? `<ul class="note-list">${notes.map(([k, j]) => `<li><span class="mood">${MOOD_FACES[j.mood - 1] || '·'}</span><div><b>${fmtShort(parseKey(k))}</b>${j.note ? `<p>${esc(j.note)}</p>` : ''}</div><button class="icon-btn sm" data-action="journal-day" data-id="${h.id}" data-key="${k}" aria-label="${t('common.edit')}">${icon('edit')}</button></li>`).join('')}</ul>`
+      : `<p class="muted">${t('detail.no_notes')}</p>`}
+    ${h.notes ? `<p class="hr-notes">${icon('info')}${esc(h.notes)}</p>` : ''}
+  </article>`;
 }
 
 // ---------- Tâches ----------

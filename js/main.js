@@ -23,7 +23,7 @@ const NAV = [
   { id: 'settings', key: 'nav.settings', ic: 'sliders' },
 ];
 // Pages hors menu : le bilan de la semaine (bannière du dimanche, page Statistiques, palette).
-const VIEWS = { today: V.viewToday, habits: V.viewHabits, tasks: V.viewTasks, stats: V.viewStats, year: V.viewYear, review: V.viewReview, settings: V.viewSettings };
+const VIEWS = { today: V.viewToday, habits: V.viewHabits, habit: V.viewHabit, tasks: V.viewTasks, stats: V.viewStats, year: V.viewYear, review: V.viewReview, settings: V.viewSettings };
 const TITLE_KEY = { review: 'review.title' };
 
 const viewEl = document.getElementById('view');
@@ -74,12 +74,18 @@ function startScene() {
 
 function currentRoute() {
   const r = location.hash.replace(/^#\/?/, '');
-  return VIEWS[r] ? r : 'today';
+  const m = r.match(/^habit\/([A-Za-z0-9_-]+)$/);
+  if (m) {
+    if (ui.habitId !== m[1]) ui.calOffset = 0;
+    ui.habitId = m[1];
+    return 'habit';
+  }
+  return VIEWS[r] && r !== 'habit' ? r : 'today';
 }
 
 function renderNav() {
   document.getElementById('nav').innerHTML = NAV.map((n, i) => `
-    <a href="#/${n.id}" class="${n.id === route ? 'active' : ''}" ${n.id === route ? 'aria-current="page"' : ''}>
+    <a href="#/${n.id}" class="${n.id === route || (route === 'habit' && n.id === 'habits') ? 'active' : ''}" ${n.id === route ? 'aria-current="page"' : ''}>
       ${icon(n.ic)}<span>${t(n.key)}</span><kbd>${i + 1}</kbd>
     </a>`).join('');
   document.getElementById('level').innerHTML = V.levelCard(st());
@@ -98,7 +104,7 @@ function render() {
   entering = false;
 
   scene?.setProgress(L.todayProgress(s.habits.filter((h) => !h.archived)).ratio);
-  document.title = `${t(TITLE_KEY[route] || NAV.find((n) => n.id === route)?.key || 'nav.today')} · Momentum`;
+  document.title = `${route === 'habit' ? (S.findHabit(ui.habitId)?.name || t('nav.habits')) : t(TITLE_KEY[route] || NAV.find((n) => n.id === route)?.key || 'nav.today')} · Momentum`;
   if (route === 'year') mountYear();
   else unmountYear();
   if ((route === 'today' || route === 'settings') && C.isSignedIn()) refreshBuddies();
@@ -332,6 +338,13 @@ const actions = {
   timer: (el) => F.openTimerModal(S.findHabit(el.dataset.id)),
   'timer-open': () => F.openTimerModal(F.timer.habit),
   'edit-habit': (el) => F.openHabitModal(S.findHabit(el.dataset.id)),
+  'journal-day': (el) => F.openJournalModal(S.findHabit(el.dataset.id), el.dataset.key),
+  'cal-prev'() { ui.calOffset = (ui.calOffset || 0) - 1; render(); },
+  'cal-next'() { ui.calOffset = Math.min(0, (ui.calOffset || 0) + 1); render(); },
+  'new-routine': () => F.openRoutineModal(),
+  'edit-routine': (el) => F.openRoutineModal(S.findRoutine(el.dataset.id)),
+  'delete-routine': (el) => F.deleteRoutine(S.findRoutine(el.dataset.id)),
+  'routine-start': (el) => F.openRoutinePlayer(S.findRoutine(el.dataset.id)),
   'delete-habit': (el) => F.deleteHabit(S.findHabit(el.dataset.id)),
   'archive-habit'(el) {
     const h = S.findHabit(el.dataset.id);
@@ -634,7 +647,8 @@ function openPalette() {
     { label: t('palette.theme'), ic: 'moon', run: () => { s.settings.theme = resolvedTheme() === 'dark' ? 'light' : 'dark'; S.save(); applyTheme(); if (route === 'settings') render(); } },
     { label: t(vacation ? 'palette.vacation_off' : 'palette.vacation_on'), ic: 'plane', run: () => { S.setVacation(!vacation); S.commit(); toast(t(vacation ? 'settings.vacation_off' : 'settings.vacation_on')); } },
     { label: t(s.settings.motion ? 'palette.motion_off' : 'palette.motion_on'), ic: 'grid', run: () => { s.settings.motion = !s.settings.motion; S.commit(); scene ? scene.setMotion(s.settings.motion) : startScene(); } },
-    ...s.habits.filter((h) => !h.archived).map((h) => ({ label: h.name, group: t('palette.habit'), ic: 'repeat', run: () => F.openHabitModal(h) })),
+    ...s.routines.map((r) => ({ label: r.name, group: t('routine.title'), ic: 'play', run: () => F.openRoutinePlayer(r) })),
+    ...s.habits.filter((h) => !h.archived).map((h) => ({ label: h.name, group: t('palette.habit'), ic: 'repeat', run: () => go(`habit/${h.id}`) })),
     ...s.tasks.map((x) => ({ label: x.title, group: x.status === 'done' ? t('palette.task_done') : t('palette.task'), ic: 'list', run: () => F.openTaskModal(x) })),
   ];
   pal.innerHTML = `
