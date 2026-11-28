@@ -701,6 +701,13 @@ document.getElementById('modal').addEventListener('click', (e) => {
 
 // ---------- Démarrage ----------
 
+// Première visite (rien d'enregistré, pas installée, pas venue de la vitrine) : la présentation d'abord.
+if (V.needsOnboarding(st()) && !st().settings.onboarded && !sessionStorage.getItem('momentum:intro')
+    && !matchMedia('(display-mode: standalone)').matches && navigator.standalone !== true) {
+  sessionStorage.setItem('momentum:intro', '1');
+  location.replace('./index.html');
+}
+
 applyTheme();
 checkRewards(true);
 render();

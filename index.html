@@ -302,6 +302,10 @@ h1 em, h2 em { font-style: normal; background: var(--grad); -webkit-background-c
 
 <footer class="foot"><span>Momentum, an app by Ziad El Alami</span><a href="https://github.com/elalamiz605-tech/suivi-habitudes">GitHub</a><a href="https://elalamiz605-tech.github.io">Portfolio</a></footer>
 
+<script>
+  // Venir de la vitrine : l'appli ne renverra pas ici.
+  try { sessionStorage.setItem('momentum:intro', '1'); } catch (e) {}
+</script>
 <script type="module">
 {
   const APP = 'app.html';
